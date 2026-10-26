@@ -46,7 +46,17 @@ with sync_playwright() as p:
  word=page.evaluate("window.VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
  assert word in state['records']
  page.keyboard.press('Alt+4');assert page.locator('#answer').is_disabled();page.keyboard.press('Alt+4')
- page.locator('#answer').press_sequentially(word,delay=5);assert page.locator('#next').is_visible()
+ for completed in range(1,8):
+  word=page.evaluate("window.VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
+  page.locator('#answer').press_sequentially(word,delay=5)
+  assert page.locator('#next').is_hidden()
+  assert page.locator('#answer').input_value()==''
+  assert page.locator('#answer').is_enabled()
+  assert page.locator('#answer').evaluate('(el)=>el===document.activeElement')
+  assert f'{completed} lượt' in page.locator('#progress').inner_text()
+  next_word=page.evaluate("window.VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
+  assert next_word!=word
+ page.keyboard.press('Alt+4');assert page.locator('#answer').is_disabled();page.keyboard.press('Alt+4')
  # Import-compatible legacy progress: stage zero relearns, positive stages remain available.
  page.evaluate("""() => {localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify({version:1,records:{recall:{stage:0,attempts:2,due:0},retain:{stage:1,attempts:1,due:0}},daily:null}));}""")
  page.reload();page.locator('#daily').click();assert page.locator('#meaning').inner_text()=='giữ lại'

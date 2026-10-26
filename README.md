@@ -37,3 +37,5 @@ GitHub Pages should publish `main` at `/ (root)`. Push changes to `main` and wai
 ## Keyboard controls
 
 Tab / Shift+Tab navigates controls, and Enter / Space activates the focused button. Enter continues learning, submits guided typing/review, or advances after feedback. Keys 1–4 select a meaning during recognition. Alt+1 opens a hint and Alt+2 reveals the answer, including while the answer input is focused. Alt+3 speaks the learning word; Alt+4 pauses/resumes arcade. Escape leaves the current activity. Typing letters is never intercepted; composition and modified shortcuts are preserved. Buttons show shortcuts and recognition answers are numbered. Versioned static asset URLs avoid mixing new HTML with previously cached scripts.
+
+Arcade automatically advances on a completed word, clears and refocuses the typing input, and starts the next falling word immediately. Review modes retain explicit feedback and Enter to continue.

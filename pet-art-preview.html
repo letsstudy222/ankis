@@ -1,67 +1,21 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111320">
-  <title>Chọn mẫu linh thú A/B/C · LetsStudy</title>
-  <style>
-    :root { color-scheme:dark; font-family:system-ui,sans-serif; color:#f4f0ff; background:#111320; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:radial-gradient(ellipse at 80% 0,#35294d,transparent 55%); min-height:100vh; }
-    main { max-width:1200px; margin:auto; padding:32px 24px 60px; }
-    a { color:#d4c1ff; }
-    a:focus-visible { outline:3px solid #9ce6c0; outline-offset:5px; }
-    header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-bottom:24px; border-bottom:1px solid #ffffff20; }
-    header span,.eyebrow { font-size:11px; letter-spacing:2px; color:#b8b1ca; }
-    .eyebrow { margin-top:40px; }
-    h1 { font-size:clamp(32px,5vw,55px); line-height:1.15; margin:16px 0; letter-spacing:-1px; }
-    .intro { color:#c3bdd0; max-width:760px; line-height:1.8; }
-    .actions { display:flex; flex-wrap:wrap; gap:12px; margin:24px 0 30px; }
-    .actions a { display:inline-block; padding:12px 18px; border:1px solid #a58ad477; border-radius:12px; text-decoration:none; }
-    .actions a:first-child { background:#c4afff; color:#20182f; font-weight:650; }
-    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
-    article { min-width:0; border:1px solid #8e79ac55; border-radius:22px; overflow:hidden; background:#1e2031; }
-    .art { display:block; background:#f9f5f2; }
-    .art img { display:block; width:100%; aspect-ratio:661 / 793; object-fit:cover; }
-    .a img { object-position:0% 50%; }
-    .b img { object-position:50% 50%; }
-    .c img { object-position:100% 50%; }
-    .copy { padding:22px; }
-    h2 { margin:0 0 10px; font-size:22px; }
-    .copy p { color:#bfb9cd; line-height:1.7; margin:0; }
-    .note { margin-top:30px; padding:20px; border:1px solid #9ce6c03d; border-radius:16px; color:#c9d7d0; line-height:1.8; }
-    footer { margin-top:35px; color:#9991ac; font-size:12px; line-height:1.8; }
-    @media(max-width:750px) { main { padding:22px 18px 40px; } header span { display:none; } .grid { grid-template-columns:1fr; max-width:460px; margin:auto; } .copy { padding:20px; } }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111320">
+<title>Mẫu tiến hóa 1–2–3 bậc · LetsStudy</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;color:#f4f0ff;background:#111320}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#35294d,transparent 55%);min-height:100vh}main{max-width:1240px;margin:auto;padding:30px 24px 60px}a{color:#d4c1ff}a:focus-visible{outline:3px solid #9ce6c0;outline-offset:5px}header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-bottom:24px;border-bottom:1px solid #fff2}header span,.eyebrow{font-size:11px;letter-spacing:2px;color:#b8b1ca}.eyebrow{margin-top:36px}h1{font-size:clamp(32px,5vw,55px);line-height:1.15;margin:16px 0;letter-spacing:-1px}p{line-height:1.8}.intro{color:#c3bdd0;max-width:850px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 30px}.actions a{padding:12px 18px;border:1px solid #a58ad477;border-radius:12px;text-decoration:none}.actions a:first-child{background:#c4afff;color:#20182f;font-weight:650}.family{margin:26px 0;border:1px solid #8e79ac55;border-radius:22px;overflow:hidden;background:#1e2031}.copy{padding:22px 25px}.copy h2{font-size:23px;line-height:1.4;margin:9px 0}.copy p{color:#c3bdd0;margin:8px 0 0}.rarity{display:inline-block;padding:4px 10px;border:1px solid;border-radius:100px;font-size:10px;letter-spacing:1px;text-transform:uppercase}.normal{color:#75e59c}.rare{color:#b1b7ff}.legend{color:#ffd0a1;border-color:#e8b9ff;background:linear-gradient(110deg,#8c384f44,#9e7a4544,#268c7944,#4c6eaa44,#935fc144)}.viewport{width:100%;overflow-x:auto;background:#fbf8f5;overscroll-behavior-x:contain}.strip{position:relative;min-width:850px;aspect-ratio:1312/var(--height);overflow:hidden}.strip img{position:absolute;display:block;width:100%;height:auto;top:var(--top);left:0}.hint{margin:0;padding:10px 25px;font-size:12px;color:#aaa0bc}.note{margin-top:30px;padding:20px;border:1px solid #9ce6c03d;border-radius:16px;color:#c9d7d0;line-height:1.8}footer{margin-top:30px;color:#9991ac;font-size:12px;line-height:1.8}@media(max-width:750px){main{padding:22px 16px 40px}header span{display:none}.copy{padding:20px}.copy h2{font-size:21px}.actions a{font-size:14px}.strip{min-width:900px}.family:first-of-type .strip{min-width:0;aspect-ratio:550/377}.family:first-of-type .strip img{width:238.54545%;left:-81.81818%}}
+</style>
 </head>
-<body>
-<main>
-  <header><a href="./vocabulary.html">← Về khu học từ vựng</a><span>LETSSTUDY / PHÒNG THIẾT KẾ LINH THÚ</span></header>
-  <p class="eyebrow">BẢN MẪU ĐỂ LỰA CHỌN</p>
-  <h1>Hồ Ly Tinh Vân<br>Ba hướng tạo hình.</h1>
-  <p class="intro">Cùng một loài ở dạng cơ bản, ba cách thể hiện khác nhau: viền đậm, màu rực, đầu lớn thân nhỏ và biểu cảm rõ. Trên điện thoại, cuộn xuống để xem từng mẫu; bấm vào ảnh để mở bản ghép đầy đủ và phóng to.</p>
-  <div class="actions">
-    <a href="./pet-evolution-preview.html">Xem mẫu tiến hóa mới: 1 / 2 / 3 bậc →</a>
-    <a href="./assets/previews/nebula-fox-abc.png" target="_blank" rel="noopener">Mở ảnh gốc A/B/C ↗</a>
-    <a href="./assets/previews/nebula-fox-abc.png" download="ho-ly-tinh-van-3-mau.png">Tải ảnh PNG</a>
-  </div>
-  <section class="grid" aria-label="Ba mẫu Hồ Ly Tinh Vân">
-    <article>
-      <a class="art a" href="./assets/previews/nebula-fox-abc.png" target="_blank" rel="noopener" aria-label="Mở ảnh gốc để xem mẫu A"><img src="./assets/previews/nebula-fox-abc.png" alt="Mẫu A: hồ ly tím tinh nghịch, tai lớn và một đuôi sao chổi khổng lồ" width="661" height="793"></a>
-      <div class="copy"><h2>A · Tinh nghịch</h2><p>Dáng đứng chắc, ánh mắt tự tin, một đuôi lớn. Hình khối dễ nhận diện khi thu nhỏ trong trận.</p></div>
-    </article>
-    <article>
-      <a class="art b" href="./assets/previews/nebula-fox-abc.png" target="_blank" rel="noopener" aria-label="Mở ảnh gốc để xem mẫu B"><img src="./assets/previews/nebula-fox-abc.png" alt="Mẫu B: hồ ly tím thân thiện, mắt tròn và ba đuôi xòe" width="661" height="793"></a>
-      <div class="copy"><h2>B · Thân thiện</h2><p>Mắt tròn, dáng ngồi nhỏ nhắn, ba đuôi xòe. Hợp cảm giác nuôi một người bạn dễ thương.</p></div>
-    </article>
-    <article>
-      <a class="art c" href="./assets/previews/nebula-fox-abc.png" target="_blank" rel="noopener" aria-label="Mở ảnh gốc để xem mẫu C"><img src="./assets/previews/nebula-fox-abc.png" alt="Mẫu C: hồ ly tím huyền bí, ngôi sao xanh ở tai và hai đuôi cong" width="661" height="793"></a>
-      <div class="copy"><h2>C · Huyền bí</h2><p>Ánh mắt sắc, hai đuôi cong, điểm nhấn ngôi sao trên tai. Cá tính hơn và thiên về cảm giác vệ binh.</p></div>
-    </article>
-  </section>
-  <p class="note">Xem xong, hãy nhắn <strong>A, B hoặc C</strong> trong cuộc trò chuyện, hoặc nói những chi tiết bạn muốn kết hợp. Đây là trang xem mẫu; hình linh thú trong game chưa được thay đổi.</p>
-  <footer>Các mẫu này là lựa chọn thiết kế khác nhau, chưa phải ba cấp tiến hóa. Ảnh gốc PNG: 1983 × 793 px.</footer>
-</main>
-</body>
-</html>
+<body><main>
+<header><a href="./vocabulary.html">← Về khu học từ vựng</a><span>LETSSTUDY / THIẾT KẾ TIẾN HÓA</span></header>
+<p class="eyebrow">MẪU A ĐÃ CHỌN / BẢNG DUYỆT HÌNH THÁI</p>
+<h1>Một loài. Một hành trình.<br>Tiến hóa theo độ hiếm.</h1>
+<p class="intro">Ba loài đại diện, tổng cộng <strong>6 hình thái</strong>. Giữ nét mẫu A: viền đậm, màu rực, đầu lớn thân nhỏ, biểu cảm tinh nghịch. Bậc đầu ít chi tiết hơn; các bậc sau phát triển thêm cơ thể, sừng, cánh, mang hoặc đuôi, đồng thời giữ dấu hiệu nhận diện của cùng một loài.</p>
+<div class="actions"><a href="./assets/previews/evolution-samples-1-2-3.png" target="_blank" rel="noopener">Mở ảnh toàn bộ 6 hình thái ↗</a><a href="./assets/previews/evolution-samples-1-2-3.png" download="linh-thu-tien-hoa-1-2-3-bac.png">Tải ảnh PNG</a><a href="./pet-art-abc.html">Xem lại mẫu A đã chọn</a></div>
+<section class="family"><div class="copy"><span class="rarity normal">Normal · 1 bậc</span><h2>Hồ Ly Tinh Vân</h2><p>Nở trứng là có hình thái hoàn chỉnh. Giữ dáng hồ ly mẫu A, một đuôi sao chổi lớn và nét mặt tinh nghịch. Không có bậc tiến hóa tiếp theo.</p></div><div class="viewport" tabindex="0" role="region" aria-label="Ảnh Hồ Ly Tinh Vân một hình thái, có thể cuộn ngang"><div class="strip" style="--height:377;--top:0%"><img src="./assets/previews/evolution-samples-1-2-3.png" width="1312" height="1199" alt="Normal: Hồ Ly Tinh Vân một hình thái hoàn chỉnh sau khi nở"></div></div><p class="hint">Điện thoại: vuốt ảnh sang ngang; nút mở ảnh gốc phía trên cho phép phóng to.</p></section>
+<section class="family"><div class="copy"><span class="rarity rare">Rare / Epic · 2 bậc</span><h2>Kỳ Nhông Ngân Hà</h2><p><strong>I — Mới nở:</strong> đầu lớn, chân ngắn, mang và đuôi gọn.<br><strong>II — Tiến hóa:</strong> thân dài khỏe hơn, mang phân nhánh, vây lưng và đuôi phát triển. Vẫn giữ mặt, màu hồng–xanh và dấu sao của loài.</p></div><div class="viewport" tabindex="0" role="region" aria-label="Ảnh hai hình thái Kỳ Nhông Ngân Hà, có thể cuộn ngang"><div class="strip" style="--height:401;--top:-94.01496%"><img src="./assets/previews/evolution-samples-1-2-3.png" width="1312" height="1199" alt="Rare và Epic: Kỳ Nhông Ngân Hà dạng mới nở chuyển sang dạng tiến hóa với mang và đuôi lớn hơn"></div></div><p class="hint">Vuốt sang ngang để so sánh bậc I → II.</p></section>
+<section class="family"><div class="copy"><span class="rarity legend">Legend / Rainbow · 3 bậc</span><h2>Tinh Long Vạn Sắc</h2><p><strong>I — Mới nở:</strong> nhỏ gọn, sừng ngắn, cánh bé, đuôi đơn giản.<br><strong>II — Tiến hóa:</strong> sừng và cánh rõ hơn, dáng khỏe, đuôi dài.<br><strong>III — Hoàn thiện:</strong> cánh lớn đa sắc, bờm ngực, sừng và đuôi nhiều lớp. Giữ màu tím–xanh, dấu sao và gương mặt xuyên suốt ba bậc.</p></div><div class="viewport" tabindex="0" role="region" aria-label="Ảnh ba hình thái Tinh Long Vạn Sắc, có thể cuộn ngang"><div class="strip" style="--height:421;--top:-184.7981%"><img src="./assets/previews/evolution-samples-1-2-3.png" width="1312" height="1199" alt="Legend và Rainbow: Tinh Long Vạn Sắc đi từ dạng nhỏ có cánh bé, qua dạng trung gian, đến dạng hoàn thiện có cánh lớn nhiều màu"></div></div><p class="hint">Vuốt sang ngang để so sánh bậc I → II → III.</p></section>
+<p class="note"><strong>Đây là bản vẽ để bạn duyệt.</strong> Chưa đổi hình hoặc quy tắc tiến hóa trong game. Hãy nhắn nhận xét theo từng dòng: Hồ Ly, Kỳ Nhông, Tinh Long; có thể yêu cầu bậc đầu đơn giản hơn hoặc bậc cuối mạnh mẽ hơn trước khi làm toàn bộ bộ sưu tập.</p>
+<footer>Tham khảo cách tổ chức chuỗi tiến hóa và giữ nhận diện loài trong game sưu tầm thú. Quy tắc 1 / 2 / 3 bậc theo độ hiếm là thiết kế riêng theo yêu cầu của bạn. <a href="https://github.com/letsstudy222/ankis/blob/main/docs/pet-evolution-art.md">Nguồn tham khảo và ghi chú thiết kế ↗</a>. Ảnh gốc: 1312 × 1199 px.</footer>
+</main></body></html>

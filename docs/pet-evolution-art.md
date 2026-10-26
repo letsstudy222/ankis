@@ -31,6 +31,7 @@ Across forms, anatomical development and silhouette changes matter more than mer
 
 - `pet-evolution-preview.html`: Vietnamese explanations and three family strips, with horizontal scrolling for multi-stage families on narrow screens.
 - `assets/previews/evolution-samples-1-2-3.png`: original full-resolution generated board, 1312 × 1199 px.
-- `pet-art-preview.html`: retained original A/B/C comparison, with a link to the new evolution sample.
+- `pet-art-preview.html`: the same evolution preview at the original review URL.
+- `pet-art-abc.html`: retained original A/B/C comparison.
 
 Only preview assets, review pages and their navigation links are published in this change. Full collection art and gameplay changes await the owner's feedback on the six forms.

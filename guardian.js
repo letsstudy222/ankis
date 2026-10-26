@@ -211,10 +211,14 @@
       node(
         "p",
         "g-muted",
-        "Đợt 1/5 đã hoàn tất: 5 loài Normal. Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới.",
+        `Đã hoàn tất ${coverage.completedTiers.map((key) => N.tiers[key].name).join(", ")} · ${coverage.completedTiers.length}/5 đợt. Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới.`,
       ),
     );
-    const artLink = node("a", "", "Xem kế hoạch và 5 loài mới ↗");
+    const artLink = node(
+      "a",
+      "",
+      "Xem các loài đã đổi và từng bậc tiến hóa ↗",
+    );
     artLink.href = "./pet-art-preview.html";
     artStatus.append(artLink);
     body.append(artStatus);
@@ -303,6 +307,17 @@
         renderDialog();
       };
       card.append(b);
+      if (GuardianArt.assets[p.id] && M.formCount(p.id) > 1) {
+        const compare = node(
+          "a",
+          "g-form-link",
+          `Xem ${M.formCount(p.id)} hình thái ↗`,
+        );
+        compare.href = `./pet-art-preview.html#${p.id}`;
+        compare.target = "_blank";
+        compare.rel = "noopener";
+        card.append(compare);
+      }
       grid.append(card);
     }
     body.append(grid);

@@ -4,16 +4,18 @@ The owner approved the 1/2/3-form evolution sample and authorized integration in
 
 | Batch | Rarity | Species | Forms per species | Assets | Status |
 | --- | --- | ---: | ---: | ---: | --- |
-| 1 | Normal | 5 | 1 | 5 | Shipped in this batch |
-| 2 | Rare | 5 | 2 | 10 | Pending |
+| 1 | Normal | 5 | 1 | 5 | Shipped |
+| 2 | Rare | 5 | 2 | 10 | Shipped |
 | 3 | Epic | 5 | 2 | 10 | Pending |
 | 4 | Legend | 5 | 3 | 15 | Pending |
 | 5 | Rainbow | 5 | 3 | 15 | Pending |
-| Total | | 25 | | 55 | 5/55 completed |
+| Total | | 25 | | 55 | 15/55 completed |
 
 ## Production assets
 
 Batch 1 consists of five individually generated, real-alpha PNG sprites: `assets/pets/normal/{fox,sprout,rabbit,cat,turtle}-1.png`. They match the approved A direction: confident thick outlines, vibrant cel shading, large expressive head and compact anatomy. Sprout, rabbit, cat and turtle retain their own species silhouettes rather than being fox recolors. Each file is an independent complete asset, not a crop of the multi-character concept board. Original generated files are retained outside the checkout.
+
+Batch 2 adds ten individually generated real-alpha PNGs: `assets/pets/rare/{axolotl,owl,jelly,deer,manta}-{1,2}.png`. Each evolved form was generated from its own hatchling reference so the face, palette and markings stay recognizable while gills/wings/tentacles/antlers/fins develop. The five families are shown side-by-side at the top of the existing review URL, and in-game comparison links open the relevant family without requiring ownership. No PNG crops, recolors or reused first-form files stand in for second forms.
 
 `GuardianArt.assets` is the manifest. `draw()` uses the new sprite when a form is present; eggs and pending species use the existing SVG art. The SVG wrapper retains the established sizing/animation/accessibility behavior. A progress panel and per-species labels distinguish new production sprites from temporary legacy art. `pet-art-preview.html` is the live rollout gallery at the user's established URL; older concept pages are retained.
 

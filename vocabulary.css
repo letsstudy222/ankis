@@ -1516,3 +1516,10 @@ progress::-moz-progress-bar {
     height: 64px;
   }
 }
+.g-form-link {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+}

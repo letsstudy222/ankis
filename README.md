@@ -52,7 +52,7 @@ The expedition map and study-day achievements remain separate long-term goals. R
 
 - `guardian-model.js`: base score/economy and legacy progression rules.
 - `guardian-nursery.js`: collection migration, coin-only acquisition, per-species XP, egg incubation, ticket and pity rules.
-- `guardian-art.js`: manifest-backed production PNG sprites in the approved style A, with SVG wrappers and legacy vector fallback for pending species/eggs. Batch 1 ships five Normal sprites; the complete plan is 25 species / 55 forms. See [production progress](docs/pet-art-rollout.md) and the established `pet-art-preview.html` gallery.
+- `guardian-art.js`: manifest-backed production PNG sprites in the approved style A, with SVG wrappers and legacy vector fallback for pending species/eggs. Batches 1–2 ship five Normal sprites and ten Rare sprites (10 species / 15 forms); the complete plan is 25 species / 55 forms. Rare portraits switch from form 1 to form 2 at level 8, and each in-game card links to a two-form comparison at the established gallery URL. See [production progress](docs/pet-art-rollout.md) and the established `pet-art-preview.html` gallery.
 - `guardian.js`: station UI, collection/shop/gacha/history, HUD and real arena equipment.
 - [Current research, exact odds, pity, pacing and persistence](docs/guardian-gacha.md).
 - [Original research and rationale](docs/guardian-design.md).
@@ -67,6 +67,8 @@ BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_nursery_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_ticket_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_art_browser.py
+node tests/guardian_rare_art.test.cjs
+BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_rare_art_browser.py
 ```
 
 Pure tests cover legacy progression, coin-only purchases, 25 species, duplicate XP, incubation pause/resume/hatch, ticket boundaries/mission caps, exactly forced hard pity, early reset, guaranteed five-Rainbow collection, probability sums, a reproducible 100,000-draw base-rate simulation, migration and backup validation. Browser integration covers actual typing, combo/ticket HUD, seamless transitions, real cosmetic changes, acquisition/hatching, gacha and duplicate display, preserved draw results, export/import, mobile layout and keyboard navigation. Test data only exists in isolated browser contexts.

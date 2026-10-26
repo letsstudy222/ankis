@@ -6,12 +6,41 @@
     rabbit: { 1: "./assets/pets/normal/rabbit-1.png" },
     cat: { 1: "./assets/pets/normal/cat-1.png" },
     turtle: { 1: "./assets/pets/normal/turtle-1.png" },
+    axolotl: {
+      1: "./assets/pets/rare/axolotl-1.png",
+      2: "./assets/pets/rare/axolotl-2.png",
+    },
+    owl: {
+      1: "./assets/pets/rare/owl-1.png",
+      2: "./assets/pets/rare/owl-2.png",
+    },
+    jelly: {
+      1: "./assets/pets/rare/jelly-1.png",
+      2: "./assets/pets/rare/jelly-2.png",
+    },
+    deer: {
+      1: "./assets/pets/rare/deer-1.png",
+      2: "./assets/pets/rare/deer-2.png",
+    },
+    manta: {
+      1: "./assets/pets/rare/manta-1.png",
+      2: "./assets/pets/rare/manta-2.png",
+    },
   };
   const progress = () => ({
     species: Object.keys(assets).length,
     forms: Object.values(assets).reduce(
       (sum, forms) => sum + Object.keys(forms).length,
       0,
+    ),
+    completedTiers: Object.keys(GuardianNursery.tiers).filter((rarity) =>
+      GuardianModel.pets
+        .filter((p) => p.rarity === rarity)
+        .every(
+          (p) =>
+            Object.keys(assets[p.id] || {}).length ===
+            GuardianModel.formCount(p.id),
+        ),
     ),
     totalSpecies: GuardianModel.pets.length,
     totalForms: GuardianModel.pets.reduce(

@@ -29,7 +29,7 @@ with sync_playwright() as p:
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  # Review is only unlocked once learned words are due.
  page.evaluate("""() => {let s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(const r of Object.values(s.records))r.due=Date.now()-1;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
- page.reload();page.locator('#daily').click();page.locator('#answer').focus();page.keyboard.press('F1');assert page.locator('#answer').input_value();page.keyboard.press('F2');page.keyboard.press('Enter')
+ page.reload();page.locator('#daily').click();page.locator('#answer').focus();page.keyboard.press('Tab');page.keyboard.press('Tab');assert page.locator('#hint').evaluate('(el)=>el===document.activeElement');page.keyboard.press('Enter');assert page.locator('#answer').input_value();page.keyboard.press('Alt+1');page.keyboard.press('Alt+2');page.keyboard.press('Enter')
  for _ in range(4):
   word=page.evaluate("window.VOCABULARY.find(w=>w.meaning===document.querySelector('#meaning').textContent).word")
   page.locator('#answer').fill(word);page.keyboard.press('Enter');page.keyboard.press('Enter')
@@ -45,11 +45,11 @@ with sync_playwright() as p:
  page.locator('#quit').click();page.locator('#back').click();page.locator('#game').click()
  word=page.evaluate("window.VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
  assert word in state['records']
- page.keyboard.press('F4');assert page.locator('#answer').is_disabled();page.keyboard.press('F4')
+ page.keyboard.press('Alt+4');assert page.locator('#answer').is_disabled();page.keyboard.press('Alt+4')
  page.locator('#answer').press_sequentially(word,delay=5);assert page.locator('#next').is_visible()
  # Import-compatible legacy progress: stage zero relearns, positive stages remain available.
  page.evaluate("""() => {localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify({version:1,records:{recall:{stage:0,attempts:2,due:0},retain:{stage:1,attempts:1,due:0}},daily:null}));}""")
  page.reload();page.locator('#daily').click();assert page.locator('#meaning').inner_text()=='giữ lại'
  assert not errors,errors
  b.close()
-print('PASS: keyboard learning/choices/copy/review/hint/reveal/pause,  new learners gated, 5-word learning/resume, recognition, guided copy, 10-minute review schedule, finite hinted review, learned-only infinite/game, mobile and legacy migration.')
+print('PASS: Tab/Enter button activation and Alt shortcuts, keyboard learning/choices/copy/review/hint/reveal/pause,  new learners gated, 5-word learning/resume, recognition, guided copy, 10-minute review schedule, finite hinted review, learned-only infinite/game, mobile and legacy migration.')

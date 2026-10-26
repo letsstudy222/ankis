@@ -20,11 +20,13 @@ Open the served pages in a browser. For automated smoke coverage, with Python Pl
 BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_smoke.py
 ```
 
-The test uses isolated browser storage. It covers entry navigation, narrow viewport, daily completion and persistence, answer checking, hints/context, game pause and collision. Existing flashcard functionality is separate from vocabulary progress.
+The test uses isolated browser storage. It covers entry navigation, narrow viewport, five-word learning and resume, recognition and guided typing, review scheduling and persistence, hinted review, learned-only infinite/game pools, mobile layout and legacy migration. Existing flashcard functionality is separate from vocabulary progress.
 
 ## Learning and data
 
-Daily planning uses the local calendar date, up to 20 oldest overdue entries and 10 unseen entries. Plans persist for the day. Clean retrieval advances intervals through 1, 3, 7, 14, 30 and 60 days. Mistakes/hints reset the interval to one day; daily practice reinserts missed entries after at least three intervening questions. Supplemental practice questions fill the gap when necessary. Infinite and arcade modes shuffle all entries per cycle and update the same learning records. Infinite mode does not immediately repeat the last word when starting a new cycle.
+New learners start with groups of five: word/meaning/context exposure, shuffled multiple-choice recognition, then guided typing with the model visible. Each completed step persists, so interrupted groups can resume. This familiarization is not counted as successful unaided recall. Only familiarized entries enter review, infinite practice and arcade. First recall is due after ten minutes. Review selects up to twenty oldest due entries per session; missed or hinted answers are scheduled ten minutes later without an endless same-session loop. Clean retrieval advances intervals through 1, 3, 7, 14, 30 and 60 days, at most one stage per local calendar day. Home refreshes availability every thirty seconds. Learners can explicitly start another five-word group.
+
+Existing records are preserved: legacy positive-stage entries count as familiarized; legacy stage-zero entries can enter the learning flow. Infinite and arcade shuffle familiarized entries per cycle and update the same records. Browser speech synthesis provides optional English pronunciation where supported.
 
 Progress is browser-local under `letsstudy-vocabulary-v1`. Export/import JSON on the vocabulary home page for backups or manual transfer. There is no account, server-side storage or automatic device sync. Game sound is opt-in. Hiding the browser tab automatically pauses the game.
 

@@ -292,12 +292,16 @@
     eggs: ["fox"],
     incubator: { species: "fox", progress: 0, target: 30 },
     tickets: 10,
+    ticketMisses: 0,
     pity: 0,
     pulls: 0,
     history: [],
   });
   function ensure(s) {
-    if (s.nursery) return s.nursery;
+    if (s.nursery) {
+      if (s.nursery.ticketMisses === undefined) s.nursery.ticketMisses = 0;
+      return s.nursery;
+    }
     const oldStage = legacyStage(s).index,
       n = blank();
     const available = [
@@ -331,6 +335,8 @@
       typeof n.pets !== "object" ||
       Array.isArray(n.pets) ||
       !["tickets", "pity", "pulls"].every((k) => integer(n[k])) ||
+      (n.ticketMisses !== undefined &&
+        (!integer(n.ticketMisses) || n.ticketMisses > 14)) ||
       n.pity > 49 ||
       n.pity > n.pulls
     )
@@ -548,8 +554,13 @@
     let tickets = 0;
     n.pets[s.pet].xp += result.xp;
     if (args.clean) {
-      if (previous < 3 && (args.random || rng)() < M.ticketChance(args.combo))
+      n.ticketMisses++;
+      const lucky =
+        previous < 3 && (args.random || rng)() < M.ticketChance(args.combo);
+      if (lucky || n.ticketMisses >= 15) {
         tickets++;
+        n.ticketMisses = 0;
+      }
       if (n.incubator) {
         const i = n.incubator;
         i.progress++;

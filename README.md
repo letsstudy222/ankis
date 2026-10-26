@@ -46,7 +46,7 @@ Open **Linh thú & cửa hàng** from the vocabulary home. Each arcade completio
 
 The nursery has 25 original illustrated species: five each in Normal (green), Rare (blue), Epic (purple), Legend (red-orange), Rainbow (multicolor). Some eggs can be bought directly with coins; others are summon-only. A single incubator advances on clean arcade words, with 30/60/100/160/240 words per rarity. Switching/caching eggs preserves incubation. Hatched species can accompany the ship. Each species has its own XP; duplicate acquisition converts directly to that species' XP (40/100/240/600/1600). Individual evolution uses levels 8/16/28, with no day gate.
 
-Each summon costs 10 earned tickets. A one-time 10-ticket welcome grant lets new/migrated collections try a draw. Combo x1/x2/x3/x4/x5 drops tickets at 1/2/6/8/10%, for the first three clean completions of a word per local day. Daily missions also award 2+4+2 guaranteed tickets. Gacha base rates are 55/30/12/2.5/0.5%; Rainbow soft pity starts on attempt 41 and is guaranteed by attempt 50 without a Rainbow. Rainbow prefers unseen species until all five are collected. Actual next-draw and per-species odds, saved history, and counters are visible in the UI.
+Each summon costs 10 earned tickets. A one-time 10-ticket welcome grant lets new/migrated collections try a draw. Combo x1/x2/x3/x4/x5 drops tickets at 1/2/6/8/10%, for the first three clean completions of a word per local day. Every 15 clean words without a random ticket guarantees one ticket, including repeats beyond the random-roll cap. This saved counter survives incorrect answers, sessions, dates and reloads; random tickets reset it, daily mission tickets do not. Daily missions also award 2+4+2 guaranteed tickets. Gacha base rates are 55/30/12/2.5/0.5%; Rainbow soft pity starts on attempt 41 and is guaranteed by attempt 50 without a Rainbow. Rainbow prefers unseen species until all five are collected. Actual next-draw and per-species odds, saved history, and counters are visible in the UI.
 
 The expedition map and study-day achievements remain separate long-term goals. Rest days never remove currency, pets or levels. Currency/tickets have no real-money purchase path. Everything is browser-local and included in the existing JSON backup. Legacy saves preserve learning, money, equipment and previously unlocked companions; this remains a single-player local save rather than a server account.
 
@@ -65,6 +65,7 @@ node tests/guardian_nursery.test.cjs
 BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_smoke.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_nursery_browser.py
+BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_ticket_browser.py
 ```
 
 Pure tests cover legacy progression, coin-only purchases, 25 species, duplicate XP, incubation pause/resume/hatch, ticket boundaries/mission caps, exactly forced hard pity, early reset, guaranteed five-Rainbow collection, probability sums, a reproducible 100,000-draw base-rate simulation, migration and backup validation. Browser integration covers actual typing, combo/ticket HUD, seamless transitions, real cosmetic changes, acquisition/hatching, gacha and duplicate display, preserved draw results, export/import, mobile layout and keyboard navigation. Test data only exists in isolated browser contexts.

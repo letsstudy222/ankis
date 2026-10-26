@@ -402,7 +402,7 @@
       node(
         "p",
         "g-muted",
-        "Tặng 10 vé khi mở hệ trứng lần đầu. Vé thêm đến từ combo và nhiệm vụ học; không bán bằng tiền thật. Lịch sử và bảo hiểm được giữ khi tải lại.",
+        "Tặng 10 vé khi mở hệ trứng lần đầu. Cứ tối đa 15 từ đúng chưa rơi vé sẽ được 1 vé; combo có thể cho vé sớm hơn. Vé cũng đến từ nhiệm vụ học; không bán bằng tiền thật. Lịch sử và bảo hiểm được giữ khi tải lại.",
       ),
     );
     const portal = node("div", "g-portal");
@@ -713,7 +713,7 @@
       ],
       [
         "Chơi vừa sức, lưu bền lâu",
-        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Vé rơi ngẫu nhiên theo tỷ lệ công bố; triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
+        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Vé có thể rơi sớm theo combo (xét 3 lần đúng đầu của mỗi từ/ngày); bảo đảm 1 vé sau tối đa 15 từ đúng chưa rơi vé, kể cả từ lặp. Gõ sai không xóa bộ đếm; vé nhiệm vụ không đặt lại bộ đếm. Triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
       ],
       [
         "Tiến độ của bạn",
@@ -792,7 +792,7 @@
       ? `×${M.comboMultiplier(run.combo)} · ${run.combo} đúng`
       : "×1";
     $("g-ticket-rate").textContent =
-      `Vé rơi ${Math.round(M.ticketChance(run.combo) * 100)}% · xét tối đa 3 lần đúng / từ / ngày`;
+      `Vé ngẫu nhiên ${Math.round(M.ticketChance(run.combo) * 100)}% · bảo đảm sau ${15 - N.ensure(s).ticketMisses} từ đúng nữa`;
     $("g-run-wallet").textContent =
       `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     $("g-run-level").textContent = `Cấp ${M.petLevel(s)}`;

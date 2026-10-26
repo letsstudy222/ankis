@@ -95,7 +95,7 @@ earn(s, 1, { clean: false, random: () => 0 });
 assert.equal(s.nursery.tickets, capped);
 s = state();
 for (let i = 0; i < 15; i++) earn(s, i, { due: i < 3 });
-assert.equal(s.nursery.tickets, 18);
+assert.equal(s.nursery.tickets, 19);
 const dailyTickets = s.nursery.tickets;
 earn(s, 16);
 assert.equal(s.nursery.tickets, dailyTickets);
@@ -191,3 +191,33 @@ individual.nursery.eggs = individual.nursery.eggs.filter(
 individual.nursery.pets.dragon.xp = GuardianModel.threshold(16);
 assert.equal(GuardianModel.stage(individual, "dragon").index, 3);
 assert.equal(GuardianModel.stage(individual).index, 0);
+
+// Ticket drought protection counts every clean word, even repeated/capped words.
+let protection = state();
+for (let i = 0; i < 14; i++) earn(protection, 0);
+assert.equal(protection.nursery.ticketMisses, 14);
+assert.equal(protection.nursery.tickets, 10);
+protection = JSON.parse(JSON.stringify(protection));
+assert(M.valid(protection, words));
+earn(protection, 0, { clean: false });
+assert.equal(protection.nursery.ticketMisses, 14);
+earn(protection, 0, { date: "2026-10-27" });
+assert.equal(protection.nursery.tickets, 11);
+assert.equal(protection.nursery.ticketMisses, 0);
+for (let i = 0; i < 15; i++) earn(protection, 0);
+assert.equal(protection.nursery.tickets, 12);
+let luckyReset = state();
+for (let i = 0; i < 8; i++) earn(luckyReset, 0);
+earn(luckyReset, 1, { random: () => 0 });
+assert.equal(luckyReset.nursery.ticketMisses, 0);
+assert.equal(luckyReset.nursery.tickets, 11);
+let oldCounter = state();
+delete oldCounter.nursery.ticketMisses;
+assert(M.valid(oldCounter, words));
+N.ensure(oldCounter);
+assert.equal(oldCounter.nursery.ticketMisses, 0);
+oldCounter.nursery.ticketMisses = 15;
+assert(!M.valid(oldCounter, words));
+console.log(
+  "PASS: guaranteed ticket every 15 clean words, repeat/day/reload persistence, wrong answers preserve count, early drops reset, old saves migrate and invalid counters reject.",
+);

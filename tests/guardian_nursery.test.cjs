@@ -221,3 +221,35 @@ assert(!M.valid(oldCounter, words));
 console.log(
   "PASS: guaranteed ticket every 15 clean words, repeat/day/reload persistence, wrong answers preserve count, early drops reset, old saves migrate and invalid counters reject.",
 );
+
+// Approved rarity-specific evolution counts never alter saved XP or ownership.
+const formsState = state();
+let totalForms = 0;
+for (const pet of M.pets) {
+  N.receive(formsState, pet.id);
+  formsState.nursery.pets[pet.id].hatched = true;
+  formsState.nursery.eggs = formsState.nursery.eggs.filter(
+    (id) => id !== pet.id,
+  );
+  const expected = { normal: 1, rare: 2, epic: 2, legend: 3, rainbow: 3 }[
+    pet.rarity
+  ];
+  totalForms += expected;
+  assert.equal(M.formCount(pet.id), expected);
+  for (const level of [1, 7, 8, 15, 16, 28, 60]) {
+    formsState.nursery.pets[pet.id].xp = M.threshold(level);
+    const xp = formsState.nursery.pets[pet.id].xp;
+    const stage = M.stage(formsState, pet.id);
+    assert.equal(
+      stage.index,
+      Math.min(expected, level >= 16 ? 3 : level >= 8 ? 2 : 1),
+    );
+    assert.equal(stage.total, expected);
+    assert.equal(stage.next === null, stage.index === expected);
+    assert.equal(formsState.nursery.pets[pet.id].xp, xp);
+  }
+}
+assert.equal(totalForms, 55);
+console.log(
+  "PASS: all 25 species follow 1/2/3 forms by rarity, 55 total forms, exact thresholds, final-form cap and existing XP preserved.",
+);

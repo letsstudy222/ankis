@@ -1,7 +1,31 @@
 "use strict";
 (() => {
+  const assets = {
+    fox: { 1: "./assets/pets/normal/fox-1.png" },
+    sprout: { 1: "./assets/pets/normal/sprout-1.png" },
+    rabbit: { 1: "./assets/pets/normal/rabbit-1.png" },
+    cat: { 1: "./assets/pets/normal/cat-1.png" },
+    turtle: { 1: "./assets/pets/normal/turtle-1.png" },
+  };
+  const progress = () => ({
+    species: Object.keys(assets).length,
+    forms: Object.values(assets).reduce(
+      (sum, forms) => sum + Object.keys(forms).length,
+      0,
+    ),
+    totalSpecies: GuardianModel.pets.length,
+    totalForms: GuardianModel.pets.reduce(
+      (sum, p) => sum + GuardianModel.formCount(p.id),
+      0,
+    ),
+  });
   let count = 0;
   function draw(p, stage = 1, egg = false) {
+    const maximum = GuardianModel.formCount(p.id);
+    const form = Math.max(1, Math.min(maximum, stage));
+    if (!egg && assets[p.id]?.[form]) {
+      return `<svg class="g-pet-svg g-painted-pet" data-pet-art="painted" data-species="${p.id}" data-form="${form}" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><image href="${assets[p.id][form]}" width="160" height="160" preserveAspectRatio="xMidYMid meet"/></svg>`;
+    }
     const id = "creature-" + ++count,
       rainbow = p.rarity === "rainbow",
       tier = GuardianNursery.tiers[p.rarity],
@@ -110,5 +134,5 @@
         : "";
     return `<svg class="g-pet-svg ${egg ? "g-egg" : ""}" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">${defs}${orb}${aura}${shape}${crown}${star(24, 23, 5)}${star(138, 91, 4)}${rainbow ? star(126, 17, 7) + star(17, 83, 5) : ""}</svg>`;
   }
-  globalThis.GuardianArt = { draw };
+  globalThis.GuardianArt = { draw, assets, progress };
 })();

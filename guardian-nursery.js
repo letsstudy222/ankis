@@ -404,32 +404,26 @@
   M.unlocked = () => true;
   M.petAvailable = (s, id) => !!ensure(s).pets[id]?.hatched;
   M.petLevel = (s, id = s.pet) => M.level(ensure(s).pets[id]?.xp || 0);
+  const formCounts = { normal: 1, rare: 2, epic: 2, legend: 3, rainbow: 3 };
+  M.formCount = (id) => formCounts[pets.find((p) => p.id === id)?.rarity] || 1;
   M.stage = (s, id = s.pet) => {
     const p = ensure(s).pets[id],
-      level = M.level(p.xp);
+      level = M.level(p.xp),
+      total = M.formCount(id);
     const index = !p.hatched
       ? 0
-      : level >= 28
-        ? 4
-        : level >= 16
-          ? 3
-          : level >= 8
-            ? 2
-            : 1;
-    const names = [
-      "Đang ấp",
-      "Ấu thú",
-      "Bạn Đồng Hành",
-      "Vệ Binh Trưởng Thành",
-      "Huyền Thoại Thiên Hà",
-    ];
+      : Math.min(total, level >= 16 ? 3 : level >= 8 ? 2 : 1);
+    const names =
+      total === 1
+        ? ["Đang ấp", "Hình thái hoàn chỉnh"]
+        : ["Đang ấp", "Ấu thú", "Trưởng thành", "Hình thái tối thượng"];
     const next =
       index === 0
         ? { name: "Nở trứng", level: 1 }
-        : index < 4
-          ? { name: names[index + 1], level: [0, 0, 8, 16, 28][index + 1] }
+        : index < total
+          ? { name: names[index + 1], level: index === 1 ? 8 : 16 }
           : null;
-    return { index, name: names[index], next };
+    return { index, name: names[index], next, total };
   };
   M.comboMultiplier = (n) => Math.min(5, 1 + Math.floor(n / 10));
   M.ticketChance = (n) =>

@@ -35,7 +35,7 @@ At 20 eligible unique completions in a continuous run, random drops average appr
 
 Receiving a new species creates exactly one unhatched egg and its own persistent species record. Choose one egg to incubate. Each clean arcade word advances incubation by one, regardless of repeat-XP/ticket caps: 30/60/100/160/240 words for Normal/Rare/Epic/Legend/Rainbow. Caching/pausing an egg retains its progress. There is no wall-clock or day timer. A hatched species can be equipped. Clean/effort XP from the existing economy goes to the currently selected species; global station XP is retained separately.
 
-A repeat of any owned species (hatched, bagged or incubating) immediately grants 40/100/240/600/1600 XP according to rarity to that species only, and increments its received count. It never adds a second copy of the egg or silently completes incubation. Individual species use the existing quadratic level thresholds and evolve at levels 8/16/28, with no active-day requirement.
+A repeat of any owned species (hatched, bagged or incubating) immediately grants 40/100/240/600/1600 XP according to rarity to that species only, and increments its received count. It never adds a second copy of the egg or silently completes incubation. Individual species retain quadratic XP/level thresholds. After approval of the art sample, Normal has one post-hatch form, Rare/Epic have two forms (evolution at level 8), and Legend/Rainbow have three forms (levels 8 and 16), with no active-day requirement. Existing XP is preserved. See [the art rollout](pet-art-rollout.md) for the 55-form production plan and shipped batches.
 
 ## Persistence, tests and limits
 

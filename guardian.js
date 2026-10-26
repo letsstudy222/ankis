@@ -142,7 +142,11 @@
     info.append(
       rarityTag(p),
       node("h3", "", s.petName || p.name),
-      node("p", "g-muted", `${p.name} · ${stage.name} · cấp ${l}`),
+      node(
+        "p",
+        "g-muted",
+        `${p.name} · ${stage.index ? "Bậc " + stage.index + "/" + stage.total : stage.name} · cấp ${l}`,
+      ),
       meter(
         activeXP(s) - M.threshold(l),
         M.threshold(l + 1) - M.threshold(l),
@@ -190,10 +194,30 @@
           ? "Gõ đúng từ trong Vệ binh để tăng tiến độ ấp. Không cần đợi đủ ngày."
           : stage.next
             ? `Đạt cấp ${stage.next.level} bằng XP học và XP trùng loài; không có yêu cầu ngày học.`
-            : "Tiếp tục sưu tầm các loài mới và tích XP riêng cho từng loài.",
+            : stage.total === 1
+              ? "Normal có một hình thái hoàn chỉnh khi nở; XP và cấp vẫn tăng, không tiến hóa thêm."
+              : "Đã hoàn tất các bậc tiến hóa của loài. XP và cấp vẫn được giữ và tiếp tục tăng.",
       ),
     );
     body.append(callout);
+    const coverage = GuardianArt.progress();
+    const artStatus = node("div", "g-art-progress");
+    artStatus.append(
+      node(
+        "strong",
+        "",
+        `Mẫu A: ${coverage.species}/${coverage.totalSpecies} loài · ${coverage.forms}/${coverage.totalForms} hình thái`,
+      ),
+      node(
+        "p",
+        "g-muted",
+        "Đợt 1/5 đã hoàn tất: 5 loài Normal. Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới.",
+      ),
+    );
+    const artLink = node("a", "", "Xem kế hoạch và 5 loài mới ↗");
+    artLink.href = "./pet-art-preview.html";
+    artStatus.append(artLink);
+    body.append(artStatus);
     const filters = node("div", "g-filters");
     for (const [key, label] of [
       ["owned", "Đã nhận"],
@@ -239,10 +263,19 @@
           "small",
           "g-requirement",
           own
-            ? `${own.hatched ? "Đã nở" : "Trứng chưa nở"} · cấp ${M.level(own.xp)} · ${own.xp} XP · nhận ${own.copies} lần`
+            ? `${own.hatched ? "Bậc " + M.stage(s, p.id).index + "/" + M.formCount(p.id) : "Trứng chưa nở"} · cấp ${M.level(own.xp)} · ${own.xp} XP · nhận ${own.copies} lần`
             : p.price !== null
               ? "Mua trứng bằng xu hoặc triệu hồi"
               : "Chỉ nhận qua triệu hồi",
+        ),
+      );
+      card.append(
+        node(
+          "small",
+          "g-art-status",
+          GuardianArt.assets[p.id]
+            ? `Ảnh mẫu A · ${M.formCount(p.id)} hình thái`
+            : `Hình minh họa cũ · chờ ảnh mới · ${M.formCount(p.id)} hình thái`,
         ),
       );
       const b = node(
@@ -709,7 +742,7 @@
       ],
       [
         "Đi xa nhờ học đều",
-        "Linh thú nở sau 30 / 60 / 100 / 160 / 240 từ gõ đúng tùy độ hiếm. Mỗi loài có XP riêng, tiến hóa ở cấp 8 / 16 / 28, không yêu cầu ngày. Trùng loài cho 40 / 100 / 240 / 600 / 1600 XP theo hạng. Linh thú chỉ đồng hành sau khi trứng nở.",
+        "Linh thú nở sau 30 / 60 / 100 / 160 / 240 từ gõ đúng tùy độ hiếm. Normal có 1 hình thái sau nở; Rare/Epic có 2 hình thái (tiến hóa cấp 8); Legend/Rainbow có 3 hình thái (cấp 8 và 16). Mỗi loài có XP riêng, không yêu cầu ngày. Trùng loài cho 40 / 100 / 240 / 600 / 1600 XP theo hạng. Linh thú chỉ đồng hành sau khi trứng nở.",
       ],
       [
         "Chơi vừa sức, lưu bền lâu",

@@ -1,6 +1,6 @@
 # Evolution art: selected style A, sample approval
 
-This is an art preview only. Existing gameplay stages, collection state and live creature graphics are unchanged. The owner selected style A from the previous three fox concepts and requested examples before the full collection is redrawn.
+This document records the initial art preview. The owner has since approved implementation; see [the live production rollout](pet-art-rollout.md) for current form counts, completed assets and pending batches. Collection state and learning records remain preserved. The owner selected style A from the previous three fox concepts and requested examples before the full collection is redrawn.
 
 ## References consulted
 
@@ -34,4 +34,4 @@ Across forms, anatomical development and silhouette changes matter more than mer
 - `pet-art-preview.html`: the same evolution preview at the original review URL.
 - `pet-art-abc.html`: retained original A/B/C comparison.
 
-Only preview assets, review pages and their navigation links are published in this change. Full collection art and gameplay changes await the owner's feedback on the six forms.
+The initial preview changed only review assets and navigation. The owner subsequently approved these concepts; production batches and the rarity-specific progression rules are now tracked in the rollout document.

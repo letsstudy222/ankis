@@ -1477,3 +1477,42 @@ progress::-moz-progress-bar {
     animation: none;
   }
 }
+
+.g-painted-pet {
+  filter: drop-shadow(0 6px 9px #090d2540);
+}
+.g-art-progress {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid #bba3f350;
+  border-radius: 16px;
+  background: #b19aff0b;
+}
+.g-art-progress strong {
+  font-size: 14px;
+  color: #d8caff;
+}
+.g-art-progress p {
+  margin: 8px 0;
+}
+.g-art-progress a {
+  font-size: 13px;
+}
+.g-art-status {
+  display: block;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #a9cdbb;
+  margin-top: 10px;
+}
+
+#arena-companion {
+  width: 72px;
+  height: 72px;
+}
+@media (max-width: 720px) {
+  #arena-companion {
+    width: 64px;
+    height: 64px;
+  }
+}

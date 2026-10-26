@@ -103,5 +103,5 @@ const evil = structuredClone(s);
 evil.petName = "<img src=x onerror=alert(1)>";
 assert(!M.valid(evil, words));
 console.log(
-  "PASS: 50 level thresholds, reward diminishing returns, due bonuses, no duplicate missions, days/hatching/evolution, 60-day expedition simulation, shop gates/ownership, rest days, and backup validation.",
+  "PASS: 50 level thresholds, reward diminishing returns, due bonuses, no duplicate missions, days/hatching/evolution, 60-day expedition simulation, shop balances/ownership, rest days, and backup validation.",
 );

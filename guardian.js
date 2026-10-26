@@ -1,16 +1,20 @@
 "use strict";
 (() => {
-  const M = globalThis.GuardianModel,
+  const N = globalThis.GuardianNursery,
+    M = globalThis.GuardianModel,
     $ = (id) => document.getElementById(id);
   let options,
     run = null,
     tab = "pet",
     filter = "ship",
-    toastTimer;
+    toastTimer,
+    collectionFilter = "owned",
+    summonBusy = false;
   const localDate = () => new Date().toLocaleDateString("sv-SE");
   const state = () => {
     const root = options.getStore();
     if (!root.guardian) root.guardian = M.create();
+    N.ensure(root.guardian);
     return root.guardian;
   };
   const node = (tag, cls, text) => {
@@ -47,35 +51,25 @@
     return `<span class="g-art" style="color:${color}">${svg(shapes[art] || shapes.meteor)}</span>`;
   }
   function petArt(id, index) {
-    const p = M.pets.find((p) => p.id === id) || M.pets[0],
-      c = p.color;
-    if (index === 0)
-      return svg(
-        `<ellipse cx="80" cy="106" rx="35" ry="6" fill="#0005"/><ellipse cx="80" cy="63" rx="32" ry="44" fill="${c}"/><path d="M59 49L76 62L65 73L88 82L101 66" stroke="#fff9" stroke-width="3"/><path d="M73 29L77 20L82 29L92 33L82 37L78 47L74 37L64 33Z" fill="#fff"/><circle cx="61" cy="82" r="5" fill="#8c6dc4"/><circle cx="96" cy="45" r="5" fill="#8c6dc4"/>`,
-        "g-pet-svg g-egg",
-      );
-    const glow =
-      index >= 3
-        ? `<circle cx="80" cy="62" r="49" stroke="${c}" stroke-width="2" stroke-dasharray="4 8" opacity=".6"/>`
-        : "";
-    const crown =
-      index === 4
-        ? '<path d="M61 19L66 4L79 14L94 4L99 19Z" fill="#ffe09d"/>'
-        : "";
-    const ears =
-      id === "fox"
-        ? `<path d="M45 48L43 14L66 36M94 36L117 14L115 48" fill="${c}" stroke="#fff8" stroke-width="2"/><path d="M51 32L55 43L62 38M109 32L105 43L98 38" fill="#705488"/>`
-        : id === "axolotl"
-          ? `<path d="M48 46L27 28M45 58L20 53M47 69L28 80M112 46L133 28M115 58L140 53M113 69L132 80" stroke="${c}" stroke-width="9" stroke-linecap="round"/>`
-          : `<path d="M52 54L21 28L30 80L53 70M108 54L139 28L130 80L107 70" fill="${c}" stroke="#fff8" stroke-width="2"/><path d="M61 35L61 17L75 36M96 35L100 17L85 36" fill="#ffe09d"/>`;
-    const tails =
-      index >= 2
-        ? `<path d="M51 88Q9 96 25 64Q28 86 55 77M109 88Q151 96 135 64Q132 86 105 77" fill="${c}" opacity=".7"/>`
-        : "";
-    return svg(
-      `${glow}${tails}<ellipse cx="80" cy="102" rx="35" ry="8" fill="#0004"/>${ears}<ellipse cx="80" cy="82" rx="29" ry="27" fill="${c}"/><ellipse cx="80" cy="57" rx="37" ry="28" fill="${c}" stroke="#fff7" stroke-width="1.5"/><ellipse cx="80" cy="88" rx="17" ry="14" fill="#fff" opacity=".35"/><path d="M57 99L71 99M89 99L103 99" stroke="${c}" stroke-width="9" stroke-linecap="round"/><circle cx="65" cy="55" r="4" fill="#24233d"/><circle cx="95" cy="55" r="4" fill="#24233d"/><circle cx="66" cy="53" r="1" fill="white"/><circle cx="96" cy="53" r="1" fill="white"/><path d="M76 64Q80 69 84 64" stroke="#51405e" stroke-width="2" stroke-linecap="round"/><ellipse cx="57" cy="64" rx="5" ry="3" fill="#f388b0" opacity=".65"/><ellipse cx="103" cy="64" rx="5" ry="3" fill="#f388b0" opacity=".65"/>${crown}`,
-      "g-pet-svg",
-    );
+    const p = M.pets.find((p) => p.id === id) || M.pets[0];
+    return GuardianArt.draw(p, index, index === 0);
+  }
+  function rarityTag(p) {
+    const t = N.tiers[p.rarity];
+    return node("span", "g-rarity rarity-" + p.rarity, t.name);
+  }
+  function activeXP(s) {
+    return N.ensure(s).pets[s.pet].xp;
+  }
+  function mutate(action) {
+    const result = action();
+    if (result.ok) {
+      options.save();
+      renderHome();
+      renderDialog();
+    }
+    notify(result.message);
+    return result;
   }
   const equipment = (s) =>
     Object.fromEntries(
@@ -116,19 +110,19 @@
     if (!options) return;
     const s = state();
     M.today(s, localDate());
-    const l = M.level(s.xp),
+    const l = M.petLevel(s),
       p = M.pets.find((p) => p.id === s.pet),
       stage = M.stage(s);
     $("g-home-art").innerHTML = petArt(s.pet, stage.index);
     $("g-home-name").textContent = s.petName || p.name;
     $("g-home-status").textContent =
-      `${stage.name} · cấp ${l} · ${s.activeDays.length} ngày đồng hành`;
+      `${stage.name} · cấp ${l} · ${N.ensure(s).tickets} vé triệu hồi`;
     $("g-home-coins").textContent = number(s.coins);
-    $("g-home-xp").value = s.xp - M.threshold(l);
+    $("g-home-xp").value = activeXP(s) - M.threshold(l);
     $("g-home-xp").max = M.threshold(l + 1) - M.threshold(l);
     $("g-home-xp").setAttribute(
       "aria-label",
-      `${s.xp - M.threshold(l)} / ${M.threshold(l + 1) - M.threshold(l)} XP đến cấp tiếp theo`,
+      `${activeXP(s) - M.threshold(l)} / ${M.threshold(l + 1) - M.threshold(l)} XP đến cấp tiếp theo`,
     );
     const mission = M.missions(s).find((m) => !s.day.missions.includes(m.id));
     $("g-home-mission").textContent = mission
@@ -138,24 +132,21 @@
   }
   function petPage(body) {
     const s = state(),
+      n = N.ensure(s),
       stage = M.stage(s),
-      l = M.level(s.xp),
+      l = M.petLevel(s),
       p = M.pets.find((p) => p.id === s.pet);
-    const hero = node("div", "g-pet-hero");
-    hero.innerHTML = petArt(s.pet, stage.index);
+    const hero = node("div", "g-pet-hero rarity-" + p.rarity);
+    hero.innerHTML = petArt(p.id, stage.index);
     const info = node("div");
     info.append(
-      node("p", "eyebrow", stage.name),
+      rarityTag(p),
       node("h3", "", s.petName || p.name),
-      node(
-        "p",
-        "g-muted",
-        `${p.name} · cấp ${l} · ${number(s.xp)} XP tích lũy`,
-      ),
+      node("p", "g-muted", `${p.name} · ${stage.name} · cấp ${l}`),
       meter(
-        s.xp - M.threshold(l),
+        activeXP(s) - M.threshold(l),
         M.threshold(l + 1) - M.threshold(l),
-        `${s.xp - M.threshold(l)} / ${M.threshold(l + 1) - M.threshold(l)} XP đến cấp ${l + 1}`,
+        `${activeXP(s) - M.threshold(l)} / ${M.threshold(l + 1) - M.threshold(l)} XP đến cấp ${l + 1}`,
       ),
     );
     hero.append(info);
@@ -163,78 +154,117 @@
     const naming = node("form", "g-naming"),
       label = node("label", "", "Tên bạn đồng hành"),
       input = node("input"),
-      button = node("button", "", "Lưu tên");
+      save = node("button", "", "Lưu tên");
     input.id = "g-pet-name";
     input.maxLength = 24;
     input.value = s.petName;
     label.htmlFor = input.id;
-    button.type = "submit";
-    naming.append(label, input, button);
+    save.type = "submit";
+    naming.append(label, input, save);
     naming.onsubmit = (e) => {
       e.preventDefault();
-      s.petName = input.value.trim().slice(0, 24);
+      s.petName = input.value.trim();
       options.save();
       renderHome();
       renderDialog();
       notify("Đã lưu tên bạn đồng hành.");
     };
     body.append(naming);
-    const evolution = node("div", "g-callout");
-    evolution.append(
+    const callout = node("div", "g-callout");
+    callout.append(
       node(
         "strong",
         "",
-        stage.next
-          ? "Tiến hóa tiếp theo: " + stage.next.name
-          : "Đã đạt hình thái huyền thoại",
+        stage.index === 0
+          ? "Trứng đang chờ nở"
+          : stage.next
+            ? "Tiến hóa tiếp theo: " + stage.next.name
+            : "Đã đạt hình thái cuối",
       ),
     );
-    if (stage.next) {
-      evolution.append(
-        meter(l, stage.next.level, `Cấp ${l} / ${stage.next.level}`),
-        meter(
-          s.activeDays.length,
-          stage.next.days,
-          `${s.activeDays.length} / ${stage.next.days} ngày đồng hành`,
-        ),
-      );
-    }
-    evolution.append(
+    callout.append(
       node(
         "p",
         "g-muted",
-        "Mỗi ngày gõ đúng 5 từ khác nhau để có 1 ngày đồng hành. Không cần liên tiếp; nghỉ học không làm linh thú mất cấp.",
+        stage.index === 0
+          ? "Gõ đúng từ trong Vệ binh để tăng tiến độ ấp. Không cần đợi đủ ngày."
+          : stage.next
+            ? `Đạt cấp ${stage.next.level} bằng XP học và XP trùng loài; không có yêu cầu ngày học.`
+            : "Tiếp tục sưu tầm các loài mới và tích XP riêng cho từng loài.",
       ),
     );
-    body.append(evolution, node("h3", "", "Bộ sưu tập linh thú"));
+    body.append(callout);
+    const filters = node("div", "g-filters");
+    for (const [key, label] of [
+      ["owned", "Đã nhận"],
+      ["all", "Tất cả"],
+      ...Object.entries(N.tiers).map(([k, v]) => [k, v.name]),
+    ]) {
+      const b = node("button", "", label);
+      b.setAttribute("aria-pressed", String(collectionFilter === key));
+      b.onclick = () => {
+        collectionFilter = key;
+        renderDialog();
+      };
+      filters.append(b);
+    }
+    body.append(
+      node(
+        "h3",
+        "",
+        `Bách khoa linh thú · ${Object.keys(n.pets).length} / ${M.pets.length} loài`,
+      ),
+      filters,
+    );
     const grid = node("div", "g-pet-grid");
-    for (const pet of M.pets) {
-      const card = node("article", "g-small-card"),
-        available = M.petAvailable(s, pet.id);
-      card.innerHTML = petArt(pet.id, available ? stage.index : 0);
+    const list = M.pets.filter(
+      (p) =>
+        collectionFilter === "all" ||
+        (collectionFilter === "owned" && n.pets[p.id]) ||
+        p.rarity === collectionFilter,
+    );
+    for (const p of list) {
+      const own = n.pets[p.id],
+        card = node("article", "g-small-card rarity-" + p.rarity);
+      card.innerHTML = GuardianArt.draw(
+        p,
+        own?.hatched ? M.stage(s, p.id).index : 1,
+        !!own && !own.hatched,
+      );
       card.append(
-        node("h4", "", pet.name),
+        rarityTag(p),
+        node("h4", "", p.name),
+        node("p", "g-muted", p.description),
         node(
-          "p",
-          "g-muted",
-          pet.id === "fox"
-            ? "Bạn đầu tiên của chuyến đi."
-            : `${pet.days} ngày đồng hành + ${pet.words} từ khác nhau (${s.activeDays.length}/${pet.days} ngày · ${M.distinct(s)}/${pet.words} từ)`,
+          "small",
+          "g-requirement",
+          own
+            ? `${own.hatched ? "Đã nở" : "Trứng chưa nở"} · cấp ${M.level(own.xp)} · ${own.xp} XP · nhận ${own.copies} lần`
+            : p.price !== null
+              ? "Mua trứng bằng xu hoặc triệu hồi"
+              : "Chỉ nhận qua triệu hồi",
         ),
       );
       const b = node(
         "button",
         "",
-        s.pet === pet.id
+        s.pet === p.id
           ? "Đang đồng hành"
-          : available
+          : own?.hatched
             ? "Chọn đồng hành"
-            : "Chưa khám phá",
+            : own
+              ? "Đến lồng ấp"
+              : "Chưa sở hữu",
       );
-      b.disabled = !available || s.pet === pet.id;
+      b.disabled = s.pet === p.id || !own;
+      b.dataset.pet = p.id;
       b.onclick = () => {
-        if (!M.petAvailable(s, pet.id)) return;
-        s.pet = pet.id;
+        if (!own?.hatched) {
+          tab = "eggs";
+          renderDialog();
+          return;
+        }
+        s.pet = p.id;
         options.save();
         renderHome();
         renderDialog();
@@ -243,6 +273,281 @@
       grid.append(card);
     }
     body.append(grid);
+  }
+  function eggsPage(body) {
+    const s = state(),
+      n = N.ensure(s);
+    body.append(
+      node("h3", "", "Lồng ấp ánh sao"),
+      node(
+        "p",
+        "g-muted",
+        "Ấp bằng những từ gõ đúng trong Vệ binh, không chờ đồng hồ hoặc ngày học. Chỉ một trứng được ấp mỗi lúc; cất trứng vẫn giữ tiến độ.",
+      ),
+    );
+    const nest = node("div", "g-incubator");
+    if (n.incubator) {
+      const i = n.incubator,
+        p = M.pets.find((p) => p.id === i.species);
+      nest.innerHTML = GuardianArt.draw(p, 0, true);
+      const text = node("div");
+      text.append(
+        rarityTag(p),
+        node("h3", "", p.name),
+        meter(
+          i.progress,
+          i.target,
+          `${i.progress} / ${i.target} từ đúng để nở`,
+        ),
+      );
+      const b = node("button", "", "Cất trứng / đổi trứng");
+      b.onclick = () => mutate(() => N.pauseIncubation(s));
+      text.append(b);
+      nest.append(text);
+    } else {
+      nest.append(
+        node(
+          "p",
+          "",
+          "Lồng ấp đang trống. Chọn một trứng bên dưới hoặc mua trứng mới.",
+        ),
+      );
+    }
+    body.append(nest, node("h3", "", `Túi trứng · ${n.eggs.length}`));
+    const grid = node("div", "g-pet-grid");
+    for (const id of n.eggs) {
+      const p = M.pets.find((p) => p.id === id),
+        entry = n.pets[id],
+        card = node("article", "g-small-card rarity-" + p.rarity);
+      card.innerHTML = GuardianArt.draw(p, 0, true);
+      card.append(
+        rarityTag(p),
+        node("h4", "", p.name),
+        node(
+          "p",
+          "g-muted",
+          `${N.tiers[p.rarity].hatch} từ đúng để nở · ${entry.xp} XP tích lũy`,
+        ),
+      );
+      const active = n.incubator?.species === id,
+        b = node(
+          "button",
+          "",
+          active
+            ? "Đang ấp"
+            : n.incubator
+              ? "Cất trứng hiện tại trước"
+              : "Bắt đầu ấp",
+        );
+      b.disabled = !!n.incubator;
+      b.dataset.egg = id;
+      b.onclick = () => mutate(() => N.incubate(s, id));
+      card.append(b);
+      grid.append(card);
+    }
+    body.append(grid);
+    if (!n.eggs.length)
+      body.append(
+        node(
+          "p",
+          "g-muted",
+          "Bạn chưa có trứng chưa nở. Cửa hàng có trứng mua bằng xu, cổng triệu hồi có các loài độc quyền.",
+        ),
+      );
+    body.append(
+      node("h3", "", "Chợ trứng · mua đúng loài"),
+      node(
+        "p",
+        "g-muted",
+        "Chỉ cần đủ xu, không yêu cầu cấp hoặc ngày. Trứng trùng loài (kể cả còn đang ấp) chuyển thành XP cho đúng loài đó.",
+      ),
+    );
+    const shop = node("div", "g-pet-grid");
+    for (const p of M.pets.filter((p) => p.price !== null)) {
+      const card = node("article", "g-small-card rarity-" + p.rarity);
+      card.innerHTML = GuardianArt.draw(p, 0, true);
+      card.append(
+        rarityTag(p),
+        node("h4", "", p.name),
+        node(
+          "p",
+          "g-muted",
+          n.pets[p.id]
+            ? `Trùng loài: +${N.tiers[p.rarity].duplicateXP} XP`
+            : `Trứng ${N.tiers[p.rarity].name} · ${N.tiers[p.rarity].hatch} từ để nở`,
+        ),
+      );
+      if (p.id === "fox") {
+        card.append(
+          node("small", "g-muted", "Trứng khởi đầu được tặng miễn phí."),
+        );
+      } else {
+        const b = node("button", "", `Mua · ${number(p.price)} xu`);
+        b.disabled = s.coins < p.price;
+        b.dataset.buyegg = p.id;
+        b.onclick = () => mutate(() => N.buyEgg(s, p.id));
+        card.append(b);
+      }
+      shop.append(card);
+    }
+    body.append(shop);
+  }
+  function gachaPage(body) {
+    const s = state(),
+      n = N.ensure(s),
+      rates = N.rates(s);
+    body.append(
+      node("p", "eyebrow", "CỔNG TRIỆU HỒI / 25 LOÀI · 5 RAINBOW"),
+      node("h3", "", `${n.tickets} vé · 10 vé / lần`),
+      node(
+        "p",
+        "g-muted",
+        "Tặng 10 vé khi mở hệ trứng lần đầu. Vé thêm đến từ combo và nhiệm vụ học; không bán bằng tiền thật. Lịch sử và bảo hiểm được giữ khi tải lại.",
+      ),
+    );
+    const portal = node("div", "g-portal");
+    portal.append(
+      node("span", "g-portal-symbol", "✧"),
+      node(
+        "strong",
+        "",
+        n.pity === 49
+          ? "Lượt tiếp theo chắc chắn Rainbow"
+          : `Còn tối đa ${50 - n.pity} lượt tới Rainbow`,
+      ),
+      meter(
+        n.pity,
+        50,
+        `${n.pity} / 50 lượt chưa ra Rainbow · đã triệu hồi ${n.pulls} lần`,
+      ),
+    );
+    const summon = node("button", "", "Triệu hồi · 10 vé");
+    summon.id = "g-summon";
+    summon.disabled = n.tickets < 10 || summonBusy;
+    summon.onclick = () => {
+      if (summonBusy) return;
+      summonBusy = true;
+      const result = N.summon(s);
+      if (!result.ok) {
+        summonBusy = false;
+        notify(result.message);
+        return;
+      }
+      options.save();
+      renderHome();
+      renderDialog();
+      notify(result.message);
+      $("g-ack")?.focus({ preventScroll: false });
+    };
+    portal.append(summon);
+    body.append(portal);
+    const last = n.history[0];
+    if (last) {
+      const p = M.pets.find((p) => p.id === last.species),
+        result = node(
+          "div",
+          "g-summon-result rarity-" +
+            p.rarity +
+            (summonBusy ? " g-new-draw" : ""),
+        );
+      result.innerHTML = GuardianArt.draw(
+        p,
+        M.stage(s, p.id).index,
+        !n.pets[p.id].hatched,
+      );
+      const info = node("div");
+      info.append(
+        rarityTag(p),
+        node(
+          "p",
+          "eyebrow",
+          `KẾT QUẢ LƯỢT #${last.pull}${last.guaranteed ? " · BẢO HIỂM 50" : ""}`,
+        ),
+        node("h3", "", p.name),
+        node(
+          "p",
+          "",
+          last.duplicate
+            ? `Trùng loài → +${last.xp} XP cho ${p.name}`
+            : "Trứng mới đã vào túi! Chuyển sang Lồng ấp để bắt đầu.",
+        ),
+        node("p", "g-muted", p.description),
+      );
+      if (summonBusy) {
+        const ack = node("button", "", "Đã nhận kết quả");
+        ack.id = "g-ack";
+        ack.onclick = () => {
+          summonBusy = false;
+          renderDialog();
+        };
+        info.append(ack);
+      }
+      result.append(info);
+      body.insertBefore(result, portal);
+    }
+    const table = node("table", "g-odds");
+    const caption = node("caption", "", "Tỷ lệ của lượt tiếp theo");
+    table.append(caption);
+    const header = node("tr");
+    for (const t of ["Độ hiếm", "Cơ bản", "Lượt tới"])
+      header.append(node("th", "", t));
+    const head = node("thead");
+    head.append(header);
+    table.append(head);
+    const tbody = node("tbody");
+    for (const [key, t] of Object.entries(N.tiers)) {
+      const row = node("tr");
+      const cell = node("td");
+      cell.append(node("span", "g-rarity rarity-" + key, t.name));
+      row.append(
+        cell,
+        node("td", "", t.rate + "%"),
+        node("td", "", rates[key] + "%"),
+      );
+      tbody.append(row);
+    }
+    table.append(tbody);
+    body.append(
+      table,
+      node(
+        "p",
+        "g-muted",
+        "Từ lượt 41 chưa ra Rainbow: tăng thêm 0,5 điểm % mỗi lượt; phần tăng lấy từ Normal. Lượt 50 bảo đảm Rainbow. Ra Rainbow thì bộ đếm về 0. Trong Rainbow ưu tiên loài chưa sở hữu cho đến khi đủ 5 loài; các loài còn lại cùng hạng có cơ hội bằng nhau.",
+      ),
+    );
+    const details = node("details"),
+      summary = node("summary", "", "Tỷ lệ từng loài ở lượt tiếp theo");
+    details.append(summary);
+    const odds = node("ul", "g-probability-list");
+    for (const p of M.pets) {
+      const unseen = M.pets.filter(
+          (x) => x.rarity === "rainbow" && !n.pets[x.id],
+        ),
+        eligible = p.rarity !== "rainbow" || !unseen.length || !n.pets[p.id],
+        size = p.rarity === "rainbow" && unseen.length ? unseen.length : 5;
+      odds.append(
+        node(
+          "li",
+          "",
+          `${p.name}: ${eligible ? (rates[p.rarity] / size).toFixed(3) : "0.000"}%`,
+        ),
+      );
+    }
+    details.append(odds);
+    body.append(details);
+    const log = node("details");
+    log.append(node("summary", "", `Lịch sử · ${n.pulls} lượt`));
+    for (const h of n.history) {
+      const p = M.pets.find((p) => p.id === h.species);
+      log.append(
+        node(
+          "p",
+          "g-history-row rarity-" + p.rarity,
+          `#${h.pull} · ${N.tiers[p.rarity].name} · ${p.name} · ${h.duplicate ? "trùng +" + h.xp + " XP" : "trứng mới"}${h.guaranteed ? " · bảo hiểm" : ""}`,
+        ),
+      );
+    }
+    body.append(log);
   }
   function shopPage(body) {
     const s = state(),
@@ -287,7 +592,7 @@
         node(
           "small",
           "g-requirement",
-          `Cấp ${item.level} · ${item.days} ngày đồng hành`,
+          "Chỉ cần đủ xu · không giới hạn ngày / cấp",
         ),
       );
       const b = node(
@@ -396,7 +701,7 @@
     const paragraphs = [
       [
         "Điểm trận & combo",
-        "Mỗi từ hoàn thành: 10 điểm + 2 điểm mỗi nhóm 5 chữ cái. Mỗi 5 từ gõ đúng liền nhau tăng hệ số; tối đa x3. Gõ sai ngắt combo nhưng không mất xu hay XP đã có. Mỗi từ thứ 10 có khách thủ lĩnh ghé thăm, không ngắt nhịp gõ.",
+        "Mỗi từ hoàn thành: 10 điểm + 2 điểm mỗi nhóm 5 chữ cái. Mỗi 10 từ gõ đúng liền nhau tăng hệ số; tối đa x5 (mỗi 10 từ đúng tăng một bậc). Gõ sai ngắt combo nhưng không mất xu hay XP đã có. Mỗi từ thứ 10 có khách thủ lĩnh ghé thăm, không ngắt nhịp gõ.",
       ],
       [
         "XP & xu để nuôi linh thú",
@@ -404,11 +709,11 @@
       ],
       [
         "Đi xa nhờ học đều",
-        "5 từ đúng khác nhau tạo một ngày đồng hành. Linh thú nở ở cấp 2 + 2 ngày; các hình thái sau cần cấp 8 + 7 ngày, cấp 16 + 21 ngày, cấp 28 + 45 ngày. Tiền không mua được cấp hay ngày đồng hành. Các mốc chỉ là mục tiêu trong game, không chứng nhận bạn đã nhớ lâu.",
+        "Linh thú nở sau 30 / 60 / 100 / 160 / 240 từ gõ đúng tùy độ hiếm. Mỗi loài có XP riêng, tiến hóa ở cấp 8 / 16 / 28, không yêu cầu ngày. Trùng loài cho 40 / 100 / 240 / 600 / 1600 XP theo hạng. Linh thú chỉ đồng hành sau khi trứng nở.",
       ],
       [
         "Chơi vừa sức, lưu bền lâu",
-        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói, đồ hết hạn hay phần thưởng ngẫu nhiên. Có thể nghỉ bất cứ lúc nào.",
+        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Vé rơi ngẫu nhiên theo tỷ lệ công bố; triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
       ],
       [
         "Tiến độ của bạn",
@@ -426,7 +731,7 @@
       "Xem nghiên cứu và cách cân bằng phần thưởng ↗",
     );
     link.href =
-      "https://github.com/letsstudy222/ankis/blob/main/docs/guardian-design.md";
+      "https://github.com/letsstudy222/ankis/blob/main/docs/guardian-gacha.md";
     link.target = "_blank";
     link.rel = "noopener";
     body.append(link);
@@ -437,7 +742,8 @@
     const focusItem = focused?.dataset?.item;
     const focusFilter = focused?.dataset?.filter;
     const s = state();
-    $("g-wallet").textContent = `${number(s.coins)} xu · cấp ${M.level(s.xp)}`;
+    $("g-wallet").textContent =
+      `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     for (const b of $("g-tabs").children)
       b.setAttribute("aria-pressed", String(b.dataset.tab === tab));
     const body = $("g-dialog-body");
@@ -445,6 +751,8 @@
     (
       ({
         pet: petPage,
+        eggs: eggsPage,
+        gacha: gachaPage,
         shop: shopPage,
         journey: journeyPage,
         rules: rulesPage,
@@ -481,10 +789,13 @@
     const s = state();
     $("g-score").textContent = number(run.score);
     $("g-combo").textContent = run.combo
-      ? `×${Math.min(3, 1 + Math.floor(run.combo / 5) * 0.5)} · ${run.combo} đúng`
+      ? `×${M.comboMultiplier(run.combo)} · ${run.combo} đúng`
       : "×1";
-    $("g-run-wallet").textContent = `${number(s.coins)} xu`;
-    $("g-run-level").textContent = `Cấp ${M.level(s.xp)}`;
+    $("g-ticket-rate").textContent =
+      `Vé rơi ${Math.round(M.ticketChance(run.combo) * 100)}% · xét tối đa 3 lần đúng / từ / ngày`;
+    $("g-run-wallet").textContent =
+      `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
+    $("g-run-level").textContent = `Cấp ${M.petLevel(s)}`;
   }
   function mistake() {
     if (!run) return;
@@ -498,7 +809,7 @@
     run.clears++;
     run.bestCombo = Math.max(run.bestCombo, run.combo);
     const base = 10 + 2 * Math.floor(word.replace(/[^a-z]/gi, "").length / 5),
-      multiplier = clean ? Math.min(3, 1 + Math.floor(run.combo / 5) * 0.5) : 1;
+      multiplier = clean ? M.comboMultiplier(run.combo) : 1;
     const points = Math.round(base * multiplier);
     run.score += points;
     const gain = M.reward(state(), {
@@ -513,13 +824,15 @@
     run.coins += gain.coins;
     options.save();
     renderHUD();
-    const message = `+${points} điểm${gain.xp ? ` · +${gain.xp} XP` : ""}${gain.coins ? ` · +${gain.coins} xu` : ""}${gain.notices.length ? " · " + gain.notices.join(" · ") : ""}`;
+    const message = `+${points} điểm${gain.xp ? ` · +${gain.xp} XP` : ""}${gain.coins ? ` · +${gain.coins} xu` : ""}${gain.tickets ? ` · +${gain.tickets} vé` : ""}${gain.notices.length ? " · " + gain.notices.join(" · ") : ""}`;
     $("guardian-reward").textContent = message;
     $("guardian-reward").classList.remove("g-pop");
     void $("guardian-reward").offsetWidth;
     $("guardian-reward").classList.add("g-pop");
     applyArena();
-    if (gain.notices.some((t) => t.startsWith("Tiến hóa")))
+    if (gain.notices.some((t) => t.startsWith("Trứng đã nở")))
+      toast(gain.notices.find((t) => t.startsWith("Trứng đã nở")));
+    else if (gain.notices.some((t) => t.startsWith("Tiến hóa")))
       toast("Linh thú đã tiến hóa!");
   }
   function toast(message) {

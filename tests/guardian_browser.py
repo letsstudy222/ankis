@@ -38,7 +38,7 @@ with sync_playwright() as p:
  state=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
  assert state['guardian']['totalClears']==16 and state['guardian']['cleanClears']==15
  # Simulate ten days of varied recall with the same production reward model.
- page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(let day=1;day<=10;day++)for(const w of VOCABULARY.slice(0,40))GuardianModel.reward(s.guardian,{word:w.word,clean:true,due:false,score:700,combo:20,date:'2026-09-'+String(day).padStart(2,'0')});localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
+ page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(let day=1;day<=10;day++)for(const w of VOCABULARY.slice(0,40))GuardianModel.reward(s.guardian,{word:w.word,clean:true,due:false,score:700,combo:20,date:'2026-09-'+String(day).padStart(2,'0')});GuardianNursery.receive(s.guardian,'axolotl');GuardianNursery.incubate(s.guardian,'axolotl');for(let i=0;i<60;i++)GuardianModel.reward(s.guardian,{word:VOCABULARY[i%40].word,clean:true,due:false,score:700,combo:20,date:'2026-09-10',random:()=>.99});localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
  page.reload();page.screenshot(path='/tmp/guardian-home-desktop.png',full_page=True)
  page.locator('#g-open').click();page.locator('#g-pet-name').fill('Mây Nhỏ');page.get_by_role('button',name='Lưu tên',exact=True).click()
  page.locator('.g-small-card').filter(has_text='Kỳ Nhông Ngân Hà').get_by_role('button').click()
@@ -58,7 +58,7 @@ with sync_playwright() as p:
  assert page.locator('#guardian-ship').inner_html().count('path')>=3
  page.locator('#answer').fill('zzz');page.screenshot(path='/tmp/guardian-game-desktop.png')
  page.keyboard.press('Escape');page.keyboard.press('Enter')
- page.locator('details summary').click()
+ page.locator('#home > details summary').click()
  with page.expect_download() as d:page.locator('#export').click()
  d.value.save_as('/tmp/guardian-backup.json')
  backup=json.loads(Path('/tmp/guardian-backup.json').read_text())

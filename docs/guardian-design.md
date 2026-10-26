@@ -1,4 +1,6 @@
-# Trạm Sao: research and progression design
+# Trạm Sao: original research and progression design
+
+**Updated mechanics:** The egg/gacha release supersedes the purchase gates, shared companion stages, automatic species unlocks and x3 cap below. See [the current collection and gacha design](guardian-gacha.md) for the implemented rules. This document retains the original design rationale.
 
 Research accessed 2026-10-26. Direct general web search, Finch, Habitica marketing, Duolingo blog and Learning Scientists were blocked by this environment's egress policy (403). The public source documents below were successfully retrieved and read. This is a comparative design review, not an experiment proving these rewards improve retention.
 

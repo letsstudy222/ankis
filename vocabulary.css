@@ -1168,3 +1168,312 @@ progress::-moz-progress-bar {
     gap: 6px;
   }
 }
+
+/* Celestial nursery: rarity is identified by both color and text. */
+.g-rarity {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  font: 700 10px/1.4 system-ui;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  padding: 4px 10px;
+  background: #11182780;
+}
+.rarity-normal {
+  --rarity: #75e59c;
+}
+.rarity-rare {
+  --rarity: #69baff;
+}
+.rarity-epic {
+  --rarity: #c293ff;
+}
+.rarity-legend {
+  --rarity: #ff9560;
+}
+.rarity-rainbow {
+  --rarity: #f3bbf8;
+}
+.g-rarity.rarity-normal,
+.g-rarity.rarity-rare,
+.g-rarity.rarity-epic,
+.g-rarity.rarity-legend {
+  color: var(--rarity);
+}
+.g-rarity.rarity-rainbow {
+  color: #fdf3ff;
+  background: linear-gradient(
+    110deg,
+    #b0417d80,
+    #9e7a4580,
+    #268c7980,
+    #4c6eaa80,
+    #935fc180
+  );
+  border-color: #edc8ff;
+}
+.g-small-card[class*="rarity-"],
+.g-summon-result[class*="rarity-"] {
+  border-color: color-mix(in srgb, var(--rarity) 45%, transparent);
+  background:
+    radial-gradient(
+      ellipse at 50% 8%,
+      color-mix(in srgb, var(--rarity) 15%, transparent),
+      transparent 65%
+    ),
+    #1d2032;
+}
+.g-small-card.rarity-rainbow,
+.g-summon-result.rarity-rainbow {
+  border: 1px solid #eed1ff;
+  box-shadow:
+    inset 0 0 25px #c593ff16,
+    0 0 20px #c593ff18;
+  background:
+    linear-gradient(
+      135deg,
+      #a44b7622,
+      #997a4d22,
+      #438d7c22,
+      #436a9422,
+      #8253a022
+    ),
+    #1b2035;
+}
+.g-small-card .g-rarity {
+  margin: 8px 0 0;
+}
+.g-small-card > svg {
+  height: 145px;
+  filter: drop-shadow(0 6px 12px #0003);
+}
+.g-small-card > button {
+  margin-top: 18px;
+}
+.g-small-card > small {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.g-pet-hero .g-rarity {
+  margin-bottom: 5px;
+}
+.g-pet-hero {
+  background: radial-gradient(
+    ellipse at 20% 50%,
+    color-mix(in srgb, var(--rarity) 12%, transparent),
+    transparent 65%
+  );
+  border-radius: 20px;
+}
+.g-incubator {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: center;
+  gap: 30px;
+  margin: 25px 0 35px;
+  padding: 25px;
+  border: 1px solid #bda2ff55;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 25% 50%, #bea4ff25, transparent 60%), #1e2135;
+}
+.g-incubator > svg {
+  width: 100%;
+  height: 200px;
+  filter: drop-shadow(0 10px 22px #ae94ff30);
+}
+.g-incubator h3 {
+  font-size: 24px;
+  margin: 12px 0;
+}
+.g-incubator > p {
+  grid-column: 1/-1;
+}
+.g-portal {
+  display: grid;
+  justify-items: center;
+  gap: 15px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0, #7256a56b, transparent 70%), #1d2035;
+  border: 1px solid #a78bfa60;
+  border-radius: 24px;
+  padding: 24px;
+  margin: 20px 0;
+}
+.g-portal-symbol {
+  display: grid;
+  place-items: center;
+  font-size: 65px;
+  line-height: 1;
+  color: #d8c6ff;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #b99bf980;
+  border-radius: 50%;
+  box-shadow:
+    0 0 30px #ae88f433,
+    inset 0 0 24px #ae88f422;
+}
+.g-portal .g-meter {
+  width: 100%;
+  max-width: 500px;
+  margin: 0;
+}
+#g-summon {
+  background: linear-gradient(110deg, #d4b6ff, #a8c7ff);
+  color: #1d2035;
+  font-weight: 750;
+  padding: 14px 30px;
+}
+.g-summon-result {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: 25px;
+  border: 1px solid;
+  border-radius: 24px;
+  margin: 24px 0;
+  padding: 24px;
+}
+.g-summon-result > svg {
+  width: 100%;
+  height: 180px;
+}
+.g-summon-result h3 {
+  font-size: 25px;
+  margin: 10px 0;
+}
+.g-summon-result .eyebrow {
+  margin: 12px 0 0;
+}
+#g-ack {
+  border-color: var(--rarity);
+  color: var(--rarity);
+}
+.g-odds {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 26px 0;
+}
+.g-odds caption {
+  text-align: left;
+  font-size: 18px;
+  font-weight: 650;
+  margin-bottom: 15px;
+}
+.g-odds th,
+.g-odds td {
+  text-align: left;
+  border-bottom: 1px solid #ffffff14;
+  padding: 12px;
+}
+.g-odds th {
+  font-size: 12px;
+  color: var(--muted);
+}
+.g-history-row {
+  font-size: 12px;
+  padding: 10px;
+  border-left: 2px solid var(--rarity);
+  background: #ffffff04;
+  border-radius: 0 8px 8px 0;
+}
+.g-probability-list {
+  padding-left: 20px;
+  columns: 2;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 2;
+}
+.g-ticket-rate {
+  grid-column: 1/-1;
+  font-size: 11px;
+  color: #c7b5ee;
+  margin: 0;
+}
+.g-hud {
+  row-gap: 8px;
+}
+#g-run-wallet {
+  font-size: 15px;
+}
+@keyframes g-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@media (max-width: 720px) {
+  .g-incubator {
+    grid-template-columns: 100px 1fr;
+    gap: 15px;
+    padding: 16px;
+  }
+  .g-incubator > svg {
+    height: 130px;
+  }
+  .g-incubator h3 {
+    font-size: 18px;
+  }
+  .g-incubator button {
+    padding: 8px;
+    font-size: 11px;
+  }
+  .g-summon-result {
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  .g-summon-result > svg {
+    height: 130px;
+  }
+  .g-summon-result h3 {
+    font-size: 20px;
+  }
+  .g-summon-result p {
+    font-size: 12px;
+  }
+  .g-small-card > svg {
+    height: 115px;
+  }
+  .g-odds th,
+  .g-odds td {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+  .g-probability-list {
+    columns: 1;
+  }
+  #g-run-wallet {
+    font-size: 11px;
+    line-height: 2.3;
+  }
+  .g-ticket-rate {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-summon-result {
+    animation: none;
+  }
+}
+
+.g-summon-result.g-new-draw {
+  animation: g-reveal 0.55s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-summon-result.g-new-draw {
+    animation: none;
+  }
+}

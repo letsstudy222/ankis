@@ -7,8 +7,6 @@
       slot: "ship",
       name: "Mũi tên Khởi Hành",
       price: 0,
-      level: 1,
-      days: 0,
       art: "scout",
       color: "#9ce6c0",
       description: "Tàu trinh sát đầu tiên của bạn.",
@@ -18,8 +16,6 @@
       slot: "ship",
       name: "Cánh Én Bạc",
       price: 180,
-      level: 2,
-      days: 2,
       art: "kite",
       color: "#9bd6ff",
       description: "Hai cánh rộng, buồng lái xanh băng.",
@@ -29,8 +25,6 @@
       slot: "ship",
       name: "Cá Đuối Tinh Vân",
       price: 750,
-      level: 7,
-      days: 7,
       art: "manta",
       color: "#c4afff",
       description: "Tàu lượn hình cá đuối, đuôi phát sáng.",
@@ -40,8 +34,6 @@
       slot: "ship",
       name: "Phượng Hoàng Mặt Trời",
       price: 2800,
-      level: 18,
-      days: 30,
       art: "phoenix",
       color: "#ffd486",
       description: "Sải cánh vàng dành cho chuyến đi dài.",
@@ -51,8 +43,6 @@
       slot: "sky",
       name: "Đêm Khởi Hành",
       price: 0,
-      level: 1,
-      days: 0,
       art: "midnight",
       color: "#7764a1",
       description: "Bầu trời tím quen thuộc.",
@@ -62,8 +52,6 @@
       slot: "sky",
       name: "Biển Sao Lam",
       price: 150,
-      level: 2,
-      days: 2,
       art: "ocean",
       color: "#559fd5",
       description: "Một đại dương xanh giữa không gian.",
@@ -73,8 +61,6 @@
       slot: "sky",
       name: "Cực Quang",
       price: 650,
-      level: 6,
-      days: 7,
       art: "aurora",
       color: "#74e4c5",
       description: "Dải sáng xanh tím trôi sau tàu.",
@@ -84,8 +70,6 @@
       slot: "sky",
       name: "Vành Nhật Thực",
       price: 1600,
-      level: 13,
-      days: 21,
       art: "solar",
       color: "#f7ad73",
       description: "Bay qua quầng sáng của một mặt trời xa.",
@@ -95,8 +79,6 @@
       slot: "target",
       name: "Thiên Thạch",
       price: 0,
-      level: 1,
-      days: 0,
       art: "meteor",
       color: "#b3a5d9",
       description: "Đá vũ trụ mang theo nghĩa của từ.",
@@ -106,8 +88,6 @@
       slot: "target",
       name: "Sứa Phiêu Lưu",
       price: 220,
-      level: 3,
-      days: 3,
       art: "jelly",
       color: "#f3a6d3",
       description: "Sứa hồng mềm mại trôi về phía bạn.",
@@ -117,8 +97,6 @@
       slot: "target",
       name: "Đĩa Bay Tí Hon",
       price: 800,
-      level: 8,
-      days: 10,
       art: "ufo",
       color: "#b7e39a",
       description: "Một vị khách ngộ nghĩnh từ thiên hà khác.",
@@ -128,8 +106,6 @@
       slot: "trail",
       name: "Tia Bạc Hà",
       price: 0,
-      level: 1,
-      days: 0,
       art: "mint",
       color: "#9ce6c0",
       description: "Tia bắn khởi đầu.",
@@ -139,8 +115,6 @@
       slot: "trail",
       name: "Tia Hồng Tinh Tú",
       price: 180,
-      level: 2,
-      days: 2,
       art: "rose",
       color: "#ffa5d2",
       description: "Tia sáng hồng và lửa đuôi đồng màu.",
@@ -150,8 +124,6 @@
       slot: "trail",
       name: "Tia Hoàng Kim",
       price: 950,
-      level: 9,
-      days: 14,
       art: "gold",
       color: "#ffda84",
       description: "Ánh vàng cho những đường bắn chuẩn xác.",
@@ -259,11 +231,11 @@
   const threshold = (l) => 15 * (l - 1) ** 2 + 65 * (l - 1);
   const distinct = (s) => Object.keys(s.vocabulary).length;
   const petAvailable = (s, id) => {
+    if (s.nursery) return !!s.nursery.pets[id]?.hatched;
     const p = pets.find((p) => p.id === id);
     return !!p && s.activeDays.length >= p.days && distinct(s) >= p.words;
   };
-  const unlocked = (s, item) =>
-    level(s.xp) >= item.level && s.activeDays.length >= item.days;
+  const unlocked = (s, item) => true;
   function valid(s, wordList) {
     if (
       !object(s) ||
@@ -309,7 +281,7 @@
     )
       return false;
     if (
-      !petAvailable(s, s.pet) ||
+      !pets.some((p) => p.id === s.pet) ||
       typeof s.petName !== "string" ||
       s.petName.length > 24
     )
@@ -374,6 +346,7 @@
     ];
   }
   function stage(s) {
+    if (s.nursery) return globalThis.GuardianNursery.stage(s);
     const l = level(s.xp),
       d = s.activeDays.length;
     const stages = [
@@ -416,11 +389,6 @@
     const item = catalog.find((i) => i.id === id);
     if (!item) return { ok: false, message: "Không tìm thấy vật phẩm." };
     if (s.owned.includes(id)) return equip(s, id);
-    if (!unlocked(s, item))
-      return {
-        ok: false,
-        message: "Chưa đủ cấp hoặc ngày học để mở vật phẩm.",
-      };
     if (s.coins < item.price)
       return {
         ok: false,
@@ -496,7 +464,7 @@
         notices.push("Đã đến " + sector.name);
       }
     if (level(s.xp) > beforeLevel)
-      notices.push("Linh thú lên cấp " + level(s.xp));
+      notices.push("Trạm Sao lên cấp " + level(s.xp));
     if (stage(s).index > beforeStage)
       notices.push("Tiến hóa: " + stage(s).name);
     return { xp, coins, notices };

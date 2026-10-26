@@ -40,21 +40,31 @@ Tab / Shift+Tab navigates controls, and Enter / Space activates the focused butt
 
 Arcade automatically advances on a completed word, clears and refocuses the typing input, and starts the next falling word immediately. Review modes retain explicit feedback and Enter to continue.
 
-## Trạm Sao: persistent arcade progression
+## Trạm Sao: collection, incubation and gacha
 
-Open **Linh thú & cửa hàng** from the vocabulary home. Each arcade completion awards run score; clean combos raise the score multiplier. Persistent XP/coin rewards diminish for repeated words on the same local day, and due-word recall gives a bonus. Daily missions auto-claim without interrupting typing. Five distinct clean words count as an active study day; days need not be consecutive.
+Open **Linh thú & cửa hàng** from the vocabulary home. Each arcade completion awards score; every ten clean words raises the combo multiplier, up to x5. Existing per-word XP/coin diminishing returns and due-word bonuses remain. All equipment/egg purchases require **only enough coins**, never levels or study days.
 
-Original star companions hatch/evolve using both increasing XP levels and accumulated study days. Three species, five growth stages, fourteen cosmetics (four included, ten purchasable), six expedition sectors, five badges and best score/combo records give medium/long-term goals. Purchases visibly change the actual ship, falling target, beam or background. Shop cosmetics never change the scheduler, answer or word timing. Missed days and failed runs never remove accumulated levels, currency or ownership. All progression is included in the existing vocabulary JSON export/import; older saves remain compatible. Existing word records are not converted into invented past game rewards.
+The nursery has 25 original illustrated species: five each in Normal (green), Rare (blue), Epic (purple), Legend (red-orange), Rainbow (multicolor). Some eggs can be bought directly with coins; others are summon-only. A single incubator advances on clean arcade words, with 30/60/100/160/240 words per rarity. Switching/caching eggs preserves incubation. Hatched species can accompany the ship. Each species has its own XP; duplicate acquisition converts directly to that species' XP (40/100/240/600/1600). Individual evolution uses levels 8/16/28, with no day gate.
 
-- `guardian-model.js`: pure progression/economy/validation rules.
-- `guardian.js`: original inline SVG art, station/shop UI, HUD and game feedback.
-- [Research, sources, reward tables and pacing](docs/guardian-design.md).
+Each summon costs 10 earned tickets. A one-time 10-ticket welcome grant lets new/migrated collections try a draw. Combo x1/x2/x3/x4/x5 drops tickets at 1/2/6/8/10%, for the first three clean completions of a word per local day. Daily missions also award 2+4+2 guaranteed tickets. Gacha base rates are 55/30/12/2.5/0.5%; Rainbow soft pity starts on attempt 41 and is guaranteed by attempt 50 without a Rainbow. Rainbow prefers unseen species until all five are collected. Actual next-draw and per-species odds, saved history, and counters are visible in the UI.
 
-Additional verification:
+The expedition map and study-day achievements remain separate long-term goals. Rest days never remove currency, pets or levels. Currency/tickets have no real-money purchase path. Everything is browser-local and included in the existing JSON backup. Legacy saves preserve learning, money, equipment and previously unlocked companions; this remains a single-player local save rather than a server account.
+
+- `guardian-model.js`: base score/economy and legacy progression rules.
+- `guardian-nursery.js`: collection migration, coin-only acquisition, per-species XP, egg incubation, ticket and pity rules.
+- `guardian-art.js`: original crisp scalable SVG illustrations for 25 species and eggs.
+- `guardian.js`: station UI, collection/shop/gacha/history, HUD and real arena equipment.
+- [Current research, exact odds, pity, pacing and persistence](docs/guardian-gacha.md).
+- [Original research and rationale](docs/guardian-design.md).
+
+Verification, against a running static server:
 
 ```sh
 node tests/guardian_model.test.cjs
+node tests/guardian_nursery.test.cjs
+BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_smoke.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_browser.py
+BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_nursery_browser.py
 ```
 
-The model test simulates sixty active days and checks level thresholds, reward caps, daily reset, missions, species/evolution/expeditions, purchases and invalid saves. Browser integration checks real typing rewards, nonblocking transitions, boss arrival cue, actual equipment changes, no duplicate charges, companion names, reload persistence, export/import, rejected invalid saves, and a narrow-screen modal. Test activity lives only in isolated browser contexts and does not modify real user progress.
+Pure tests cover legacy progression, coin-only purchases, 25 species, duplicate XP, incubation pause/resume/hatch, ticket boundaries/mission caps, exactly forced hard pity, early reset, guaranteed five-Rainbow collection, probability sums, a reproducible 100,000-draw base-rate simulation, migration and backup validation. Browser integration covers actual typing, combo/ticket HUD, seamless transitions, real cosmetic changes, acquisition/hatching, gacha and duplicate display, preserved draw results, export/import, mobile layout and keyboard navigation. Test data only exists in isolated browser contexts.

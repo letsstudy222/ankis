@@ -10,10 +10,10 @@ const M = GuardianModel,
   N = GuardianNursery,
   A = GuardianArt;
 const coverage = A.progress();
-assert.equal(coverage.species, 15);
-assert.equal(coverage.forms, 25);
+assert.equal(coverage.species, 20);
+assert.equal(coverage.forms, 40);
 assert.equal(coverage.totalForms, 55);
-assert.deepEqual(coverage.completedTiers, ["normal", "rare", "epic"]);
+assert.deepEqual(coverage.completedTiers, ["normal", "rare", "epic", "legend"]);
 const s = M.create();
 N.ensure(s);
 for (const pet of M.pets.filter((p) => p.rarity === "rare")) {
@@ -48,5 +48,5 @@ for (const pet of M.pets.filter((p) => p.rarity === "rare")) {
   assert(!A.draw(pet, 0, true).includes('data-pet-art="painted"'));
 }
 console.log(
-  "PASS: ten distinct high-resolution RGBA Rare sprites, 15/25 species and 25/55 forms, completed batches, exact level-8 asset switch, capped final form, unchanged save and separate eggs.",
+  "PASS: ten distinct high-resolution RGBA Rare sprites, 20/25 species and 40/55 forms, completed batches, exact level-8 asset switch, capped final form, unchanged save and separate eggs.",
 );

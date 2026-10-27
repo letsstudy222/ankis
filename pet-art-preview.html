@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#111320" />
-    <title>Bộ linh thú mẫu A · Tiến độ 10/25 loài · LetsStudy</title>
+    <title>Bộ linh thú mẫu A · Tiến độ 20/25 loài · LetsStudy</title>
     <style>
       :root {
         color-scheme: dark;
@@ -261,6 +261,31 @@
         color: #b5d8fa;
         padding-top: 10px;
       }
+      .legend-grid {
+        display: grid;
+        gap: 22px;
+        margin: 22px 0 36px;
+      }
+      .legend-card {
+        border-color: #ff956080;
+      }
+      .legend-tag {
+        color: #ffb18b;
+        border-color: #ff956088;
+      }
+      .evolution-triple {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      @media (max-width: 600px) {
+        .evolution-triple {
+          grid-template-columns: 1fr;
+        }
+        .evolution-triple figure {
+          width: 100%;
+          max-width: 280px;
+          margin: auto;
+        }
+      }
       .epic-card {
         border-color: #c293ff80;
       }
@@ -292,33 +317,312 @@
   <body>
     <main>
       <header>
-        <a href="./vocabulary.html?v=20261027-art-epic-3"
+        <a href="./vocabulary.html?v=20261027-art-legend-4"
           >← Vào khu học và Trạm Sao</a
         ><span>LETSSTUDY / BỘ SƯU TẬP MẪU A</span>
       </header>
-      <p class="eyebrow">ĐỢT 3/5 ĐÃ ĐƯA VÀO GAME</p>
-      <h1>Mẫu A.<br />Epic đã có hai hình thái.</h1>
+      <p class="eyebrow">ĐỢT 4/5 ĐÃ ĐƯA VÀO GAME</p>
+      <h1>Mẫu A.<br />Legend đã có ba hình thái.</h1>
       <p class="intro">
-        Đợt 3 đã thay ảnh cho <strong>5 loài Epic với 10 hình thái</strong>,
-        theo phong cách A bạn đã chọn. Mỗi loài có bậc mới nở và bậc tiến hóa ở
-        cấp 8; xem hai ảnh cạnh nhau bên dưới, không cần sở hữu hay ấp nở trong
-        game. Các loài Rare và Normal đã hoàn tất vẫn ở phía dưới.
+        Đợt 4 đã thay ảnh cho <strong>5 loài Legend với 15 hình thái</strong>,
+        theo phong cách A bạn đã chọn. Mỗi loài có bậc mới nở, tiến hóa cấp 8 và
+        trưởng thành cấp 16. Xem đủ ba bậc bên dưới, không cần sở hữu hay ấp nở
+        trong game. Các nhóm Epic, Rare và Normal vẫn ở phía dưới.
       </p>
       <div class="progress">
-        <strong>15 / 25 loài · 25 / 55 hình thái</strong
-        ><small>Còn 10 loài · 30 hình thái ở hai đợt tiếp theo</small
+        <strong>20 / 25 loài · 40 / 55 hình thái</strong
+        ><small>Còn 5 loài Rainbow · 15 hình thái ở đợt cuối</small
         ><progress
-          value="25"
+          value="40"
           max="55"
-          aria-label="Đã hoàn tất 25 trong 55 hình thái"
+          aria-label="Đã hoàn tất 40 trong 55 hình thái"
         ></progress>
       </div>
       <div class="actions">
-        <a href="./vocabulary.html?v=20261027-art-epic-3"
+        <a href="./vocabulary.html?v=20261027-art-legend-4"
           >Vào game xem linh thú →</a
         ><a href="./pet-evolution-preview.html">Xem bảng tiến hóa đã duyệt</a
         ><a href="./pet-art-abc.html">Xem lại lựa chọn A/B/C</a>
       </div>
+      <section id="legend-batch">
+        <h2>Đợt 4 · Legend: 5 loài, 15 hình thái</h2>
+        <p class="intro">
+          I → II ở cấp 8; II → III ở cấp 16. Bấm ảnh để xem PNG gốc, không cần
+          sở hữu trong game.
+        </p>
+        <div class="legend-grid">
+          <article class="evolution-card legend-card" id="dragon">
+            <div class="copy">
+              <span class="tag legend-tag">LEGEND · 3 HÌNH THÁI</span>
+              <h2>Long Vũ Cực Quang</h2>
+              <p>
+                Rồng non cánh gọn → cánh mở và sừng phân nhánh → long vũ trưởng
+                thành với giáp pha lê.
+              </p>
+            </div>
+            <div class="evolution-pair evolution-triple">
+              <figure>
+                <a
+                  href="./assets/pets/legend/dragon-1.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/dragon-1.png"
+                    alt="Long Vũ Cực Quang — I · Mới nở"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>I · Mới nở</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/dragon-2.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/dragon-2.png"
+                    alt="Long Vũ Cực Quang — II · Tiến hóa · cấp 8"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>II · Tiến hóa · cấp 8</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/dragon-3.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/dragon-3.png"
+                    alt="Long Vũ Cực Quang — III · Trưởng thành · cấp 16"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>III · Trưởng thành · cấp 16</figcaption>
+              </figure>
+            </div>
+          </article>
+          <article class="evolution-card legend-card" id="phoenix">
+            <div class="copy">
+              <span class="tag legend-tag">LEGEND · 3 HÌNH THÁI</span>
+              <h2>Phượng Hoàng Nhật Diệm</h2>
+              <p>
+                Chim non mào lửa nhỏ → cánh dài và ba lông đuôi → phượng hoàng
+                sải cánh lớn, đuôi lửa rực rỡ.
+              </p>
+            </div>
+            <div class="evolution-pair evolution-triple">
+              <figure>
+                <a
+                  href="./assets/pets/legend/phoenix-1.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/phoenix-1.png"
+                    alt="Phượng Hoàng Nhật Diệm — I · Mới nở"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>I · Mới nở</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/phoenix-2.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/phoenix-2.png"
+                    alt="Phượng Hoàng Nhật Diệm — II · Tiến hóa · cấp 8"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>II · Tiến hóa · cấp 8</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/phoenix-3.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/phoenix-3.png"
+                    alt="Phượng Hoàng Nhật Diệm — III · Trưởng thành · cấp 16"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>III · Trưởng thành · cấp 16</figcaption>
+              </figure>
+            </div>
+          </article>
+          <article class="evolution-card legend-card" id="serpent">
+            <div class="copy">
+              <span class="tag legend-tag">LEGEND · 3 HÌNH THÁI</span>
+              <h2>Linh Xà Hỏa Tinh</h2>
+              <p>
+                Linh xà cuộn nhỏ → bành mang và sừng lớn → vương xà với mào lửa
+                và thân uốn dài.
+              </p>
+            </div>
+            <div class="evolution-pair evolution-triple">
+              <figure>
+                <a
+                  href="./assets/pets/legend/serpent-1.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/serpent-1.png"
+                    alt="Linh Xà Hỏa Tinh — I · Mới nở"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>I · Mới nở</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/serpent-2.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/serpent-2.png"
+                    alt="Linh Xà Hỏa Tinh — II · Tiến hóa · cấp 8"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>II · Tiến hóa · cấp 8</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/serpent-3.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/serpent-3.png"
+                    alt="Linh Xà Hỏa Tinh — III · Trưởng thành · cấp 16"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>III · Trưởng thành · cấp 16</figcaption>
+              </figure>
+            </div>
+          </article>
+          <article class="evolution-card legend-card" id="lion">
+            <div class="copy">
+              <span class="tag legend-tag">LEGEND · 3 HÌNH THÁI</span>
+              <h2>Sư Tử Vầng Dương</h2>
+              <p>
+                Sư tử con bờm ngắn → bờm đỏ cam phát triển → bờm thái dương
+                nhiều lớp và dáng trưởng thành.
+              </p>
+            </div>
+            <div class="evolution-pair evolution-triple">
+              <figure>
+                <a
+                  href="./assets/pets/legend/lion-1.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/lion-1.png"
+                    alt="Sư Tử Vầng Dương — I · Mới nở"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>I · Mới nở</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/lion-2.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/lion-2.png"
+                    alt="Sư Tử Vầng Dương — II · Tiến hóa · cấp 8"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>II · Tiến hóa · cấp 8</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/lion-3.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/lion-3.png"
+                    alt="Sư Tử Vầng Dương — III · Trưởng thành · cấp 16"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>III · Trưởng thành · cấp 16</figcaption>
+              </figure>
+            </div>
+          </article>
+          <article class="evolution-card legend-card" id="griffin">
+            <div class="copy">
+              <span class="tag legend-tag">LEGEND · 3 HÌNH THÁI</span>
+              <h2>Sư Ưng Xích Kim</h2>
+              <p>
+                Sư ưng non cánh gọn → cánh mở, vuốt khỏe → sải cánh xích kim và
+                mào vương giả.
+              </p>
+            </div>
+            <div class="evolution-pair evolution-triple">
+              <figure>
+                <a
+                  href="./assets/pets/legend/griffin-1.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/griffin-1.png"
+                    alt="Sư Ưng Xích Kim — I · Mới nở"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>I · Mới nở</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/griffin-2.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/griffin-2.png"
+                    alt="Sư Ưng Xích Kim — II · Tiến hóa · cấp 8"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>II · Tiến hóa · cấp 8</figcaption>
+              </figure>
+              <figure>
+                <a
+                  href="./assets/pets/legend/griffin-3.png"
+                  target="_blank"
+                  rel="noopener"
+                  ><img
+                    src="./assets/pets/legend/griffin-3.png"
+                    alt="Sư Ưng Xích Kim — III · Trưởng thành · cấp 16"
+                    width="1254"
+                    height="1254"
+                    loading="lazy"
+                /></a>
+                <figcaption>III · Trưởng thành · cấp 16</figcaption>
+              </figure>
+            </div>
+          </article>
+        </div>
+      </section>
       <section id="epic-batch">
         <h2>Đợt 3 · Epic: 5 loài, 10 hình thái</h2>
         <p class="intro">
@@ -900,7 +1204,7 @@
               <td>5</td>
               <td>3</td>
               <td>15</td>
-              <td>Chưa vẽ</td>
+              <td>Đã vào game</td>
             </tr>
             <tr>
               <td>5</td>
@@ -925,10 +1229,10 @@
       <p class="note">
         Quy tắc số bậc đã được áp dụng:
         <strong>Normal 1 bậc; Rare/Epic 2 bậc; Legend/Rainbow 3 bậc</strong>.
-        Bậc mới mở ở cấp 8 và 16 tùy nhóm. Đã hoàn tất ảnh Normal, Rare và Epic
-        (15 loài, 25 hình thái); các loài còn lại tạm dùng hình minh họa cũ cho
-        đến đợt của mình. XP, đồ sở hữu, vé, xu, lịch sử quay và tiến độ học
-        được giữ nguyên.
+        Bậc mới mở ở cấp 8 và 16 tùy nhóm. Đã hoàn tất ảnh Normal, Rare, Epic và
+        Legend (20 loài, 40 hình thái); chỉ nhóm Rainbow còn tạm dùng hình minh
+        họa cũ cho đến đợt cuối. XP, đồ sở hữu, vé, xu, lịch sử quay và tiến độ
+        học được giữ nguyên.
       </p>
       <footer>
         Mỗi hình là một tệp PNG nền trong suốt riêng. Trứng giữ hình riêng và

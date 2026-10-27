@@ -7,9 +7,9 @@ The owner approved the 1/2/3-form evolution sample and authorized integration in
 | 1 | Normal | 5 | 1 | 5 | Shipped |
 | 2 | Rare | 5 | 2 | 10 | Shipped |
 | 3 | Epic | 5 | 2 | 10 | Shipped |
-| 4 | Legend | 5 | 3 | 15 | Pending |
+| 4 | Legend | 5 | 3 | 15 | Shipped |
 | 5 | Rainbow | 5 | 3 | 15 | Pending |
-| Total | | 25 | | 55 | 25/55 completed |
+| Total | | 25 | | 55 | 40/55 completed |
 
 ## Production assets
 
@@ -26,3 +26,5 @@ Batch 2 adds ten individually generated real-alpha PNGs: `assets/pets/rare/{axol
 Each later art batch should add only its approved species/form assets to the manifest, verify actual alpha and image loading, and update the gallery, progress text and this table. Do not label pending legacy art as freshly generated. Species/rates, purchases, tickets (including the 15-clean-word guarantee), pity, backup format and study scheduling remain unchanged.
 
 Batch 3 adds ten individually generated transparent Epic sprites: `assets/pets/epic/{butterfly,wolf,lotus,whale,kirin}-{1,2}.png`. Each evolved sprite uses its hatchling as a reference, retains its palette and identity, and develops its silhouette. The established gallery shows both forms without requiring ownership. Normal, Rare and Epic are complete: 15 species / 25 forms; Legend and Rainbow remain pending (30 forms). Save data and reward rules are unchanged.
+
+Batch 4 ships fifteen individually generated transparent Legend sprites: `assets/pets/legend/{dragon,phoenix,serpent,lion,griffin}-{1,2,3}.png`. Each next form references its preceding form to preserve identity while developing anatomy. Three-form comparisons are available at the established gallery URL; on phones forms stack at readable size. Levels 8 and 16 select forms II and III using existing species XP, with no save migration or reward changes. Current production coverage: 20 species / 40 forms; only Rainbow (5 species / 15 forms) remains. The owner now prefers direct site updates and text reports without sending images in chat.

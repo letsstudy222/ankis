@@ -1,0 +1,98 @@
+.pet-yard {
+  margin: 20px 0 28px;
+  padding: 18px;
+  border: 1px solid #ffffff20;
+  border-radius: 20px;
+  background: #191d2b;
+}
+.pet-yard h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+.pet-yard-hint,
+#pet-yard-message {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #b7b7c6;
+  margin: 8px 0;
+}
+#pet-yard-floor {
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(#1c2536 70%, #26372f 70%);
+  touch-action: pan-y;
+}
+#pet-walker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px;
+  width: 94px;
+  height: 94px;
+  min-height: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 2.8s linear;
+  will-change: transform;
+  z-index: 1;
+}
+#pet-walker:focus-visible {
+  outline: 2px solid #b7d7b4;
+  outline-offset: -3px;
+  border-radius: 15px;
+}
+.pet-walker-avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(var(--pet-facing, 1));
+}
+.pet-walker-avatar .g-pet-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: none;
+}
+.pet-yard-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.pet-yard-controls button {
+  padding: 8px 13px;
+  font-size: 12px;
+  min-height: 38px;
+}
+.pet-patted {
+  animation: pet-pat 0.45s ease;
+}
+@keyframes pet-pat {
+  50% {
+    translate: 0 -9px;
+  }
+}
+@media (max-width: 500px) {
+  #pet-walker {
+    width: 76px;
+    height: 76px;
+  }
+  #pet-yard-floor {
+    height: 145px;
+  }
+  .pet-yard {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #pet-walker {
+    transition: none;
+  }
+  .pet-patted {
+    animation: none;
+  }
+}

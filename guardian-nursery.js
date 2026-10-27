@@ -651,7 +651,7 @@
       Array.isArray(n.pets) ||
       !["tickets", "pity", "pulls"].every((k) => integer(n[k])) ||
       (n.ticketMisses !== undefined &&
-        (!integer(n.ticketMisses) || n.ticketMisses > 14)) ||
+        (!integer(n.ticketMisses) || n.ticketMisses > 19)) ||
       n.pity > 49 ||
       n.pity > n.pulls
     )
@@ -741,8 +741,7 @@
     return { index, name: names[index], next, total };
   };
   M.comboMultiplier = (n) => Math.min(5, 1 + Math.floor(n / 10));
-  M.ticketChance = (n) =>
-    [0.01, 0.02, 0.06, 0.08, 0.1][M.comboMultiplier(n) - 1];
+  M.ticketChance = (s) => Math.min(1, (ensure(s).ticketMisses + 1) / 20);
   function receive(s, id) {
     const n = ensure(s),
       pet = pets.find((p) => p.id === id);
@@ -856,17 +855,14 @@
   M.reward = (s, args) => {
     const n = ensure(s),
       before = M.stage(s).index,
-      previous =
-        args.date === s.day.date ? s.day.words[args.word]?.clean || 0 : 0,
       claimed = args.date === s.day.date ? [...s.day.missions] : [];
     const result = baseReward(s, args);
     let tickets = 0;
     n.pets[s.pet].xp += result.xp;
     if (args.clean) {
+      const chance = M.ticketChance(s);
       n.ticketMisses++;
-      const lucky =
-        previous < 3 && (args.random || rng)() < M.ticketChance(args.combo);
-      if (lucky || n.ticketMisses >= 15) {
+      if (chance === 1 || (args.random || rng)() < chance) {
         tickets++;
         n.ticketMisses = 0;
       }

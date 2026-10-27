@@ -10,8 +10,9 @@ with sync_playwright() as p:
  def force_dry_spell():
   page.evaluate("() => {const reward=GuardianModel.reward;GuardianModel.reward=(s,a)=>reward(s,{...a,random:()=>.99});}")
  page.reload();force_dry_spell();page.locator('#game').click()
- assert '15 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
- for _ in range(14):page.locator('#answer').press_sequentially('recall')
+ assert '20 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
+ assert '5%' in page.locator('#g-ticket-rate').inner_text()
+ for _ in range(19):page.locator('#answer').press_sequentially('recall')
  assert '1 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==10
  page.locator('#answer').fill('wrong');page.locator('#answer').fill('')
@@ -20,12 +21,12 @@ with sync_playwright() as p:
  page.locator('#answer').fill('recall');assert '1 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
  page.locator('#answer').press_sequentially('recall')
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==11
- assert '15 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
+ assert '20 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
  for _ in range(7):page.locator('#answer').press_sequentially('recall')
  page.reload();force_dry_spell();page.locator('#game').click()
- assert '8 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
- for _ in range(8):page.locator('#answer').press_sequentially('recall')
+ assert '13 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
+ for _ in range(13):page.locator('#answer').press_sequentially('recall')
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==12
  assert not errors,errors
  b.close()
-print('PASS: real 15-word guaranteed ticket, capped repeated word, typo protection, HUD countdown and reload continuation.')
+print('PASS: real 20-word guaranteed ticket, capped repeated word, typo protection, HUD countdown and reload continuation.')

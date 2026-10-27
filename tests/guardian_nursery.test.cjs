@@ -80,25 +80,26 @@ assert.deepEqual(
   [0, 9, 10, 20, 30, 40, 100].map(M.comboMultiplier),
   [1, 1, 2, 3, 4, 5, 5],
 );
-assert.deepEqual(
-  [0, 10, 20, 30, 40].map(M.ticketChance),
-  [0.01, 0.02, 0.06, 0.08, 0.1],
-);
+const odds = state();
+for (let misses = 0; misses < 20; misses++) {
+  odds.nursery.ticketMisses = misses;
+  assert.equal(M.ticketChance(odds), (misses + 1) / 20);
+}
 s = state();
 const tickets = s.nursery.tickets;
-earn(s, 0, { combo: 20, random: () => 0.059 });
+earn(s, 0, { random: () => 0.049 });
 assert.equal(s.nursery.tickets, tickets + 1);
-earn(s, 0, { combo: 20, random: () => 0.06 });
+earn(s, 0, { random: () => 0.05 });
 assert.equal(s.nursery.tickets, tickets + 1);
-earn(s, 0, { combo: 20, random: () => 0 });
-const capped = s.nursery.tickets;
-earn(s, 0, { combo: 100, random: () => 0 });
-assert.equal(s.nursery.tickets, capped);
+earn(s, 0, { random: () => 0.099 });
+assert.equal(s.nursery.tickets, tickets + 2);
+for (let i = 0; i < 4; i++) earn(s, 0, { random: () => 0 });
+assert.equal(s.nursery.tickets, tickets + 6);
 earn(s, 1, { clean: false, random: () => 0 });
-assert.equal(s.nursery.tickets, capped);
+assert.equal(s.nursery.tickets, tickets + 6);
 s = state();
 for (let i = 0; i < 15; i++) earn(s, i, { due: i < 3 });
-assert.equal(s.nursery.tickets, 19);
+assert.equal(s.nursery.tickets, 18);
 const dailyTickets = s.nursery.tickets;
 earn(s, 16);
 assert.equal(s.nursery.tickets, dailyTickets);
@@ -195,19 +196,19 @@ individual.nursery.pets.dragon.xp = GuardianModel.threshold(16);
 assert.equal(GuardianModel.stage(individual, "dragon").index, 3);
 assert.equal(GuardianModel.stage(individual).index, 0);
 
-// Ticket drought protection counts every clean word, even repeated/capped words.
+// Progressive ticket odds count every clean word, including capped repeats.
 let protection = state();
-for (let i = 0; i < 14; i++) earn(protection, 0);
-assert.equal(protection.nursery.ticketMisses, 14);
+for (let i = 0; i < 19; i++) earn(protection, 0);
+assert.equal(protection.nursery.ticketMisses, 19);
 assert.equal(protection.nursery.tickets, 10);
 protection = JSON.parse(JSON.stringify(protection));
 assert(M.valid(protection, words));
 earn(protection, 0, { clean: false });
-assert.equal(protection.nursery.ticketMisses, 14);
-earn(protection, 0, { date: "2026-10-27" });
+assert.equal(protection.nursery.ticketMisses, 19);
+earn(protection, 0, { date: "2026-10-27", random: () => 1 });
 assert.equal(protection.nursery.tickets, 11);
 assert.equal(protection.nursery.ticketMisses, 0);
-for (let i = 0; i < 15; i++) earn(protection, 0);
+for (let i = 0; i < 20; i++) earn(protection, 0);
 assert.equal(protection.nursery.tickets, 12);
 let luckyReset = state();
 for (let i = 0; i < 8; i++) earn(luckyReset, 0);
@@ -219,10 +220,15 @@ delete oldCounter.nursery.ticketMisses;
 assert(M.valid(oldCounter, words));
 N.ensure(oldCounter);
 assert.equal(oldCounter.nursery.ticketMisses, 0);
-oldCounter.nursery.ticketMisses = 15;
+oldCounter.nursery.ticketMisses = 14;
+const restored = JSON.parse(JSON.stringify(oldCounter));
+N.ensure(restored);
+assert.equal(M.ticketChance(restored), 0.75);
+assert.equal(restored.nursery.ticketMisses, 14);
+oldCounter.nursery.ticketMisses = 20;
 assert(!M.valid(oldCounter, words));
 console.log(
-  "PASS: guaranteed ticket every 15 clean words, repeat/day/reload persistence, wrong answers preserve count, early drops reset, old saves migrate and invalid counters reject.",
+  "PASS: progressive 5–100% ticket odds, every clean repeat eligible, exact probability boundaries, forced twentieth drop, wrong/day/reload persistence, early reset, old-counter compatibility.",
 );
 
 // Approved rarity-specific evolution counts never alter saved XP or ownership.

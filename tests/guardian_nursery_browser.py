@@ -24,7 +24,7 @@ with sync_playwright() as p:
   page.locator('#answer').press_sequentially(word,delay=1)
   assert page.locator('#next').is_hidden()
  assert '×4' in page.locator('#g-combo').inner_text()
- assert '8%' in page.locator('#g-ticket-rate').inner_text()
+ assert 'lần' in page.locator('#g-ticket-rate').inner_text() and '/20' in page.locator('#g-ticket-rate').inner_text()
  state=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
  assert state['guardian']['nursery']['pets']['sprout']['hatched']
  assert state['guardian']['nursery']['incubator'] is None

@@ -129,6 +129,7 @@
       ? `${mission.title}: ${Math.min(mission.value, mission.target)}/${mission.target} · +${mission.coins} xu`
       : "Đã xong nhiệm vụ hôm nay. Linh thú chờ chuyến bay tiếp theo.";
     applyArena();
+    globalThis.PetRoaming?.render(s);
   }
   function petPage(body) {
     const s = state(),
@@ -454,7 +455,7 @@
       node(
         "p",
         "g-muted",
-        "Tặng 10 vé khi mở hệ trứng lần đầu. Cứ tối đa 15 từ đúng chưa rơi vé sẽ được 1 vé; combo có thể cho vé sớm hơn. Vé cũng đến từ nhiệm vụ học; không bán bằng tiền thật. Lịch sử và bảo hiểm được giữ khi tải lại.",
+        "Tặng 10 vé khi mở hệ trứng lần đầu. Mỗi lần gõ đúng chưa ra vé tăng thêm 5 điểm %: 5%, 10%, …, đến lần 20 chắc chắn có vé. Nhận vé thì đếm lại từ đầu. Vé cũng đến từ nhiệm vụ học; không bán bằng tiền thật. Lịch sử và bảo hiểm được giữ khi tải lại.",
       ),
     );
     const portal = node("div", "g-portal");
@@ -769,7 +770,7 @@
       ],
       [
         "Chơi vừa sức, lưu bền lâu",
-        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Vé có thể rơi sớm theo combo (xét 3 lần đúng đầu của mỗi từ/ngày); bảo đảm 1 vé sau tối đa 15 từ đúng chưa rơi vé, kể cả từ lặp. Gõ sai không xóa bộ đếm; vé nhiệm vụ không đặt lại bộ đếm. Triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
+        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Mỗi từ gõ đúng có tỷ lệ vé tăng dần 5%, 10%, …, 100% ở lần 20 nếu chưa nhận vé; áp dụng cả từ lặp, không giới hạn ba lần/ngày. Nhận vé từ gõ từ thì bộ đếm về đầu. Gõ sai không xóa bộ đếm; vé nhiệm vụ không đặt lại bộ đếm. Triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
       ],
       [
         "Tiến độ của bạn",
@@ -848,7 +849,7 @@
       ? `×${M.comboMultiplier(run.combo)} · ${run.combo} đúng`
       : "×1";
     $("g-ticket-rate").textContent =
-      `Vé ngẫu nhiên ${Math.round(M.ticketChance(run.combo) * 100)}% · bảo đảm sau ${15 - N.ensure(s).ticketMisses} từ đúng nữa`;
+      `Vé lượt tới ${Math.round(M.ticketChance(s) * 100)}% · lần ${N.ensure(s).ticketMisses + 1}/20 · bảo đảm sau ${20 - N.ensure(s).ticketMisses} từ đúng nữa`;
     $("g-run-wallet").textContent =
       `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     $("g-run-level").textContent = `Cấp ${M.petLevel(s)}`;

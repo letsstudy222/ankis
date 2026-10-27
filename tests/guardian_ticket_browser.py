@@ -17,9 +17,9 @@ with sync_playwright() as p:
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==10
  page.locator('#answer').fill('wrong');page.locator('#answer').fill('')
  assert '1 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
- # The word corrected after a typo is not a clean retrieval and cannot advance the counter.
- page.locator('#answer').fill('recall');assert '1 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
- page.locator('#answer').press_sequentially('recall')
+ # Correcting a typo before time runs out still qualifies for the guaranteed ticket.
+ page.locator('#answer').press('Enter');assert '1 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
+ page.locator('#answer').fill('recall');assert '20 đúng' in page.locator('#g-combo').inner_text()
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==11
  assert '20 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
  for _ in range(7):page.locator('#answer').press_sequentially('recall')
@@ -27,6 +27,19 @@ with sync_playwright() as p:
  assert '13 từ đúng nữa' in page.locator('#g-ticket-rate').inner_text()
  for _ in range(13):page.locator('#answer').press_sequentially('recall')
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==12
+ # Viewing an answer or using a ship hint still cannot earn a word ticket.
+ page.keyboard.press('Shift+Tab');page.locator('#answer').fill('recall')
+ assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.ticketMisses")==0
+ page.locator('#answer').focus();page.keyboard.press('Tab');assert page.locator('#answer').input_value()=='r';page.locator('#answer').fill('recall')
+ assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.ticketMisses")==0
+ # Accelerate only this test's next deadline; exercise the production timeout/coaching path.
+ page.keyboard.press('Escape');page.locator('#back').click()
+ page.evaluate("()=>{window.originalDuration=VocabularyPractice.duration;VocabularyPractice.duration=()=>200}")
+ page.locator('#game').click();page.evaluate("()=>{VocabularyPractice.duration=window.originalDuration}")
+ page.locator('#flight-coach').wait_for(state='visible')
+ page.locator('#answer').fill('recall')
+ assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.ticketMisses")==0
+ assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.nursery.tickets")==12
  assert not errors,errors
  b.close()
-print('PASS: real 20-word guaranteed ticket, capped repeated word, typo protection, HUD countdown and reload continuation.')
+print('PASS: real 20-word guaranteed ticket, capped repeated word, corrected-typo eligibility, no rewards from hints/timeouts, HUD countdown and reload continuation.')

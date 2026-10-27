@@ -447,7 +447,9 @@
   }
   function resolve() {
     if (session.resolved) return;
-    const clean = !session.helped && !session.mistake;
+    // In the arcade the final answer matters; corrected keystrokes are normal.
+    const clean =
+      !session.helped && (session.mode === "game" || !session.mistake);
     session.resolved = true;
     session.completed++;
     if (clean) session.correct++;
@@ -698,10 +700,9 @@
         target = current().word.toLowerCase();
       if (!target.startsWith(value)) {
         session.mistake = true;
-        Guardian.mistake();
         $("answer").setAttribute("aria-invalid", "true");
         $("feedback").textContent =
-          "Sửa chữ màu đỏ; chưa cần vội. Chưa nhớ thì bấm Shift+Tab để học lại.";
+          "Cứ sửa chữ màu đỏ. Hoàn thành đúng trước khi hết giờ vẫn tính lượt vé.";
       } else {
         $("answer").removeAttribute("aria-invalid");
         if (!session.coaching) $("feedback").textContent = "";

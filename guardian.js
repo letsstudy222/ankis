@@ -788,7 +788,7 @@
     const paragraphs = [
       [
         "Điểm trận & combo",
-        "Mỗi từ hoàn thành: 10 điểm + 2 điểm mỗi nhóm 5 chữ cái. Mỗi 10 từ gõ đúng liền nhau tăng hệ số; tối đa x5 (mỗi 10 từ đúng tăng một bậc). Gõ sai ngắt combo nhưng không mất xu hay XP đã có. Mỗi từ thứ 10 có khách thủ lĩnh ghé thăm, không ngắt nhịp gõ.",
+        "Mỗi từ hoàn thành: 10 điểm + 2 điểm mỗi nhóm 5 chữ cái. Mỗi 10 từ gõ đúng liền nhau tăng hệ số; tối đa x5 (mỗi 10 từ đúng tăng một bậc). Gõ nhầm rồi sửa đúng trước khi hết giờ vẫn tính thưởng và giữ combo. Hết giờ hoặc dùng gợi ý/học lại mới ngắt combo. Mỗi từ thứ 10 có khách thủ lĩnh ghé thăm, không ngắt nhịp gõ.",
       ],
       [
         "XP & xu để nuôi linh thú",
@@ -800,7 +800,7 @@
       ],
       [
         "Chơi vừa sức, lưu bền lâu",
-        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Mỗi từ gõ đúng có tỷ lệ vé tăng dần 5%, 10%, …, 100% ở lần 20 nếu chưa nhận vé; áp dụng cả từ lặp, không giới hạn ba lần/ngày. Nhận vé từ gõ từ thì bộ đếm về đầu. Gõ sai không xóa bộ đếm; vé nhiệm vụ không đặt lại bộ đếm. Triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
+        "Gõ đúng là có từ mới ngay. Cửa hàng nằm ngoài trận để không gián đoạn. Tạm dừng bằng Alt+4; ẩn tab cũng tự dừng. Không có chuỗi ngày bị mất, thú bị đói hay đồ hết hạn. Mỗi từ gõ đúng có tỷ lệ vé tăng dần 5%, 10%, …, 100% ở lần 20 nếu chưa nhận vé; áp dụng cả từ lặp, không giới hạn ba lần/ngày. Nhận vé từ gõ từ thì bộ đếm về đầu. Gõ nhầm rồi sửa đúng vẫn tính một lượt rơi vé. Từ hết giờ hoặc có gợi ý/học lại không tăng và không xóa bộ đếm; vé nhiệm vụ không đặt lại bộ đếm. Triệu hồi có bảo hiểm tối đa 50 lượt. Có thể nghỉ bất cứ lúc nào.",
       ],
       [
         "Tiến độ của bạn",

@@ -28,15 +28,15 @@ with sync_playwright() as p:
  assert len(state['guardian']['activeDays'])==1
  assert state['guardian']['bestCombo']==15
  assert '15 đúng' in page.locator('#g-combo').inner_text()
- # A typo breaks the combo; fixing the answer still advances and awards base points.
+ # A typo is normal: correcting before timeout keeps the combo and clean rewards.
  word=page.evaluate("VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
- page.locator('#answer').fill('zzzz');assert page.locator('#g-combo').inner_text()=='×1'
+ page.locator('#answer').fill('zzzz');assert '15 đúng' in page.locator('#g-combo').inner_text()
  page.locator('#answer').fill(word)
  assert page.locator('#answer').input_value()==''
  page.locator('#quit').evaluate('(el)=>{el.click();el.click()}');assert page.locator('.g-run-summary').is_visible()
  page.keyboard.press('Enter');page.reload()
  state=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
- assert state['guardian']['totalClears']==16 and state['guardian']['cleanClears']==15
+ assert state['guardian']['totalClears']==16 and state['guardian']['cleanClears']==16
  # Simulate ten days of varied recall with the same production reward model.
  page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(let day=1;day<=10;day++)for(const w of VOCABULARY.slice(0,40))GuardianModel.reward(s.guardian,{word:w.word,clean:true,due:false,score:700,combo:20,date:'2026-09-'+String(day).padStart(2,'0')});GuardianNursery.receive(s.guardian,'axolotl');GuardianNursery.incubate(s.guardian,'axolotl');for(let i=0;i<60;i++)GuardianModel.reward(s.guardian,{word:VOCABULARY[i%40].word,clean:true,due:false,score:700,combo:20,date:'2026-09-10',random:()=>.99});localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
  page.reload();page.screenshot(path='/tmp/guardian-home-desktop.png',full_page=True)

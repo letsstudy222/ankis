@@ -96,6 +96,11 @@
       2: "./assets/pets/rainbow/halo-2.png",
       3: "./assets/pets/rainbow/halo-3.png",
     },
+    penguin: { 1: "./assets/pets/normal/penguin-1.png" },
+    hedgehog: { 1: "./assets/pets/normal/hedgehog-1.png" },
+    raccoon: { 1: "./assets/pets/normal/raccoon-1.png" },
+    otter: { 1: "./assets/pets/normal/otter-1.png" },
+    seahorse: { 1: "./assets/pets/normal/seahorse-1.png" },
   };
   const progress = () => ({
     species: Object.keys(assets).length,

@@ -211,7 +211,7 @@
       node(
         "p",
         "g-muted",
-        `Đã hoàn tất ${coverage.completedTiers.map((key) => N.tiers[key].name).join(", ")} · ${coverage.completedTiers.length}/5 đợt. ${coverage.forms === coverage.totalForms ? "Toàn bộ linh thú đã có ảnh mẫu A cho từng bậc tiến hóa. Trứng dùng hình riêng." : "Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới."}`,
+        `Đã hoàn tất ${coverage.completedTiers.map((key) => N.tiers[key].name).join(", ")} · ${coverage.completedTiers.length}/5 nhóm. ${coverage.forms === coverage.totalForms ? "Toàn bộ linh thú đã có ảnh mẫu A cho từng bậc tiến hóa. Trứng dùng hình riêng." : "Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới."}`,
       ),
     );
     const artLink = node(
@@ -445,7 +445,11 @@
       n = N.ensure(s),
       rates = N.rates(s);
     body.append(
-      node("p", "eyebrow", "CỔNG TRIỆU HỒI / 25 LOÀI · 5 RAINBOW"),
+      node(
+        "p",
+        "eyebrow",
+        `CỔNG TRIỆU HỒI / ${M.pets.length} LOÀI · ${M.pets.filter((p) => p.rarity === "rainbow").length} RAINBOW`,
+      ),
       node("h3", "", `${n.tickets} vé · 10 vé / lần`),
       node(
         "p",

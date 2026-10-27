@@ -10,9 +10,9 @@ const M = GuardianModel,
   N = GuardianNursery,
   A = GuardianArt,
   c = A.progress();
-assert.equal(c.species, 25);
-assert.equal(c.forms, 55);
-assert.equal(c.totalForms, 55);
+assert.equal(c.species, 30);
+assert.equal(c.forms, 60);
+assert.equal(c.totalForms, 60);
 assert.deepEqual(c.completedTiers, [
   "normal",
   "rare",
@@ -65,5 +65,5 @@ for (const pet of M.pets.filter((p) => p.rarity === "legend")) {
   assert(!A.draw(pet, 0, true).includes('data-pet-art="painted"'));
 }
 console.log(
-  "PASS: fifteen independent Legend RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 25 species / 55 forms.",
+  "PASS: fifteen independent Legend RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 30 species / 60 forms.",
 );

@@ -10,7 +10,7 @@ with sync_playwright() as p:
  assert page.locator('.evolution-card').count()==20
  assert page.locator('.evolution-pair img').count()==50
  page.evaluate("async () => {await Promise.all([...document.querySelectorAll('.evolution-pair img')].map(async i=>{i.loading='eager';await i.decode();if(i.naturalWidth<1024)throw Error('low resolution');}));}")
- assert '55 / 55' in page.locator('.progress').inner_text()
+ assert '60 / 60' in page.locator('.progress').inner_text()
  page.locator('#axolotl').scroll_into_view_if_needed();page.screenshot(path='/tmp/rare-comparison-desktop.png',animations='disabled')
  page.goto(BASE+'/vocabulary.html')
  page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=8888;s.guardian.nursery.tickets=37;s.guardian.nursery.ticketMisses=6;s.guardian.nursery.pity=11;s.guardian.nursery.pulls=11;for(const p of GuardianModel.pets.filter(p=>p.rarity==='rare')){GuardianNursery.receive(s.guardian,p.id);s.guardian.nursery.pets[p.id].hatched=true;s.guardian.nursery.pets[p.id].xp=GuardianModel.threshold(7);s.guardian.nursery.eggs=s.guardian.nursery.eggs.filter(id=>id!==p.id);}s.guardian.pet='axolotl';s.records.recall={learned:true,stage:0,due:Date.now()+86400000,attempts:0};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")

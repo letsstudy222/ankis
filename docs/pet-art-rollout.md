@@ -38,3 +38,7 @@ Revised files use `*-2-v2.png` and `*-3-v2.png` URLs in the manifest and gallery
 ## Batch 5: complete collection
 
 Fifteen Rainbow sprites ship at `assets/pets/rainbow/{astra,iris,nova,orion,halo}-{1,2,3}.png`. Each successive stage deliberately changes expression, dominant palette and body structure, keeping selected identity motifs. Iris develops one, three, then nine tails. Original standalone transparent PNGs are generated individually; subsequent stages reference the previous stage. The existing gallery and in-game cards show all stages, with mobile-readable stacked triples. All five batches are complete: 25 species / 55 forms. Eggs retain separate SVG illustrations, with no changes to incubation, acquisition, gacha rates, pity, tickets, per-species XP or saved learning data.
+
+## Expansion 1: five more Normal species
+
+Penguin, hedgehog, raccoon, otter and seahorse add five individually generated transparent PNGs in `assets/pets/normal/`. Collection total is now 30 species / 60 forms. Normal contains ten species; the other tiers retain five each. All five new eggs are coin purchases (1200–2000 coins), also eligible for Normal gacha; Normal total remains 55%, split equally. Incubation requires 30 clean words, duplicate grants 40 species XP, no day gates. No save migration/reset is required because species records are keyed by stable IDs. The original 25-species / 55-form rollout above is retained as history.

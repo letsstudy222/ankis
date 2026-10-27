@@ -13,16 +13,16 @@ with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  page=b.new_page(viewport={'width':1280,'height':1000});errors=[];failed=[]
  page.on('pageerror',lambda e:errors.append(e.stack))
- page.on('response',lambda r:failed.append((r.url,r.status)) if '/assets/pets/' in r.url and r.status!=200 else None)
+ page.on('response',lambda r:failed.append((r.url,r.status)) if '/assets/pets/' in r.url and r.status not in (200,304) else None)
  page.goto(BASE+'/vocabulary.html')
  page.evaluate("""() => {let s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=7777;s.guardian.nursery.tickets=31;s.guardian.nursery.ticketMisses=7;s.guardian.nursery.pity=12;s.guardian.nursery.pulls=12;for(const pet of GuardianModel.pets){GuardianNursery.receive(s.guardian,pet.id);s.guardian.nursery.pets[pet.id].hatched=true;s.guardian.nursery.pets[pet.id].xp=GuardianModel.threshold(35);}s.guardian.nursery.eggs=[];s.guardian.nursery.incubator=null;s.records.recall={learned:true,stage:1,attempts:1,due:Date.now()+86400000};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
  page.reload()
  snapshot=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
- assert page.evaluate('GuardianArt.progress().forms')==15
+ assert page.evaluate('GuardianArt.progress().forms')==25
  assert page.evaluate('GuardianArt.progress().totalForms')==55
  assert page.locator('#g-home-art [data-pet-art="painted"]').get_attribute('data-species')=='fox'
  page.locator('#g-open').click()
- assert '10/25 loài · 15/55 hình thái' in page.locator('.g-art-progress').inner_text()
+ assert '15/25 loài · 25/55 hình thái' in page.locator('.g-art-progress').inner_text()
  page.get_by_role('button',name='Normal',exact=True).click()
  assert page.locator('.g-small-card').count()==5
  assert page.locator('.g-small-card [data-pet-art="painted"]').count()==5
@@ -52,7 +52,7 @@ with sync_playwright() as p:
  page.set_viewport_size({'width':390,'height':844})
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  page.locator('.card').first.scroll_into_view_if_needed();page.screenshot(path='/tmp/art-normal-gallery-mobile.png',animations='disabled')
- page.goto(BASE+'/vocabulary.html');page.locator('#g-open').click();page.get_by_role('button',name='Epic',exact=True).click()
+ page.goto(BASE+'/vocabulary.html');page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click()
  assert 'Hình minh họa cũ' in page.locator('.g-small-card').first.inner_text()
  assert not errors,errors
  assert not failed,failed

@@ -26,6 +26,26 @@
       1: "./assets/pets/rare/manta-1.png",
       2: "./assets/pets/rare/manta-2.png",
     },
+    butterfly: {
+      1: "./assets/pets/epic/butterfly-1.png",
+      2: "./assets/pets/epic/butterfly-2.png",
+    },
+    wolf: {
+      1: "./assets/pets/epic/wolf-1.png",
+      2: "./assets/pets/epic/wolf-2.png",
+    },
+    lotus: {
+      1: "./assets/pets/epic/lotus-1.png",
+      2: "./assets/pets/epic/lotus-2.png",
+    },
+    whale: {
+      1: "./assets/pets/epic/whale-1.png",
+      2: "./assets/pets/epic/whale-2.png",
+    },
+    kirin: {
+      1: "./assets/pets/epic/kirin-1.png",
+      2: "./assets/pets/epic/kirin-2.png",
+    },
   };
   const progress = () => ({
     species: Object.keys(assets).length,

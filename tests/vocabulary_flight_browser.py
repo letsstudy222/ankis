@@ -10,7 +10,7 @@ with sync_playwright() as p:
  page.locator('#game').click()
  def word():return page.evaluate("VOCABULARY.find(w=>w.meaning===document.querySelector('#enemy-meaning').textContent).word")
  missed=word();before=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian")
- page.keyboard.press('Alt+2');assert page.locator('#flight-coach').is_visible();assert missed in page.locator('#coach-word').inner_text();assert page.locator('#flight-time').inner_text()=='HỌC LẠI'
+ page.keyboard.press('Shift+Tab');assert page.locator('#flight-coach').is_visible();assert missed in page.locator('#coach-word').inner_text();assert page.locator('.flight-clock').get_attribute('data-mode')=='coaching'
  frozen=page.locator('#enemy').evaluate('e=>e.style.transform');page.wait_for_timeout(250);assert page.locator('#enemy').evaluate('e=>e.style.transform')==frozen
  assert page.locator('#g-ship-hint').is_disabled();page.locator('#answer').focus();page.keyboard.press('Alt+1');assert page.locator('#answer').input_value()==''
  page.locator('#answer').fill(missed)
@@ -28,7 +28,7 @@ with sync_playwright() as p:
  # Exercise actual animation frames and timeout transitions under a virtual browser clock.
  page.goto(BASE+'/vocabulary.html');page.clock.install();page.locator('#speed').select_option('fast');page.locator('#game').click()
  for remaining in [2,1,0]:
-  current=word();seconds=int(page.locator('#flight-time').inner_text().rstrip('s'))
+  current=word();seconds=int(page.locator('#flight-time').get_attribute('data-seconds'))
   page.clock.run_for((seconds+1)*1000)
   if remaining:
    assert page.locator('#flight-shields').get_attribute('aria-label')==f'{remaining} lá chắn còn lại'
@@ -41,7 +41,7 @@ with sync_playwright() as p:
  page.clock.resume();page.goto(BASE+'/vocabulary.html');page.set_viewport_size({'width':390,'height':844});page.locator('#game').click()
  assert page.locator('#answer').bounding_box()['y']+page.locator('#answer').bounding_box()['height']<=844
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
- page.keyboard.press('Alt+2');assert page.locator('#flight-coach').is_visible();assert page.locator('#answer').bounding_box()['y']+page.locator('#answer').bounding_box()['height']<=844;page.screenshot(path='/tmp/orbit-coach-mobile.png',full_page=True)
+ page.keyboard.press('Shift+Tab');assert page.locator('#flight-coach').is_visible();assert page.locator('#answer').bounding_box()['y']+page.locator('#answer').bounding_box()['height']<=844;page.screenshot(path='/tmp/orbit-coach-mobile.png',full_page=True)
  page.emulate_media(reduced_motion='reduce');assert page.locator('#arena .stars').evaluate('e=>getComputedStyle(e).animationName')=='none'
  assert page.locator('#pet-background, #pet-dock').count()==0
  assert not errors,errors;b.close()

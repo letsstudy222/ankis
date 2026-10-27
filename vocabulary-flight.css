@@ -1109,3 +1109,117 @@ footer {
     visibility: hidden;
   }
 }
+/* Local seven-segment display, like a small backlit instrument panel. */
+#flight-status {
+  grid-template-columns: 1fr auto 1fr;
+}
+#flight-pace {
+  text-align: right;
+}
+#arena .flight-clock {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  width: 154px;
+  padding: 7px 13px 5px;
+  border: 1px solid #8595ae48;
+  border-top-color: #b7cee666;
+  border-radius: 9px;
+  background: linear-gradient(160deg, #152333, #070f19 70%);
+  box-shadow:
+    0 5px 14px #020813a3,
+    0 4px 14px -5px #b79cf5a6,
+    inset 0 1px #d2e6f611;
+  z-index: 6;
+  pointer-events: none;
+  text-align: center;
+}
+#clock-state {
+  display: block;
+  font-size: 6px;
+  letter-spacing: 1.4px;
+  color: #9dbbbf;
+  line-height: 1.4;
+}
+#flight-time {
+  display: block;
+  color: #e0faff;
+  margin: 3px 0;
+}
+#flight-time svg {
+  display: block;
+  width: 100%;
+  height: 40px;
+  filter: drop-shadow(0 0 4px #aee7ff39);
+}
+#flight-time polygon {
+  fill: #20323f;
+}
+#flight-time polygon.is-lit,
+#flight-time .clock-colon {
+  fill: currentColor;
+}
+.clock-readable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.clock-units {
+  display: flex;
+  justify-content: space-around;
+  color: #8fabbf;
+  font-size: 6px;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.clock-units i {
+  width: 5px;
+}
+#arena .flight-clock.clock-warning {
+  border-color: #e9a17a77;
+  box-shadow:
+    0 5px 14px #020813a3,
+    0 4px 14px -5px #f2a47799;
+}
+.clock-warning #flight-time {
+  color: #ffc79d;
+}
+#arena .flight-clock[data-mode="coaching"] #flight-time {
+  color: #b5d1bd;
+}
+#enemy {
+  top: 90px;
+}
+#g-boss-label {
+  max-width: calc(100% - 185px);
+}
+@media (max-width: 720px) {
+  .g-playing #arena {
+    height: clamp(360px, 40svh, 390px);
+  }
+  #arena .flight-clock {
+    width: 118px;
+    right: 8px;
+    top: 7px;
+    padding: 5px 10px 4px;
+  }
+  #flight-time svg {
+    height: 29px;
+  }
+  #clock-state {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .clock-units {
+    font-size: 5px;
+  }
+  #enemy {
+    top: 74px;
+  }
+  #g-boss-label {
+    max-width: calc(100% - 140px);
+  }
+}

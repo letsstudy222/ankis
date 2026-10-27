@@ -18,6 +18,19 @@ const q = P.queue(
 assert.equal(new Set(q).size, 8);
 assert(q.slice(0, 4).every((i) => records[words[i].word].due === 0));
 assert(q.slice(4, 6).every((i) => records[words[i].word].stage === 0));
+assert.equal(P.duration("normal", "recall", { stage: 0 }, 0, 5), 40000);
+for (const [bonus, expected] of [
+  [5, 40000],
+  [10, 45000],
+  [15, 50000],
+  [20, 55000],
+])
+  assert.equal(
+    P.duration("normal", "recall", { stage: 0 }, 0, bonus),
+    expected,
+  );
+assert.equal(P.duration("slow", "recall", { stage: 0 }, 0, 5), 50000);
+assert.equal(P.duration("fast", "recall", { stage: 0 }, 0, 5), 30000);
 const familiar = P.duration("normal", "recall", { stage: 1 }, 0, 0);
 assert(P.duration("normal", "recall", { stage: 0 }, 0, 0) > familiar);
 assert.equal(
@@ -25,7 +38,8 @@ assert.equal(
   familiar + 7000,
 );
 assert(
-  P.duration("normal", "recall", { stage: 1 }, 100, 0) >= 38000 * 0.92 + 6600,
+  P.duration("normal", "recall", { stage: 1 }, 100, 0) >=
+    Math.round(35000 * 0.96 * 0.92),
 );
 const retry = [0, 1, 2, 3, 4, 5, 6, 7],
   counts = {};

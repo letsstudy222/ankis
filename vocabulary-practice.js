@@ -18,11 +18,13 @@
     return buckets.flatMap((bucket) => shuffle(bucket, random));
   }
   function duration(speed, word, record, streak, bonus = 0) {
-    const base = { slow: 55000, normal: 38000, fast: 24000 }[speed] || 38000;
-    const familiarity = record?.stage > 0 ? 1 : 1.3;
+    const base = { slow: 45000, normal: 35000, fast: 25000 }[speed] || 35000;
+    const familiarity = record?.stage > 0 ? 0.96 : 1;
     const pace = Math.max(0.92, 1 - Math.floor(streak / 5) * 0.02);
     return Math.round(
-      base * familiarity * pace + word.length * 1100 + bonus * 1000,
+      base * familiarity * pace +
+        Math.min(6000, Math.max(0, word.length - 12) * 500) +
+        bonus * 1000,
     );
   }
   // Retrieve a missed word after three other distinct words, at most twice per flight.

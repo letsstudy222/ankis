@@ -10,6 +10,10 @@ const s = M.create();
 N.ensure(s);
 assert(M.valid(s, ["recall"]));
 s.coins = 200000;
+assert.deepEqual(
+  M.catalog.filter((i) => i.slot === "sky").map((i) => i.timeBonus),
+  [5, 10, 15, 20],
+);
 const oldFox = JSON.stringify(s.nursery.pets.fox);
 for (const id of [
   "ship-phoenix",
@@ -21,7 +25,7 @@ for (const id of [
 assert.equal(s.coins, 22000);
 assert.deepEqual(E.effects(s), {
   hintEvery: 5,
-  timeBonus: 7,
+  timeBonus: 20,
   ticketBonus: 0.03,
   coinBonus: 3,
 });

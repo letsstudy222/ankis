@@ -508,7 +508,10 @@
         `${session.shields} lá chắn còn lại`,
       );
     }
-    $("flight-time").textContent = session.coaching ? "HỌC LẠI" : `${second}s`;
+    FlightClock.paint(
+      second,
+      session.coaching ? "coaching" : session.paused ? "paused" : "running",
+    );
     $("flight-timebar").value = Math.max(
       0,
       100 * (1 - session.elapsed / session.duration),
@@ -516,7 +519,7 @@
     $("flight-pace").textContent = session.coaching
       ? "Không giới hạn thời gian"
       : store.records[current().word]?.stage === 0
-        ? "Từ còn mới · thêm thời gian"
+        ? "Nhịp làm quen"
         : "Nhịp theo độ quen từ";
   }
   function studyWord(timedOut = false) {
@@ -593,7 +596,9 @@
       if (session.last) session.elapsed += Math.min(now - session.last, 100);
       const ratio = session.elapsed / session.duration;
       const max =
-        $("arena").querySelector(".danger").offsetTop - $("enemy").offsetHeight;
+        $("arena").querySelector(".danger").offsetTop -
+        $("enemy").offsetTop -
+        $("enemy").offsetHeight;
       $("enemy").style.transform =
         `translateY(${Math.max(0, max) * Math.min(1, ratio)}px)`;
       const second = Math.ceil((session.duration - session.elapsed) / 1000);
@@ -623,6 +628,7 @@
       ? "Tiếp tục · Alt+4"
       : "Tạm dừng · Alt+4";
     $("answer").disabled = session.paused;
+    updateFlight();
     if (!session.paused) $("answer").focus();
   }
   function finish(lost) {
@@ -695,7 +701,7 @@
         Guardian.mistake();
         $("answer").setAttribute("aria-invalid", "true");
         $("feedback").textContent =
-          "Sửa chữ màu đỏ; chưa cần vội. Chưa nhớ thì bấm Alt+2 để học lại.";
+          "Sửa chữ màu đỏ; chưa cần vội. Chưa nhớ thì bấm Shift+Tab để học lại.";
       } else {
         $("answer").removeAttribute("aria-invalid");
         if (!session.coaching) $("feedback").textContent = "";
@@ -839,6 +845,17 @@
         action = () => activate("learning-next");
     } else if (session) {
       if (
+        e.key === "Tab" &&
+        e.shiftKey &&
+        !e.altKey &&
+        e.target === $("answer") &&
+        session.mode === "game" &&
+        !session.paused &&
+        !session.resolved &&
+        !session.coaching
+      )
+        action = () => studyWord();
+      else if (
         e.key === "Tab" &&
         !e.shiftKey &&
         !e.altKey &&

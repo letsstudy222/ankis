@@ -4,15 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Quỹ đạo từ vựng · LetsStudy</title>
-    <link rel="stylesheet" href="vocabulary.css?v=20261027-orbit-flight-4" />
+    <link rel="stylesheet" href="vocabulary.css?v=20261027-digital-clock-5" />
     <link
       rel="stylesheet"
-      href="./pet-art-tone.css?v=20261027-orbit-flight-4"
+      href="./pet-art-tone.css?v=20261027-digital-clock-5"
     />
-    <link rel="stylesheet" href="./pet-roaming.css?v=20261027-orbit-flight-4" />
     <link
       rel="stylesheet"
-      href="vocabulary-flight.css?v=20261027-orbit-flight-4"
+      href="./pet-roaming.css?v=20261027-digital-clock-5"
+    />
+    <link
+      rel="stylesheet"
+      href="vocabulary-flight.css?v=20261027-digital-clock-5"
     />
   </head>
   <body>
@@ -254,10 +257,7 @@
           >
             ◆ ◆ ◆
           </div>
-          <div class="flight-clock">
-            <span id="flight-time">—</span
-            ><small id="flight-pace">Vừa sức</small>
-          </div>
+          <small id="flight-pace">Vừa sức</small>
           <progress
             id="flight-timebar"
             value="100"
@@ -266,6 +266,16 @@
           ></progress>
         </div>
         <div id="arena" hidden>
+          <div
+            class="flight-clock"
+            role="timer"
+            aria-live="off"
+            aria-label="Thời gian còn lại"
+          >
+            <small id="clock-state">THỜI GIAN CÒN LẠI</small
+            ><span id="flight-time">00:40</span
+            ><span class="clock-units" aria-hidden="true">MIN <i></i> SEC</span>
+          </div>
           <div class="stars"></div>
           <div class="orbit-haze" aria-hidden="true"></div>
           <div id="flight-effects" aria-hidden="true"></div>
@@ -318,9 +328,9 @@
             id="game-study"
             type="button"
             hidden
-            aria-keyshortcuts="Alt+2"
+            aria-keyshortcuts="Shift+Tab"
           >
-            Chưa nhớ? Học lại từ · Alt+2
+            Chưa nhớ? Học lại từ · Shift+Tab
           </button>
           <div class="actions">
             <button id="hint" aria-keyshortcuts="Alt+1">
@@ -373,21 +383,23 @@
           Tab / Shift+Tab = chuyển nút, Enter / Space = bấm nút. Phím tắt: Enter
           = tiếp tục / kiểm tra · 1–4 = chọn nghĩa · Alt+1 = gợi ý · Alt+2 = đáp
           án · Alt+3 = nghe từ · Alt+4 = tạm dừng game · Esc = về khu học. Phím
-          Alt+1/Alt+2 dùng được ngay trong ô nhập. Trong Vệ binh, Alt+2 mở phần
-          học lại từ; không tính là tự nhớ đúng. Trong Vệ binh, Tab ở ô trả lời
-          dùng một lượt mở chữ của tàu khi đã nạp; Shift+Tab vẫn chuyển nút.
+          Alt+1/Alt+2 dùng được ngay trong ô nhập. Trong Vệ binh, ở ô nhập: Tab
+          dùng lượt mở chữ của tàu khi đã nạp; Shift+Tab học lại từ. Các vị trí
+          khác vẫn dùng Tab / Shift+Tab để chuyển nút. Không cần phím F1–F12
+          hoặc Fn.
         </p>
         Học chậm mà chắc. Mỗi lần tự nhớ là một lần tiến bộ.
       </footer>
     </main>
-    <script src="vocabulary-data.js?v=20261027-orbit-flight-4"></script>
-    <script src="guardian-model.js?v=20261027-orbit-flight-4"></script>
-    <script src="guardian-nursery.js?v=20261027-orbit-flight-4"></script>
-    <script src="guardian-equipment.js?v=20261027-orbit-flight-4"></script>
-    <script src="guardian-art.js?v=20261027-orbit-flight-4"></script>
-    <script src="guardian.js?v=20261027-orbit-flight-4"></script>
-    <script src="pet-roaming.js?v=20261027-orbit-flight-4"></script>
-    <script src="vocabulary-practice.js?v=20261027-orbit-flight-4"></script>
-    <script src="vocabulary.js?v=20261027-orbit-flight-4"></script>
+    <script src="vocabulary-data.js?v=20261027-digital-clock-5"></script>
+    <script src="guardian-model.js?v=20261027-digital-clock-5"></script>
+    <script src="guardian-nursery.js?v=20261027-digital-clock-5"></script>
+    <script src="guardian-equipment.js?v=20261027-digital-clock-5"></script>
+    <script src="guardian-art.js?v=20261027-digital-clock-5"></script>
+    <script src="guardian.js?v=20261027-digital-clock-5"></script>
+    <script src="pet-roaming.js?v=20261027-digital-clock-5"></script>
+    <script src="flight-clock.js?v=20261027-digital-clock-5"></script>
+    <script src="vocabulary-practice.js?v=20261027-digital-clock-5"></script>
+    <script src="vocabulary.js?v=20261027-digital-clock-5"></script>
   </body>
 </html>

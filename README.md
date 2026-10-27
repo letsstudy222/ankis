@@ -117,17 +117,17 @@ The selected hatched companion patrols a short horizontal route inside the Guard
 | --- | --- | --- |
 | Ship | 0 / 2,400 / 12,000 / 48,000 | One hint charge after 18 / 12 / 8 / 5 clean words |
 | Flying target | 0 / 4,000 / 16,000 / 45,000 | +0 / 1 / 2 / 3 percentage points to word-ticket chance, capped at 100% |
-| Sky | 0 / 2,000 / 9,000 / 30,000 | +0 / 2 / 4 / 7 seconds per arcade word |
+| Sky | 0 / 2,000 / 9,000 / 30,000 | +5 / 10 / 15 / 20 seconds per arcade word |
 | Laser trail | 0 / 3,000 / 16,000 / 55,000 | +0 / 1 / 2 / 3 coins on a word's first clean completion per local day |
 
-Hint storage caps at one; no progress is banked while full. Use Tab only from the active unpaused arcade answer input, or the visible hint button; Shift+Tab and Tab elsewhere remain native. Using a hint marks the word assisted and does not refill the meter. Free review hints remain available. Charge/progress live in optional validated `guardian.gear` fields inside existing JSON backup, with backward-compatible migration. Switching ships cannot grant free charges. Coin bonuses encourage vocabulary variety; repeated words do not receive extra trail coins. Background/pet state does not affect support rewards.
+Hint storage caps at one; no progress is banked while full. Use Tab only from the active unpaused arcade answer input, or the visible hint button; Shift+Tab from the active arcade answer input opens relearning; Tab/Shift+Tab elsewhere remain native. Using a hint marks the word assisted and does not refill the meter. Free review hints remain available. Charge/progress live in optional validated `guardian.gear` fields inside existing JSON backup, with backward-compatible migration. Switching ships cannot grant free charges. Coin bonuses encourage vocabulary variety; repeated words do not receive extra trail coins. Background/pet state does not affect support rewards.
 
 Additional verification: `node tests/guardian_equipment.test.cjs`, `BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_support_browser.py`.
 
 
 ## Word Orbit flight interface
 
-The learning home now recommends due review first, with an original vector space theme shared by the arcade. Flights have three shields, adaptive thinking time for fragile memories, letter-hit feedback and an arena-only companion. Timeout or Alt+2 opens a stopped-clock word/context/pronunciation panel; supported copying never counts as clean recall. Missed words reappear after three distinct other words when possible, with bounded retries, and can be reviewed without a timer from the result screen. Correct typing still advances instantly without Enter. Old progress, wallet, gear and pet ownership are preserved. See [design and access limitations](docs/vocabulary-flight-design.md).
+The learning home now recommends due review first, with an original vector space theme shared by the arcade. Flights have three shields, adaptive thinking time for fragile memories, letter-hit feedback and an arena-only companion. Timeout or Shift+Tab from the answer input opens a stopped-clock word/context/pronunciation panel; supported copying never counts as clean recall. Missed words reappear after three distinct other words when possible, with bounded retries, and can be reviewed without a timer from the result screen. Correct typing still advances instantly without Enter. Old progress, wallet, gear and pet ownership are preserved. See [design and access limitations](docs/vocabulary-flight-design.md).
 
 Additional checks:
 
@@ -135,3 +135,6 @@ Additional checks:
 node tests/vocabulary_practice.test.cjs
 BASE_URL=http://127.0.0.1:8008 python3 tests/vocabulary_flight_browser.py
 ```
+
+
+The arcade clock is a local SVG seven-segment MM:SS display inside the upper-right of the arena. Standard speed starts stage-zero words of up to 12 characters at 40 seconds with the default sky: 35 base + 5 sky. Sky tiers add 5/10/15/20 seconds, so their standard starting totals are 40/45/50/55 seconds. Slow/fast base times are 45/25 seconds; familiar memories and clean streaks retain a small capped adjustment, and long phrases add at most 6 seconds. Shift+Tab in the answer input opens relearning; Tab consumes one available ship hint, with native focus navigation otherwise. No function keys are required.

@@ -7,6 +7,7 @@
     run = null,
     tab = "pet",
     filter = "ship",
+    previewGear = "",
     toastTimer,
     collectionFilter = "owned",
     summonBusy = false;
@@ -25,32 +26,6 @@
     return el;
   };
   const number = (n) => n.toLocaleString("vi-VN");
-  function svg(content, cls = "") {
-    return `<svg class="${cls}" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${content}</svg>`;
-  }
-  function ship(art, color) {
-    const common = `<ellipse cx="80" cy="103" rx="13" ry="12" fill="${color}" opacity=".2"/><path d="M73 89L80 113L87 89" fill="${color}"/><path d="M80 15L94 82L80 94L66 82Z" fill="${color}"/><path d="M80 35L86 64H74Z" fill="#142333"/>`;
-    const wings = {
-      scout:
-        '<path d="M80 17L120 89L91 78L80 93L69 78L40 89Z" fill="currentColor" stroke="#ffffff88" stroke-width="2"/>',
-      kite: '<path d="M80 14L142 79L110 92L80 69L50 92L18 79Z" fill="currentColor" stroke="#ffffff88" stroke-width="2"/><path d="M28 78L58 70M132 78L102 70" stroke="#fff8" stroke-width="3"/>',
-      manta:
-        '<path d="M80 29C53 33 43 61 9 69C18 92 55 92 80 72C105 92 142 92 151 69C117 61 107 33 80 29Z" fill="currentColor" stroke="#fff8" stroke-width="2"/>',
-      phoenix:
-        '<path d="M80 32L37 12L43 48L10 30L25 78L60 91L80 65L100 91L135 78L150 30L117 48L123 12Z" fill="currentColor" stroke="#fff9" stroke-width="2"/><path d="M22 56L57 73M138 56L103 73" stroke="#ffebac" stroke-width="3"/>',
-    };
-    return `<span class="g-art" style="color:${color}">${svg((wings[art] || wings.scout) + common)}</span>`;
-  }
-  function target(art, color) {
-    const shapes = {
-      meteor:
-        '<path d="M40 27L83 16L121 42L126 80L96 105L49 92L29 61Z" fill="currentColor" opacity=".8" stroke="#fff8" stroke-width="2"/><circle cx="65" cy="45" r="12" fill="#202334" opacity=".5"/><circle cx="98" cy="76" r="17" fill="#202334" opacity=".5"/><circle cx="54" cy="78" r="6" fill="#fff" opacity=".15"/>',
-      jelly:
-        '<path d="M34 67C31 7 129 7 126 67Z" fill="currentColor" stroke="#fff9" stroke-width="2"/><path d="M48 66Q37 93 54 103M70 66Q60 99 73 109M94 66Q110 86 95 109M114 66Q129 93 113 103" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="65" cy="49" r="4" fill="#23243d"/><circle cx="94" cy="49" r="4" fill="#23243d"/><path d="M75 57Q80 62 85 57" stroke="#23243d" stroke-width="2"/>',
-      ufo: '<path d="M49 60C47 10 113 10 111 60" fill="#b1e9ed" stroke="#fff9" stroke-width="2"/><ellipse cx="80" cy="66" rx="62" ry="19" fill="currentColor" stroke="#fff9" stroke-width="2"/><path d="M49 81L35 111H125L111 81" fill="currentColor" opacity=".13"/><circle cx="43" cy="66" r="4" fill="#fff"/><circle cx="80" cy="72" r="4" fill="#fff"/><circle cx="117" cy="66" r="4" fill="#fff"/>',
-    };
-    return `<span class="g-art" style="color:${color}">${svg(shapes[art] || shapes.meteor)}</span>`;
-  }
   function petArt(id, index) {
     const p = M.pets.find((p) => p.id === id) || M.pets[0];
     return GuardianArt.draw(p, index, index === 0);
@@ -80,11 +55,7 @@
       ]),
     );
   function itemArt(item) {
-    if (item.slot === "ship") return ship(item.art, item.color);
-    if (item.slot === "target") return target(item.art, item.color);
-    if (item.slot === "sky")
-      return `<span class="g-sky-swatch" data-sky="${item.art}"><i></i><i></i><i></i></span>`;
-    return `<span class="g-trail-swatch" style="--swatch:${item.color}">✦</span>`;
+    return GuardianGearArt.preview(item);
   }
   function meter(value, max, label) {
     const wrap = node("div", "g-meter"),
@@ -103,8 +74,10 @@
       items = equipment(s);
     $("arena").dataset.sky = items.sky.art;
     $("arena").style.setProperty("--beam", items.trail.color);
-    $("guardian-ship").innerHTML = ship(items.ship.art, items.ship.color);
-    $("enemy-art").innerHTML = target(items.target.art, items.target.color);
+    $("guardian-ship").innerHTML = GuardianGearArt.draw(items.ship);
+    $("enemy-art").innerHTML = GuardianGearArt.draw(items.target);
+    $("arena").dataset.trail = items.trail.id;
+    $("laser").innerHTML = GuardianGearArt.beam(items.trail);
     $("arena-companion").innerHTML = petArt(s.pet, M.stage(s).index);
   }
   function renderHome() {
@@ -631,21 +604,62 @@
       node(
         "p",
         "g-muted",
-        "Mua một lần, dùng mãi mãi. Mỗi ô trang bị có một công dụng, chỉ ô đang trang bị có hiệu lực. Đồ đã mua trước đây giữ nguyên quyền sở hữu và được nhận công dụng mới. Gợi ý không tính là tự nhớ đúng.",
+        "Xem thử trước khi mua. Mỗi loại dùng một món đang trang bị; mua một lần, dùng mãi mãi. Chỉ cần đủ xu.",
       ),
     );
+    const selected =
+      M.catalog.find((i) => i.id === previewGear && i.slot === filter) ||
+      M.catalog.find((i) => i.id === s.equipment[filter]);
+    const showcase = node("section", "g-gear-showcase");
+    showcase.setAttribute("aria-label", "Xem trước trang bị");
+    const stage = node("div", "g-gear-showcase-stage");
+    stage.innerHTML = itemArt(selected);
+    const details = node("div", "g-gear-showcase-info");
+    details.append(
+      node("p", "eyebrow", "XEM TRƯỚC / " + labels[filter].toUpperCase()),
+      Object.assign(node("h3", "", selected.name), {
+        id: "g-gear-preview-title",
+        tabIndex: -1,
+      }),
+      node("strong", "g-gear-effect", GuardianGearArt.effect(selected)),
+      node("p", "g-muted", selected.description),
+      node(
+        "small",
+        "g-gear-ownership",
+        s.equipment[filter] === selected.id
+          ? "Đang trang bị trong chuyến bay"
+          : s.owned.includes(selected.id)
+            ? "Đã sở hữu · có thể trang bị bên dưới"
+            : `${number(selected.price)} xu · xem thử miễn phí`,
+      ),
+    );
+    showcase.append(stage, details);
+    body.append(showcase);
     const grid = node("div", "g-shop-grid");
     for (const item of M.catalog.filter((i) => i.slot === filter)) {
       const card = node("article", "g-shop-card"),
         art = node("div", "g-item-preview");
       art.innerHTML = itemArt(item);
+      card.dataset.gear = item.id;
+      card.dataset.tier = GuardianGearArt.tier(item);
+      card.style.setProperty("--gear-accent", item.color || "#9dd8d9");
       const owned = s.owned.includes(item.id),
         active = s.equipment[item.slot] === item.id,
         unlocked = M.unlocked(s, item);
+      card.classList.toggle("is-equipped", active);
+      const badge = node(
+        "span",
+        "g-gear-badge",
+        active
+          ? "ĐANG DÙNG"
+          : `BẬC ${["I", "II", "III", "IV"][GuardianGearArt.tier(item) - 1]}`,
+      );
+      art.append(badge);
       card.append(
         art,
         node("p", "eyebrow", owned ? "ĐÃ SỞ HỮU" : `${number(item.price)} XU`),
         node("h3", "", item.name),
+        node("strong", "g-gear-effect", GuardianGearArt.effect(item)),
         node("p", "g-muted", item.description),
         node(
           "small",
@@ -671,13 +685,28 @@
       b.onclick = () => {
         const result = M.buy(state(), item.id);
         if (result.ok) {
+          previewGear = item.id;
           options.save();
           renderHome();
           renderDialog();
         }
         notify(result.message);
       };
-      card.append(b);
+      const preview = node("button", "g-gear-preview-button", "Xem thử");
+      preview.dataset.preview = item.id;
+      preview.setAttribute("aria-label", `Xem thử ${item.name}`);
+      preview.setAttribute("aria-pressed", String(selected.id === item.id));
+      preview.onclick = () => {
+        previewGear = item.id;
+        renderDialog();
+        $("g-gear-preview-title").focus({ preventScroll: true });
+        $("g-gear-preview-title")
+          .closest(".g-gear-showcase")
+          .scrollIntoView({ block: "nearest" });
+      };
+      const actions = node("div", "g-gear-card-actions");
+      actions.append(preview, b);
+      card.append(actions);
       grid.append(card);
     }
     body.append(grid);

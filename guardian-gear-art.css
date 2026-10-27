@@ -1,0 +1,402 @@
+/* Equipment hangar: shared vector illustrations in shop and real flight. */
+.g-gear-showcase {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0;
+  border: 1px solid #9bb4ce3b;
+  border-radius: 20px;
+  background: #0e2031;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.g-gear-showcase-stage {
+  min-width: 0;
+  height: 245px;
+}
+.g-gear-showcase-info {
+  padding: 25px 26px;
+  align-self: center;
+}
+.g-gear-showcase-info .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #9ebbc9;
+  margin: 0 0 9px;
+}
+.g-gear-showcase-info h3 {
+  margin: 0 0 12px;
+  font-size: 26px;
+  letter-spacing: -0.7px;
+  line-height: 1.2;
+}
+.g-gear-showcase-info p.g-muted {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 10px 0 13px;
+}
+.g-gear-ownership {
+  color: #c9d9d4;
+  font-size: 11px;
+}
+.g-gear-effect {
+  display: block;
+  color: #c1e4d0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.g-gear-showcase-info .g-gear-effect {
+  font-size: 18px;
+  color: #d5eecd;
+}
+.g-shop-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.g-shop-card {
+  padding: 0 20px 20px;
+  background: linear-gradient(145deg, #1a2d40, #122333);
+  border-color: #adc0d02b;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.g-shop-card.is-equipped {
+  border-color: #a7dec77a;
+  box-shadow: 0 0 0 1px #a7dec710;
+}
+.g-shop-card .g-item-preview {
+  height: 175px;
+  padding: 0;
+  margin: 0 -20px 0;
+  position: relative;
+  background: #0c1829;
+}
+.g-shop-card .g-item-preview:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 -20px 22px -20px #bedee544;
+  pointer-events: none;
+}
+.g-shop-card h3 {
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+.g-shop-card .eyebrow {
+  font-size: 10px;
+  color: #c6dddf;
+  margin: 17px 0 7px;
+}
+.g-shop-card > .g-muted {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 10px 0;
+  color: #adc3cd;
+}
+.g-shop-card .g-requirement {
+  font-size: 10px;
+  color: #8fa8b9;
+}
+.g-gear-badge {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  border: 1px solid #c2d0e239;
+  background: #0c1b2be0;
+  border-radius: 6px;
+  padding: 4px 7px;
+  color: #c4d5e2;
+  font-size: 8px;
+  letter-spacing: 1px;
+  z-index: 3;
+}
+.is-equipped .g-gear-badge {
+  color: #c4e9d0;
+  border-color: #b5d8c558;
+}
+.g-gear-card-actions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+.g-gear-card-actions button {
+  margin: 0;
+  padding: 9px 12px;
+  font-size: 12px;
+  min-width: 0;
+}
+.g-gear-preview-button {
+  color: #b9d0df;
+  background: #101e2c;
+  border-color: #99b9cc42;
+}
+.g-gear-preview-button[aria-pressed="true"] {
+  border-color: #adcfc875;
+  color: #dbefe0;
+}
+.gear-preview-scene {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  overflow: hidden;
+  background: url("assets/scenes/gear-midnight.svg") center/cover #091323;
+}
+.gear-preview-scene[data-sky="ocean"] {
+  background-image: url("assets/scenes/gear-ocean.svg");
+}
+.gear-preview-scene[data-sky="aurora"] {
+  background-image: url("assets/scenes/gear-aurora.svg");
+}
+.gear-preview-scene[data-sky="solar"] {
+  background-image: url("assets/scenes/gear-solar.svg");
+}
+.gear-preview-scene:before {
+  content: "";
+  position: absolute;
+  inset: 15% 12%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--gear-accent) 20%, transparent),
+    transparent 65%
+  );
+}
+.gear-preview-scene .gear-art {
+  position: relative;
+  width: 170px;
+  height: 135px;
+  z-index: 2;
+  filter: drop-shadow(0 10px 9px #02071299);
+  animation: gear-hover 5s ease-in-out infinite;
+}
+.gear-art svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gear-art .gear-exhaust {
+  transform-origin: 50% 70%;
+  animation: gear-engine 0.6s ease-in-out infinite alternate;
+}
+.g-gear-showcase-stage .gear-art {
+  width: 235px;
+  height: 185px;
+}
+.gear-sky-orbit {
+  display: block;
+  width: 155px;
+  height: 58px;
+  border: 1px solid #c2e7f026;
+  border-radius: 50%;
+  transform: rotate(-22deg);
+  box-shadow: 0 0 45px #c2e7f011;
+  position: absolute;
+  left: 7%;
+  bottom: 18%;
+}
+.gear-sky-orbit:after {
+  content: "";
+  position: absolute;
+  left: 20%;
+  bottom: 6%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d6eddf;
+  box-shadow: 0 0 12px #b4e7ff;
+}
+.gear-scanline {
+  position: absolute;
+  bottom: 18px;
+  height: 1px;
+  width: 70%;
+  background: linear-gradient(90deg, transparent, #d5edf02b, transparent);
+}
+@keyframes gear-hover {
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes gear-engine {
+  to {
+    transform: scaleY(0.7);
+    opacity: 0.65;
+  }
+}
+/* Sparse meteors cross behind the words, never intercepting keyboard or pointer input. */
+.gear-weather {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  --weather-color: #c0daf9;
+}
+.gear-meteor {
+  position: absolute;
+  left: 0;
+  top: 5%;
+  width: 100px;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--weather-color));
+  border-radius: 100%;
+  animation: gear-meteor-pass 14s linear infinite;
+  animation-delay: 1s;
+}
+.gear-meteor:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -1px;
+  width: 3px;
+  height: 3px;
+  background: #effbff;
+  border-radius: 50%;
+  box-shadow: 0 0 7px var(--weather-color);
+}
+.gear-meteor:nth-child(2) {
+  left: 26%;
+  top: -3%;
+  width: 65px;
+  animation-duration: 19s;
+  animation-delay: 6s;
+}
+.gear-meteor:nth-child(3) {
+  left: -7%;
+  top: 36%;
+  width: 80px;
+  animation-duration: 24s;
+  animation-delay: 11s;
+}
+.gear-nebula {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(ellipse at 70% 30%, #87a2d70d, transparent 55%);
+  opacity: 0.4;
+  animation: gear-nebula-breathe 22s ease-in-out infinite alternate;
+}
+@keyframes gear-meteor-pass {
+  0% {
+    opacity: 0;
+    transform: translate3d(-120px, -60px, 0) rotate(29deg);
+  }
+  2% {
+    opacity: 0.65;
+  }
+  12%,
+  100% {
+    opacity: 0;
+    transform: translate3d(900px, 500px, 0) rotate(29deg);
+  }
+}
+@keyframes gear-nebula-breathe {
+  to {
+    opacity: 0.85;
+    transform: translate3d(-3%, 2%, 0);
+  }
+}
+#arena[data-sky="midnight"] {
+  background-image: url("assets/scenes/gear-midnight.svg");
+}
+#arena[data-sky="ocean"] {
+  background-image: url("assets/scenes/gear-ocean.svg");
+}
+#arena[data-sky="aurora"] {
+  background-image: url("assets/scenes/gear-aurora.svg");
+}
+#arena[data-sky="solar"] {
+  background-image: url("assets/scenes/gear-solar.svg");
+}
+[data-sky="ocean"] > .gear-weather {
+  --weather-color: #91e4ed;
+}
+[data-sky="aurora"] > .gear-weather {
+  --weather-color: #b1f6ce;
+}
+[data-sky="solar"] > .gear-weather {
+  --weather-color: #ffce9e;
+}
+[data-sky="aurora"] > .gear-weather .gear-nebula {
+  background: linear-gradient(
+    125deg,
+    transparent 30%,
+    #8bf3c412 40%,
+    #b49ce30f 50%,
+    transparent 65%
+  );
+}
+[data-sky="solar"] > .gear-weather .gear-nebula {
+  background: radial-gradient(ellipse at 85% 20%, #e7ae7e18, transparent 50%);
+}
+#arena #laser {
+  left: calc(50% - 11px);
+  width: 22px;
+  background: none;
+  box-shadow: none;
+}
+#laser svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#guardian-ship .gear-art,
+#enemy-art .gear-art {
+  width: 100%;
+  height: 100%;
+}
+#enemy-art .gear-art {
+  filter: drop-shadow(0 2px 4px #020b1c80);
+}
+#arena:has(#pause-overlay:not([hidden])) .gear-weather *,
+#arena:has(#pause-overlay:not([hidden])) .gear-exhaust,
+#arena:has(#pause-overlay:not([hidden])) .gear-art {
+  animation-play-state: paused;
+}
+@media (max-width: 720px) {
+  .g-gear-showcase {
+    grid-template-columns: 1fr;
+  }
+  .g-gear-showcase-stage {
+    height: 195px;
+  }
+  .g-gear-showcase-info {
+    padding: 19px 20px;
+  }
+  .g-gear-showcase-info h3 {
+    font-size: 22px;
+  }
+  .g-gear-showcase-info .g-gear-effect {
+    font-size: 16px;
+  }
+  .g-gear-showcase-stage .gear-art {
+    width: 195px;
+    height: 155px;
+  }
+  .g-shop-grid {
+    grid-template-columns: 1fr;
+  }
+  .g-item-preview .gear-art {
+    width: 170px;
+  }
+  .g-gear-card-actions button {
+    padding: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gear-preview-scene .gear-art,
+  .gear-exhaust,
+  .gear-nebula {
+    animation: none !important;
+  }
+  .gear-meteor {
+    display: none;
+    animation: none;
+  }
+}
+#arena .ship {
+  left: 50%;
+  transform: translateX(-50%);
+}

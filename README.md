@@ -138,3 +138,12 @@ BASE_URL=http://127.0.0.1:8008 python3 tests/vocabulary_flight_browser.py
 
 
 The arcade clock is a local SVG seven-segment MM:SS display inside the upper-right of the arena. Standard speed starts stage-zero words of up to 12 characters at 40 seconds with the default sky: 35 base + 5 sky. Sky tiers add 5/10/15/20 seconds, so their standard starting totals are 40/45/50/55 seconds. Slow/fast base times are 45/25 seconds; familiar memories and clean streaks retain a small capped adjustment, and long phrases add at most 6 seconds. Shift+Tab in the answer input opens relearning; Tab consumes one available ship hint, with native focus navigation otherwise. No function keys are required.
+
+
+## Equipment hangar art
+
+All sixteen non-pet catalog entries now have detailed original vector presentation: four distinct hulls, cratered meteor / luminous jelly / two different saucers, four energy-beam designs, and four illustrated sky scenes. Shop cards show their functional effect and equipped status; a free keyboard-accessible preview panel does not spend coins or change equipment. Purchasing/equipping applies the same ship/target/beam and sky artwork in the real arena. Existing IDs, prices, effects, saves and all pet artwork remain intact.
+
+`guardian-gear-art.js` draws the shared equipment and previews, `guardian-gear-art.css` styles the hangar and sparse meteor/nebula effects, and `assets/scenes/gear-*.svg` supplies the four small local sky illustrations. SVG gradient IDs are unique across cards and arena. Meteor/engine motion pauses with the game, and reduced motion hides meteors and stops decorative animations. Beams now align with the ship center.
+
+Check: `BASE_URL=http://127.0.0.1:8008 python3 tests/guardian_gear_art_browser.py` covers sixteen previews without state changes, SVG isolation, real purchases and equipped assets, beam alignment, meteor visibility/pause, mobile/reduced motion and the egg collection.

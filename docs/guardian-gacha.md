@@ -48,3 +48,7 @@ Collection expansion: 30 species (10 Normal, 5 in each other tier), 60 forms. Th
 ## Expansion 2: five Rare families
 
 Koi, bat, chameleon, seal and peacock add ten standalone real-alpha PNGs in `assets/pets/rare/`. Stage II deliberately changes expression, dominant palette and anatomy while retaining identity motifs. Egg prices 3000/3400/3800/4200/4600 coins, incubation 60 clean words, evolution level 8, duplicate 100 species XP. All appear in Rare gacha; the tier remains 30% split evenly across ten species (3% each). No day gate or save reset. Total 35 species / 70 forms, with ten Normal, ten Rare, five each Epic/Legend/Rainbow. Earlier batch counts are retained as historical records.
+
+## Expansion 3: five Epic families
+
+Beetle, lynx, octopus, scorpion and crane add ten real-alpha individual sprites. Gacha-only Epic eggs, 100 clean-word incubation, two forms with level-8 evolution, 240 duplicate species XP. Epic remains 12%, now 1.2% per species across ten. Total 40 species / 80 forms. No save reset or day gate.

@@ -46,3 +46,11 @@ Penguin, hedgehog, raccoon, otter and seahorse add five individually generated t
 ## Expansion 2: five Rare families
 
 Koi, bat, chameleon, seal and peacock add ten standalone real-alpha PNGs in `assets/pets/rare/`. Stage II deliberately changes expression, dominant palette and anatomy while retaining identity motifs. Egg prices 3000/3400/3800/4200/4600 coins, incubation 60 clean words, evolution level 8, duplicate 100 species XP. All appear in Rare gacha; the tier remains 30% split evenly across ten species (3% each). No day gate or save reset. Total 35 species / 70 forms, with ten Normal, ten Rare, five each Epic/Legend/Rainbow. Earlier batch counts are retained as historical records.
+
+## Expansion 3: five Epic families
+
+Beetle, lynx, octopus, scorpion and crane add ten real-alpha individual sprites. Gacha-only Epic eggs, 100 clean-word incubation, two forms with level-8 evolution, 240 duplicate species XP. Epic remains 12%, now 1.2% per species across ten. Total 40 species / 80 forms. No save reset or day gate.
+
+## Rarity art direction (owner preference)
+
+For new and revised designs: keep Normal to about two dominant material colors, compact uncomplicated anatomy and minimal markings. Rare can add a third material color and one distinctive structural feature. Epic uses around three coherent material colors and stronger silhouettes/evolution anatomy. Reserve elaborate crowns, luminous armor, layered effects and richer color for Legend; reserve prismatic/rainbow effects primarily for Rainbow. Keep line clarity and resolution high at every rarity: simplicity is a design choice, not blur or quality degradation. Existing artwork is retained unless specifically revised; the new Epic expansion follows this direction rather than retroactively claiming all earlier sprites were redrawn. Persist this owner preference for future batches.

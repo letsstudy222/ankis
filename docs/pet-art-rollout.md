@@ -58,3 +58,7 @@ For new and revised designs: keep Normal to about two dominant material colors, 
 ## Expansion 4: five Legend families
 
 Tiger, genbu, swan, elephant and dragon-horse add fifteen standalone real-alpha sprites. Gacha-only Legend eggs, 160 clean-word incubation, three forms at levels 8/16, 600 duplicate species XP. Legend remains 2.5%, now 0.25% each across ten species. Total 45 species / 95 forms. Each evolved stage changes expression, dominant palette and anatomy; mature Legend uses richer gold/armor/feather detailing than Epic but no rainbow effects. Original companion IDs, egg progress and saved study data are preserved. Earlier batch counts remain historical.
+
+## Expansion 5: five Rainbow families
+
+Aurora red panda, leviathan sea dragon, sphinx, moon rabbit and butterfly dragon add fifteen real-alpha sprites with three distinct stages. Gacha-only Rainbow eggs, 240 clean-word incubation, evolutions at levels 8/16, 1600 duplicate species XP. Rainbow remains 0.5% base, soft pity from draw 41 and guaranteed at 50; the unseen-species pool now has ten species including original ownership and unhatched eggs. Maximum 500 draws for all ten from zero, or 250 additional for five missing species when the original five are owned. No pity, tickets, egg progress, XP or learning data reset. Total 50 species / 110 forms, ten in each rarity. Any earlier five-Rainbow/250-draw or smaller collection counts describe historical rosters; this section is the current expansion rule.

@@ -49,8 +49,8 @@ with sync_playwright() as p:
  page.locator('#g-summon').click()
  assert 'Trùng loài → +40 XP' in page.locator('.g-summon-result').inner_text()
  page.locator('#g-ack').click();page.locator('[data-tab="pet"]').click()
- page.get_by_role('button',name='Tất cả',exact=True).click();assert page.locator('.g-small-card').count()==45
- page.get_by_role('button',name='Rainbow',exact=True).click();assert page.locator('.g-small-card').count()==5
+ page.get_by_role('button',name='Tất cả',exact=True).click();assert page.locator('.g-small-card').count()==50
+ page.get_by_role('button',name='Rainbow',exact=True).click();assert page.locator('.g-small-card').count()==10
  page.locator('.g-small-card').first.scroll_into_view_if_needed();page.screenshot(animations='disabled',path='/tmp/nursery-rainbow-collection.png')
  page.locator('#g-close').click();page.locator('#home > details summary').click()
  with page.expect_download() as d:page.locator('#export').click()
@@ -74,4 +74,4 @@ with sync_playwright() as p:
  page.keyboard.press('Escape');assert not page.locator('#guardian-dialog').is_visible()
  assert not errors,errors
  b.close()
-print('PASS: zero-day coin-only purchase, egg purchase/switch/hatch, continuous combo x4, ticket odds HUD, hard-pity Rainbow UI, duplicate species XP, 45/5 collection filters, immutable saved draw result, JSON roundtrip, all mobile tabs and keyboard modal.')
+print('PASS: zero-day coin-only purchase, egg purchase/switch/hatch, continuous combo x4, ticket odds HUD, hard-pity Rainbow UI, duplicate species XP, 50/10 collection filters, immutable saved draw result, JSON roundtrip, all mobile tabs and keyboard modal.')

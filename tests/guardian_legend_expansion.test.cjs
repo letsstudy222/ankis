@@ -57,8 +57,8 @@ for (const [i, id] of ids.entries()) {
   assert(!s.nursery.eggs.includes(id));
   assert(M.valid(JSON.parse(JSON.stringify(s)), ["recall"]));
 }
-assert.equal(M.pets.length, 45);
-assert.equal(GuardianArt.progress().forms, 95);
+assert.equal(M.pets.length, 50);
+assert.equal(GuardianArt.progress().forms, 110);
 console.log(
   "PASS: five new Legend families, disclosed gacha pool and unchanged rate, gacha-only eggs, 160-word hatch, three forms at levels 8/16, 600 duplicate XP, save compatibility.",
 );

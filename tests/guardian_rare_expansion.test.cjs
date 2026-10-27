@@ -60,8 +60,8 @@ for (const [i, id] of ids.entries()) {
   assert.equal(draw.rarity, "rare");
   assert.equal(N.rates(g).rare, 30);
 }
-assert.equal(M.pets.length, 45);
-assert.equal(GuardianArt.progress().forms, 95);
+assert.equal(M.pets.length, 50);
+assert.equal(GuardianArt.progress().forms, 110);
 console.log(
   "PASS: five new Rare families, exact coin prices, 60-word hatch, two forms at level 8, 100 duplicate XP, reachable gacha pool with unchanged tier rate, save compatibility.",
 );

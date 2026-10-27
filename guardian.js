@@ -564,7 +564,7 @@
       node(
         "p",
         "g-muted",
-        "Từ lượt 41 chưa ra Rainbow: tăng thêm 0,5 điểm % mỗi lượt; phần tăng lấy từ Normal. Lượt 50 bảo đảm Rainbow. Ra Rainbow thì bộ đếm về 0. Trong Rainbow ưu tiên loài chưa sở hữu cho đến khi đủ 5 loài; các loài còn lại cùng hạng có cơ hội bằng nhau.",
+        `Từ lượt 41 chưa ra Rainbow: tăng thêm 0,5 điểm % mỗi lượt; phần tăng lấy từ Normal. Lượt 50 bảo đảm Rainbow. Ra Rainbow thì bộ đếm về 0. Trong Rainbow ưu tiên loài chưa sở hữu cho đến khi đủ ${M.pets.filter((p) => p.rarity === "rainbow").length} loài; các loài còn lại cùng hạng có cơ hội bằng nhau.`,
       ),
     );
     const details = node("details"),

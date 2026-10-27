@@ -21,12 +21,9 @@ const earn = (s, i, extra = {}) =>
     random: () => 0.99,
     ...extra,
   });
-assert.equal(M.pets.length, 45);
+assert.equal(M.pets.length, 50);
 for (const rarity of Object.keys(N.tiers))
-  assert.equal(
-    M.pets.filter((p) => p.rarity === rarity).length,
-    ["normal", "rare", "epic", "legend"].includes(rarity) ? 10 : 5,
-  );
+  assert.equal(M.pets.filter((p) => p.rarity === rarity).length, 10);
 let s = state();
 assert(M.valid(s, words));
 assert.equal(s.nursery.tickets, 10);
@@ -102,10 +99,10 @@ assert.equal(s.nursery.tickets, 19);
 const dailyTickets = s.nursery.tickets;
 earn(s, 16);
 assert.equal(s.nursery.tickets, dailyTickets);
-// Hard pity at 50, soft pity starts at 41; all five rainbow species get collected.
+// Hard pity at 50, soft pity starts at 41; all ten rainbow species get collected.
 s = state();
-s.nursery.tickets = 2500;
-for (let i = 1; i <= 250; i++) {
+s.nursery.tickets = 5000;
+for (let i = 1; i <= 500; i++) {
   const result = N.summon(s, () => 0);
   assert(result.ok);
   if (i % 50 === 0) {
@@ -119,10 +116,10 @@ for (let i = 1; i <= 250; i++) {
 assert.equal(s.nursery.tickets, 0);
 assert.equal(
   M.pets.filter((p) => p.rarity === "rainbow" && s.nursery.pets[p.id]).length,
-  5,
+  10,
 );
 assert(!N.summon(s, () => 0).ok);
-assert.equal(s.nursery.pulls, 250);
+assert.equal(s.nursery.pulls, 500);
 assert.equal(s.nursery.history.length, 50);
 assert(M.valid(s, words));
 // Early rainbow resets pity immediately; rates sum exactly to 100 at every step.
@@ -181,7 +178,7 @@ const corrupt = structuredClone(old);
 corrupt.nursery.pets.fox.incubation = -1;
 assert(!M.valid(corrupt, words));
 console.log(
-  "PASS: coin-only shop, 45 species, incubation pause/resume/hatching, species duplicate XP, combo tickets/caps/missions, hard+soft pity, five-rainbow collection, rate sums, Monte Carlo, migration and backup validation.",
+  "PASS: coin-only shop, 50 species, incubation pause/resume/hatching, species duplicate XP, combo tickets/caps/missions, hard+soft pity, ten-rainbow collection, rate sums, Monte Carlo, migration and backup validation.",
 );
 
 const individual = GuardianModel.create();
@@ -252,7 +249,7 @@ for (const pet of M.pets) {
     assert.equal(formsState.nursery.pets[pet.id].xp, xp);
   }
 }
-assert.equal(totalForms, 95);
+assert.equal(totalForms, 110);
 console.log(
-  "PASS: all 45 species follow 1/2/3 forms by rarity, 95 total forms, exact thresholds, final-form cap and existing XP preserved.",
+  "PASS: all 50 species follow 1/2/3 forms by rarity, 110 total forms, exact thresholds, final-form cap and existing XP preserved.",
 );

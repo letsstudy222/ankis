@@ -18,11 +18,11 @@ with sync_playwright() as p:
  page.evaluate("""() => {let s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=7777;s.guardian.nursery.tickets=31;s.guardian.nursery.ticketMisses=7;s.guardian.nursery.pity=12;s.guardian.nursery.pulls=12;for(const pet of GuardianModel.pets){GuardianNursery.receive(s.guardian,pet.id);s.guardian.nursery.pets[pet.id].hatched=true;s.guardian.nursery.pets[pet.id].xp=GuardianModel.threshold(35);}s.guardian.nursery.eggs=[];s.guardian.nursery.incubator=null;s.records.recall={learned:true,stage:1,attempts:1,due:Date.now()+86400000};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
  page.reload()
  snapshot=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
- assert page.evaluate('GuardianArt.progress().forms')==95
- assert page.evaluate('GuardianArt.progress().totalForms')==95
+ assert page.evaluate('GuardianArt.progress().forms')==110
+ assert page.evaluate('GuardianArt.progress().totalForms')==110
  assert page.locator('#g-home-art [data-pet-art="painted"]').get_attribute('data-species')=='fox'
  page.locator('#g-open').click()
- assert '45/45 loài · 95/95 hình thái' in page.locator('.g-art-progress').inner_text()
+ assert '50/50 loài · 110/110 hình thái' in page.locator('.g-art-progress').inner_text()
  page.get_by_role('button',name='Normal',exact=True).click()
  assert page.locator('.g-small-card').count()==10
  assert page.locator('.g-small-card [data-pet-art="painted"]').count()==10
@@ -53,10 +53,10 @@ with sync_playwright() as p:
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  page.locator('.card').first.scroll_into_view_if_needed();page.screenshot(path='/tmp/art-normal-gallery-mobile.png',animations='disabled')
  page.goto(BASE+'/vocabulary.html');page.locator('#g-open').click();page.get_by_role('button',name='Rainbow',exact=True).click()
- assert page.locator('.g-small-card [data-pet-art="painted"]').count()==5
+ assert page.locator('.g-small-card [data-pet-art="painted"]').count()==10
  assert 'Hình minh họa cũ' not in page.locator('.g-art-progress').inner_text()
  assert 'Toàn bộ linh thú đã có ảnh mẫu A' in page.locator('.g-art-progress').inner_text()
  assert not errors,errors
  assert not failed,failed
  b.close()
-print('PASS: five real-alpha high-resolution sprites, correct SVG image loading in home/collection/arena, 95-form coverage, rarity caps, mobile gallery, complete collection labels, and all currency/XP/ticket/learning data preserved.')
+print('PASS: five real-alpha high-resolution sprites, correct SVG image loading in home/collection/arena, 110-form coverage, rarity caps, mobile gallery, complete collection labels, and all currency/XP/ticket/learning data preserved.')

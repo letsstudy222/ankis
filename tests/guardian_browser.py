@@ -42,9 +42,9 @@ with sync_playwright() as p:
  page.reload();page.screenshot(path='/tmp/guardian-home-desktop.png',full_page=True)
  page.locator('#g-open').click();page.locator('#g-pet-name').fill('Mây Nhỏ');page.get_by_role('button',name='Lưu tên',exact=True).click()
  page.locator('.g-small-card').filter(has_text='Kỳ Nhông Ngân Hà').get_by_role('button').click()
- page.locator('[data-tab="shop"]').click();coins_before=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.coins")
+ page.evaluate("() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=60000;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}");page.reload();page.locator('#g-open').click();page.locator('[data-tab="shop"]').click();coins_before=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.coins")
  page.locator('[data-item="ship-manta"]').click();coins_after=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.coins")
- assert coins_before-coins_after==750
+ assert coins_before-coins_after==12000
  assert page.locator('[data-item="ship-manta"]').inner_text()=='Đang trang bị'
  page.locator('[data-item="ship-scout"]').click();page.locator('[data-item="ship-manta"]').click()
  assert page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1')).guardian.coins")==coins_after

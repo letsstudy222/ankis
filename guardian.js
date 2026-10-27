@@ -15,6 +15,7 @@
     const root = options.getStore();
     if (!root.guardian) root.guardian = M.create();
     N.ensure(root.guardian);
+    globalThis.GuardianEquipment?.ensure(root.guardian);
     return root.guardian;
   };
   const node = (tag, cls, text) => {
@@ -630,7 +631,7 @@
       node(
         "p",
         "g-muted",
-        "Mua một lần, dùng mãi mãi. Đồ trang trí thay đổi thật trong trận; không thay đáp án, tốc độ hay lịch ôn.",
+        "Mua một lần, dùng mãi mãi. Mỗi ô trang bị có một công dụng, chỉ ô đang trang bị có hiệu lực. Đồ đã mua trước đây giữ nguyên quyền sở hữu và được nhận công dụng mới. Gợi ý không tính là tự nhớ đúng.",
       ),
     );
     const grid = node("div", "g-shop-grid");
@@ -853,6 +854,17 @@
     $("g-run-wallet").textContent =
       `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     $("g-run-level").textContent = `Cấp ${M.petLevel(s)}`;
+    const gear = GuardianEquipment.ensure(s),
+      power = GuardianEquipment.effects(s);
+    $("g-ship-hint").hidden = false;
+    $("g-ship-hint").disabled = !gear.hintCharge;
+    $("g-ship-hint").textContent = gear.hintCharge
+      ? "Mở 1 chữ · 1/1 lượt · Tab"
+      : "Nạp gợi ý tàu · " +
+        gear.hintProgress +
+        "/" +
+        power.hintEvery +
+        " từ đúng";
   }
   function mistake() {
     if (!run) return;
@@ -887,6 +899,7 @@
     void $("guardian-reward").offsetWidth;
     $("guardian-reward").classList.add("g-pop");
     applyArena();
+    globalThis.PetRoaming?.render(state());
     if (gain.notices.some((t) => t.startsWith("Trứng đã nở")))
       toast(gain.notices.find((t) => t.startsWith("Trứng đã nở")));
     else if (gain.notices.some((t) => t.startsWith("Tiến hóa")))
@@ -926,6 +939,7 @@
     $("result-copy").after(summary);
     run = null;
     $("guardian-hud").hidden = true;
+    $("g-ship-hint").hidden = true;
   }
   function clear() {
     document.body.classList.remove("g-playing");
@@ -933,6 +947,7 @@
     $("g-toast").hidden = true;
     run = null;
     $("guardian-hud").hidden = true;
+    $("g-ship-hint").hidden = true;
     document.querySelectorAll(".g-run-summary").forEach((el) => el.remove());
   }
   function mount(config) {
@@ -960,7 +975,15 @@
       };
     renderHome();
   }
+  function useHint() {
+    if (!run || !GuardianEquipment.useHint(state())) return false;
+    options.save();
+    renderHUD();
+    return true;
+  }
   globalThis.Guardian = {
+    useHint,
+    timeBonus: () => GuardianEquipment.effects(state()).timeBonus || 0,
     mount,
     renderHome,
     start,

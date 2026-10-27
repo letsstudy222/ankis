@@ -356,7 +356,8 @@
       Guardian.question();
       session.duration =
         { slow: 55000, normal: 38000, fast: 24000 }[$("speed").value] +
-        w.word.length * 1100;
+        w.word.length * 1100 +
+        Guardian.timeBonus() * 1000;
       frame = requestAnimationFrame(tick);
     }
   }
@@ -505,6 +506,20 @@
       if (normalized(value) === target) resolve();
     }
   };
+  function useShipHint() {
+    if (
+      !session ||
+      session.mode !== "game" ||
+      session.paused ||
+      session.resolved ||
+      !Guardian.useHint()
+    )
+      return;
+    $("hint").onclick();
+    if (normalized($("answer").value) === current().word.toLowerCase())
+      resolve();
+  }
+  $("g-ship-hint").onclick = useShipHint;
   $("hint").onclick = () => {
     session.helped = true;
     const w = current().word;
@@ -619,10 +634,22 @@
       else if (e.key === "Enter" && !$("learning-next").hidden)
         action = () => activate("learning-next");
     } else if (session) {
-      if (e.key === "Escape") action = () => activate("quit");
+      if (
+        e.key === "Tab" &&
+        !e.shiftKey &&
+        !e.altKey &&
+        e.target === $("answer") &&
+        session.mode === "game" &&
+        !session.paused &&
+        !session.resolved &&
+        GuardianEquipment.ensure(store.guardian).hintCharge
+      )
+        action = useShipHint;
+      else if (e.key === "Escape") action = () => activate("quit");
       else if (shortcut === "Alt+4" && session.mode === "game")
         action = () => activate("pause");
-      else if (shortcut === "Alt+1") action = () => activate("hint");
+      else if (shortcut === "Alt+1")
+        action = session.mode === "game" ? useShipHint : () => activate("hint");
       else if (shortcut === "Alt+2") action = () => activate("reveal");
       else if (e.key === "Enter" && session.resolved)
         action = () => activate("next");

@@ -107,4 +107,19 @@ Expansion 6 follows the owner’s preference to grow common rosters only: five s
 
 Natural Normal refresh: all fifteen Normal companions are ordinary animals. Ten earlier fantasy sprites are replaced at `assets/pets/normal/natural-v2/`; five recent natural animals stay as-is. Stable IDs, costs and saved XP remain intact; `sprout` becomes a brown squirrel. Shared `pet-art-tone.css` reduces displayed saturation for Rare/Epic/Legend/Rainbow at 0.68/0.80/0.88/0.92 respectively while preserving their source art and evolution. The gallery and full-size `pet-portrait.html` use the same presentation. No collection or reward-rule expansion.
 
-The home page has a bounded companion yard (`pet-roaming.js/css`). Hatched selected pets wander, respond to petting/calling/floor clicks and keyboard arrows; focus/hover freezes them for interaction. A pause button, reduced-motion preference, offscreen/tab/home/modal checks limit motion. It never awards currency/XP or modifies saved learning/collection state.
+The selected hatched companion now moves across a fixed background layer throughout learning and arcade, with a gait animation and direction changes. A compact companion dock provides petting, recall and pause. The old bounded yard is removed. The background is behind the learning UI and never intercepts the answer input; reduced-motion and tab visibility pause animation. Pet interaction does not award XP/currency.
+
+## Equipment support
+
+`guardian-equipment.js` decorates the existing model after nursery initialization. Owned items remain owned at no additional cost; only new purchases use revised prices. One active item per slot grants its effect. No day/level gates.
+
+| Slot | Four prices in coins | Effect by tier |
+| --- | --- | --- |
+| Ship | 0 / 2,400 / 12,000 / 48,000 | One hint charge after 18 / 12 / 8 / 5 clean words |
+| Flying target | 0 / 4,000 / 16,000 / 45,000 | +0 / 1 / 2 / 3 percentage points to word-ticket chance, capped at 100% |
+| Sky | 0 / 2,000 / 9,000 / 30,000 | +0 / 2 / 4 / 7 seconds per arcade word |
+| Laser trail | 0 / 3,000 / 16,000 / 55,000 | +0 / 1 / 2 / 3 coins on a word's first clean completion per local day |
+
+Hint storage caps at one; no progress is banked while full. Use Tab only from the active unpaused arcade answer input, or the visible hint button; Shift+Tab and Tab elsewhere remain native. Using a hint marks the word assisted and does not refill the meter. Free review hints remain available. Charge/progress live in optional validated `guardian.gear` fields inside existing JSON backup, with backward-compatible migration. Switching ships cannot grant free charges. Coin bonuses encourage vocabulary variety; repeated words do not receive extra trail coins. Background/pet state does not affect support rewards.
+
+Additional verification: `node tests/guardian_equipment.test.cjs`, `BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_support_browser.py`.

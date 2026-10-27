@@ -8,7 +8,7 @@ with sync_playwright() as p:
  page=b.new_page(viewport={'width':1280,'height':1000});errors=[]
  page.on('pageerror',lambda e:errors.append(e.stack))
  page.goto(BASE+'/vocabulary.html')
- page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=6000;for(const w of VOCABULARY.slice(0,40))s.records[w.word]={stage:0,attempts:0,due:0,learned:true};s.guardian.nursery.tickets=20;s.guardian.nursery.pity=49;s.guardian.nursery.pulls=49;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
+ page.evaluate("""() => {const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=52000;for(const w of VOCABULARY.slice(0,40))s.records[w.word]={stage:0,attempts:0,due:0,learned:true};s.guardian.nursery.tickets=20;s.guardian.nursery.pity=49;s.guardian.nursery.pulls=49;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")
  page.reload();page.locator('#g-open').click();page.locator('[data-tab="shop"]').click()
  # Buy a formerly day/level-locked item on day zero, level one.
  page.locator('[data-item="ship-phoenix"]').click()

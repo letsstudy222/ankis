@@ -1,189 +1,204 @@
 "use strict";
 (() => {
-  let yard,
-    floor,
+  let root,
     pet,
     avatar,
-    message,
+    dock,
     call,
+    pat,
     toggle,
+    message,
+    name = "",
     signature = "",
     enabled = true,
-    inView = false,
     hatched = false,
-    x = 0,
-    y = 0,
-    name = "",
-    timer;
+    x = 16,
+    y = 20,
+    tx = 16,
+    ty = 20,
+    frame = 0,
+    last = 0;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-  const canWalk = () =>
+  const allowed = () =>
     hatched &&
     enabled &&
-    inView &&
     !reduced.matches &&
     !document.hidden &&
-    !document.getElementById("home").hidden &&
     !document.getElementById("guardian-dialog").open &&
     document.activeElement !== pet &&
     !pet.matches(":hover");
-  function moveTo(nextX, nextY, instant = false) {
-    const maxX = Math.max(0, floor.clientWidth - pet.offsetWidth),
-      maxY = Math.max(0, floor.clientHeight - pet.offsetHeight);
-    const targetX = Math.max(0, Math.min(maxX, nextX)),
-      targetY = Math.max(0, Math.min(maxY, nextY));
-    avatar.style.setProperty("--pet-facing", targetX < x ? -1 : 1);
-    x = targetX;
-    y = targetY;
-    pet.style.transition = instant || reduced.matches ? "none" : "";
-    pet.style.transform = `translate(${x}px, ${y}px)`;
+  function bounds() {
+    return {
+      w: Math.max(0, innerWidth - pet.offsetWidth - 8),
+      h: Math.max(0, innerHeight - pet.offsetHeight - 12),
+    };
   }
-  function freeze() {
-    if (!hatched || !floor.offsetWidth) return;
-    const matrix = new DOMMatrixReadOnly(getComputedStyle(pet).transform);
-    moveTo(matrix.m41, matrix.m42, true);
+  function paint() {
+    const { w, h } = bounds();
+    x = Math.max(4, Math.min(w, x));
+    y = Math.max(4, Math.min(h, y));
+    pet.style.transform = `translate(${x}px,${y}px)`;
   }
-  function wander() {
-    if (canWalk())
-      moveTo(
-        Math.random() * Math.max(0, floor.clientWidth - pet.offsetWidth),
-        Math.random() * Math.max(0, floor.clientHeight - pet.offsetHeight),
-      );
+  function target() {
+    const { w, h } = bounds();
+    tx = 8 + Math.random() * Math.max(0, w - 8);
+    ty = 12 + Math.random() * Math.max(0, h - 12);
+  }
+  function tick(now) {
+    frame = 0;
+    if (!allowed()) {
+      pet.classList.remove("is-moving");
+      return;
+    }
+    const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+    last = now;
+    const dx = tx - x,
+      dy = ty - y,
+      d = Math.hypot(dx, dy),
+      step = 24 * dt;
+    if (d < 2) target();
+    else {
+      avatar.style.setProperty("--pet-facing", dx < 0 ? -1 : 1);
+      x += (dx / d) * Math.min(step, d);
+      y += (dy / d) * Math.min(step, d);
+      paint();
+    }
+    pet.classList.add("is-moving");
+    frame = requestAnimationFrame(tick);
+  }
+  function sync() {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    last = 0;
+    pet.classList.remove("is-moving");
+    root.classList.toggle("pet-study", document.getElementById("home").hidden);
+    if (allowed()) frame = requestAnimationFrame(tick);
+  }
+  function say() {
+    message.textContent = `${name} thích được bạn vuốt ve. Cùng học tiếp nhé!`;
+    avatar.classList.remove("pet-patted");
+    void avatar.offsetWidth;
+    avatar.classList.add("pet-patted");
   }
   function mount() {
-    yard = document.createElement("section");
-    yard.id = "pet-yard";
-    yard.className = "pet-yard";
-    yard.setAttribute("aria-label", "Góc đi dạo của thú cưng");
-    const heading = document.createElement("h2");
-    heading.textContent = "Một vòng đi dạo";
-    const hint = document.createElement("p");
-    hint.className = "pet-yard-hint";
-    hint.textContent =
-      "Chạm nền để dẫn đường. Tab chọn thú, Enter/Space vuốt ve; phím mũi tên để di chuyển.";
-    floor = document.createElement("div");
-    floor.id = "pet-yard-floor";
+    root = document.createElement("div");
+    root.id = "pet-background";
     pet = document.createElement("button");
-    pet.id = "pet-walker";
     pet.type = "button";
-    pet.hidden = true;
+    pet.id = "pet-walker";
     avatar = document.createElement("span");
     avatar.className = "pet-walker-avatar";
     pet.append(avatar);
-    floor.append(pet);
+    root.append(pet);
+    document.body.append(root);
+    dock = document.createElement("details");
+    dock.id = "pet-dock";
+    const summary = document.createElement("summary");
+    summary.textContent = "Bạn đồng hành";
+    dock.append(summary);
     const controls = document.createElement("div");
-    controls.className = "pet-yard-controls";
+    controls.className = "pet-dock-controls";
     call = document.createElement("button");
-    call.type = "button";
     call.id = "pet-call";
+    call.type = "button";
     call.textContent = "Gọi lại";
+    pat = document.createElement("button");
+    pat.id = "pet-pat";
+    pat.type = "button";
+    pat.textContent = "Vuốt ve";
     toggle = document.createElement("button");
-    toggle.type = "button";
     toggle.id = "pet-walk-toggle";
+    toggle.type = "button";
     toggle.textContent = "Dừng đi dạo";
     toggle.setAttribute("aria-pressed", "true");
-    controls.append(call, toggle);
+    controls.append(call, pat, toggle);
     message = document.createElement("p");
     message.id = "pet-yard-message";
     message.setAttribute("aria-live", "polite");
-    yard.append(heading, hint, floor, controls, message);
-    document.getElementById("guardian-home").after(yard);
+    dock.append(controls, message);
+    document.body.append(dock);
+    pet.onclick = say;
+    pat.onclick = say;
     call.onclick = () => {
-      moveTo(
-        (floor.clientWidth - pet.offsetWidth) / 2,
-        (floor.clientHeight - pet.offsetHeight) / 2,
-      );
-      message.textContent = `${name} chạy lại bên bạn.`;
+      tx = 16;
+      ty = Math.max(12, innerHeight - pet.offsetHeight - 30);
+      message.textContent = `${name} đang chạy lại góc màn hình.`;
+      if (reduced.matches || !enabled) {
+        x = tx;
+        y = ty;
+        paint();
+      }
+      sync();
     };
     toggle.onclick = () => {
-      freeze();
       enabled = !enabled;
-      toggle.setAttribute("aria-pressed", String(enabled));
       toggle.textContent = enabled ? "Dừng đi dạo" : "Cho thú đi dạo";
-      message.textContent = enabled
-        ? `${name} tiếp tục đi dạo.`
-        : `${name} nghỉ cạnh bạn.`;
-      if (enabled) wander();
+      toggle.setAttribute("aria-pressed", String(enabled));
+      sync();
     };
-    pet.onclick = (e) => {
-      e.stopPropagation();
-      freeze();
-      message.textContent = `${name} thích được bạn vuốt ve. Cùng học thêm một chút nhé!`;
-      avatar.classList.remove("pet-patted");
-      void avatar.offsetWidth;
-      avatar.classList.add("pet-patted");
-    };
-    pet.onfocus = freeze;
-    pet.onpointerenter = freeze;
+    pet.onfocus = sync;
+    pet.onblur = sync;
+    pet.onpointerenter = sync;
+    pet.onpointerleave = sync;
     pet.onkeydown = (e) => {
-      if (e.altKey || e.ctrlKey || e.metaKey) return;
-      const directions = {
-        ArrowLeft: [-35, 0],
-        ArrowRight: [35, 0],
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const d = {
+        ArrowLeft: [-30, 0],
+        ArrowRight: [30, 0],
         ArrowUp: [0, -25],
         ArrowDown: [0, 25],
-      };
-      const d = directions[e.key];
+      }[e.key];
       if (d) {
         e.preventDefault();
         e.stopPropagation();
-        moveTo(x + d[0], y + d[1], true);
+        x += d[0];
+        y += d[1];
+        tx = x;
+        ty = y;
+        paint();
       }
     };
-    floor.onclick = (e) => {
-      if (!hatched) return;
-      const box = floor.getBoundingClientRect();
-      moveTo(
-        e.clientX - box.left - pet.offsetWidth / 2,
-        e.clientY - box.top - pet.offsetHeight / 2,
-      );
-      message.textContent = `${name} đi theo hướng bạn chỉ.`;
-    };
-    new IntersectionObserver((entries) => {
-      inView = entries[0].isIntersecting;
-      if (!inView) freeze();
-    }).observe(yard);
-    new MutationObserver(() => {
-      if (document.getElementById("home").hidden) freeze();
-    }).observe(document.getElementById("home"), {
+    addEventListener("resize", () => {
+      paint();
+      target();
+      sync();
+    });
+    document.addEventListener("visibilitychange", sync);
+    reduced.addEventListener("change", sync);
+    new MutationObserver(sync).observe(document.getElementById("home"), {
       attributes: true,
       attributeFilter: ["hidden"],
     });
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) freeze();
-    });
-    document.getElementById("guardian-dialog").addEventListener("close", () => {
-      if (canWalk()) wander();
-    });
-    reduced.addEventListener("change", freeze);
-    new ResizeObserver(() => moveTo(x, y, true)).observe(floor);
-    timer = setInterval(wander, 3500);
-    addEventListener("pageshow", (e) => {
-      if (e.persisted) {
-        clearInterval(timer);
-        timer = setInterval(wander, 3500);
-      }
-    });
-    addEventListener("pagehide", () => clearInterval(timer));
+    new MutationObserver(sync).observe(
+      document.getElementById("guardian-dialog"),
+      { attributes: true, attributeFilter: ["open"] },
+    );
+    addEventListener("pagehide", () => cancelAnimationFrame(frame));
+    addEventListener("pageshow", sync);
   }
   function render(s) {
-    if (!yard) mount();
+    if (!root) mount();
     const p = GuardianModel.pets.find((p) => p.id === s.pet),
       stage = GuardianModel.stage(s);
     name = s.petName || p.name;
     hatched = stage.index > 0;
     pet.hidden = !hatched;
-    call.disabled = toggle.disabled = !hatched;
+    call.disabled = pat.disabled = toggle.disabled = !hatched;
     const key = `${p.id}:${stage.index}:${name}`;
     if (key !== signature) {
       signature = key;
-      pet.setAttribute("aria-label", `Vuốt ve ${name}`);
-      pet.dataset.species = p.id;
       avatar.innerHTML = GuardianArt.draw(p, stage.index, !hatched);
+      pet.dataset.species = p.id;
+      pet.setAttribute("aria-label", `Vuốt ve ${name}`);
       message.textContent = hatched
-        ? `${name} đang ở bên bạn.`
-        : "Linh thú được chọn sẽ đi dạo sau khi trứng nở. Học để ấp trứng rồi quay lại nhé!";
-      moveTo(Math.max(0, floor.clientWidth - pet.offsetWidth) / 2, 25, true);
+        ? `${name} sẽ đi quanh nền, kể cả lúc bạn học. Trên điện thoại có thể vuốt ve bằng nút ở đây.`
+        : "Chọn thú đã nở để đi dạo cùng bạn.";
+      x = 16;
+      y = Math.max(12, innerHeight - 120);
+      paint();
+      target();
     }
+    sync();
   }
   globalThis.PetRoaming = { render };
 })();

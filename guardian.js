@@ -576,7 +576,11 @@
           (x) => x.rarity === "rainbow" && !n.pets[x.id],
         ),
         eligible = p.rarity !== "rainbow" || !unseen.length || !n.pets[p.id],
-        size = p.rarity === "rainbow" && unseen.length ? unseen.length : 5;
+        size =
+          p.rarity === "rainbow" && unseen.length
+            ? unseen.length
+            : M.pets.filter((candidate) => candidate.rarity === p.rarity)
+                .length;
       odds.append(
         node(
           "li",

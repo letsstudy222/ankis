@@ -141,6 +141,31 @@
       1: "./assets/pets/epic/crane-1.png",
       2: "./assets/pets/epic/crane-2.png",
     },
+    tiger: {
+      1: "./assets/pets/legend/tiger-1.png",
+      2: "./assets/pets/legend/tiger-2.png",
+      3: "./assets/pets/legend/tiger-3.png",
+    },
+    genbu: {
+      1: "./assets/pets/legend/genbu-1.png",
+      2: "./assets/pets/legend/genbu-2.png",
+      3: "./assets/pets/legend/genbu-3.png",
+    },
+    swan: {
+      1: "./assets/pets/legend/swan-1.png",
+      2: "./assets/pets/legend/swan-2.png",
+      3: "./assets/pets/legend/swan-3.png",
+    },
+    elephant: {
+      1: "./assets/pets/legend/elephant-1.png",
+      2: "./assets/pets/legend/elephant-2.png",
+      3: "./assets/pets/legend/elephant-3.png",
+    },
+    dragonhorse: {
+      1: "./assets/pets/legend/dragonhorse-1.png",
+      2: "./assets/pets/legend/dragonhorse-2.png",
+      3: "./assets/pets/legend/dragonhorse-3.png",
+    },
   };
   const progress = () => ({
     species: Object.keys(assets).length,

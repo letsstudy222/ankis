@@ -54,3 +54,7 @@ Beetle, lynx, octopus, scorpion and crane add ten real-alpha individual sprites.
 ## Rarity art direction (owner preference)
 
 For new and revised designs: keep Normal to about two dominant material colors, compact uncomplicated anatomy and minimal markings. Rare can add a third material color and one distinctive structural feature. Epic uses around three coherent material colors and stronger silhouettes/evolution anatomy. Reserve elaborate crowns, luminous armor, layered effects and richer color for Legend; reserve prismatic/rainbow effects primarily for Rainbow. Keep line clarity and resolution high at every rarity: simplicity is a design choice, not blur or quality degradation. Existing artwork is retained unless specifically revised; the new Epic expansion follows this direction rather than retroactively claiming all earlier sprites were redrawn. Persist this owner preference for future batches.
+
+## Expansion 4: five Legend families
+
+Tiger, genbu, swan, elephant and dragon-horse add fifteen standalone real-alpha sprites. Gacha-only Legend eggs, 160 clean-word incubation, three forms at levels 8/16, 600 duplicate species XP. Legend remains 2.5%, now 0.25% each across ten species. Total 45 species / 95 forms. Each evolved stage changes expression, dominant palette and anatomy; mature Legend uses richer gold/armor/feather detailing than Epic but no rainbow effects. Original companion IDs, egg progress and saved study data are preserved. Earlier batch counts remain historical.

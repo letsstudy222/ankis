@@ -12,7 +12,7 @@ with sync_playwright() as p:
  assert page.locator('#legend-batch .evolution-card').count()==5
  assert page.locator('#legend-batch img').count()==15
  page.evaluate("async()=>{await Promise.all([...document.querySelectorAll('#legend-batch img')].map(async i=>{i.loading='eager';await i.decode();if(i.naturalWidth<1024)throw Error('low resolution')}))}")
- assert '80 / 80' in page.locator('.progress').inner_text()
+ assert '95 / 95' in page.locator('.progress').inner_text()
  page.locator('#dragon').scroll_into_view_if_needed();page.screenshot(path='/tmp/legend-desktop.png',animations='disabled')
  page.goto(BASE+'/vocabulary.html')
  page.evaluate("""()=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=8888;s.guardian.nursery.tickets=37;s.guardian.nursery.ticketMisses=6;s.guardian.nursery.pity=11;s.guardian.nursery.pulls=11;for(const p of GuardianModel.pets.filter(p=>p.rarity==='legend')){GuardianNursery.receive(s.guardian,p.id);s.guardian.nursery.pets[p.id].hatched=true;s.guardian.nursery.pets[p.id].xp=GuardianModel.threshold(7);s.guardian.nursery.eggs=s.guardian.nursery.eggs.filter(id=>id!==p.id);}s.guardian.pet='dragon';s.records.recall={learned:true,stage:0,due:Date.now()+86400000,attempts:0};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""")
@@ -32,7 +32,7 @@ with sync_playwright() as p:
   page.reload();assert page.locator(f'#g-home-art [data-form="{form}"]').is_visible()
  for level,form in [(8,2),(16,3)]:
   page.evaluate("""level=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(const p of GuardianModel.pets.filter(p=>p.rarity==='legend'))s.guardian.nursery.pets[p.id].xp=GuardianModel.threshold(level);localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""",level)
-  page.reload();page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click();assert page.locator(f'.g-small-card [data-form="{form}"]').count()==5
+  page.reload();page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click();assert page.locator(f'.g-small-card [data-form="{form}"]').count()==10
   for species in SPECIES:
    sprite=page.locator(f'.g-small-card [data-species="{species}"] image')
    assert sprite.get_attribute('href').endswith(f'{species}-{form}-v2.png')

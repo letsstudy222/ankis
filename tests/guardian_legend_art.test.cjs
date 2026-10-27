@@ -10,9 +10,9 @@ const M = GuardianModel,
   N = GuardianNursery,
   A = GuardianArt,
   c = A.progress();
-assert.equal(c.species, 40);
-assert.equal(c.forms, 80);
-assert.equal(c.totalForms, 80);
+assert.equal(c.species, 45);
+assert.equal(c.forms, 95);
+assert.equal(c.totalForms, 95);
 assert.deepEqual(c.completedTiers, [
   "normal",
   "rare",
@@ -31,7 +31,9 @@ for (const pet of M.pets.filter((p) => p.rarity === "legend")) {
     const url = A.assets[pet.id][form],
       file = fs.readFileSync(path.join(__dirname, "..", url));
     assert(
-      url.includes(`/legend/${pet.id}-${form}${form > 1 ? "-v2" : ""}.png`),
+      url.includes(
+        `/legend/${pet.id}-${form}${form > 1 && ["dragon", "phoenix", "serpent", "lion", "griffin"].includes(pet.id) ? "-v2" : ""}.png`,
+      ),
     );
     assert.equal(file.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
     assert(file.readUInt32BE(16) >= 1024);
@@ -65,5 +67,5 @@ for (const pet of M.pets.filter((p) => p.rarity === "legend")) {
   assert(!A.draw(pet, 0, true).includes('data-pet-art="painted"'));
 }
 console.log(
-  "PASS: fifteen independent Legend RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 40 species / 80 forms.",
+  "PASS: thirty independent Legend RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 45 species / 95 forms.",
 );

@@ -52,3 +52,9 @@ Koi, bat, chameleon, seal and peacock add ten standalone real-alpha PNGs in `ass
 ## Expansion 3: five Epic families
 
 Beetle, lynx, octopus, scorpion and crane add ten real-alpha individual sprites. Gacha-only Epic eggs, 100 clean-word incubation, two forms with level-8 evolution, 240 duplicate species XP. Epic remains 12%, now 1.2% per species across ten. Total 40 species / 80 forms. No save reset or day gate.
+
+## Expansion 4: five Legend families
+
+Tiger, genbu, swan, elephant and dragon-horse add fifteen standalone real-alpha sprites. Gacha-only Legend eggs, 160 clean-word incubation, three forms at levels 8/16, 600 duplicate species XP. Legend remains 2.5%, now 0.25% each across ten species. Total 45 species / 95 forms. Each evolved stage changes expression, dominant palette and anatomy; mature Legend uses richer gold/armor/feather detailing than Epic but no rainbow effects. Original companion IDs, egg progress and saved study data are preserved. Earlier batch counts remain historical.
+
+The per-species probability UI now divides by the live rarity-pool size instead of the original constant five. This fixes displayed odds after collection expansions; the underlying draw implementation already used the correct pool size. Browser checks assert every base per-species percentage and a 100% sum.

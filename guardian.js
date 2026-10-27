@@ -211,7 +211,7 @@
       node(
         "p",
         "g-muted",
-        `Đã hoàn tất ${coverage.completedTiers.map((key) => N.tiers[key].name).join(", ")} · ${coverage.completedTiers.length}/5 đợt. Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới.`,
+        `Đã hoàn tất ${coverage.completedTiers.map((key) => N.tiers[key].name).join(", ")} · ${coverage.completedTiers.length}/5 đợt. ${coverage.forms === coverage.totalForms ? "Toàn bộ linh thú đã có ảnh mẫu A cho từng bậc tiến hóa. Trứng dùng hình riêng." : "Các loài còn lại đang dùng hình minh họa cũ trong lúc chờ bộ ảnh mới."}`,
       ),
     );
     const artLink = node(

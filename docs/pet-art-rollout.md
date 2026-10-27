@@ -8,8 +8,8 @@ The owner approved the 1/2/3-form evolution sample and authorized integration in
 | 2 | Rare | 5 | 2 | 10 | Shipped |
 | 3 | Epic | 5 | 2 | 10 | Shipped |
 | 4 | Legend | 5 | 3 | 15 | Shipped |
-| 5 | Rainbow | 5 | 3 | 15 | Pending |
-| Total | | 25 | | 55 | 40/55 completed |
+| 5 | Rainbow | 5 | 3 | 15 | Shipped |
+| Total | | 25 | | 55 | 55/55 completed |
 
 ## Production assets
 
@@ -34,3 +34,7 @@ Batch 4 ships fifteen individually generated transparent Legend sprites: `assets
 Owner feedback: the original Legend evolution looked like a size change. Redrew ten stage-II/III sprites with explicit changes in expression, dominant color and anatomical silhouette. Stage I stays untouched. Dragon develops cobalt quadruped anatomy then silver/navy upright dragon anatomy; phoenix moves crimson adolescent to ivory/gold mature bird; serpent develops obsidian molten cobra then violet/gold royal coils; lion changes russet athlete to ivory solar guardian; griffin changes slate/copper predator to white/navy/gold imperial guardian. Identity motifs remain recognizable rather than locking the entire palette and baby face.
 
 Revised files use `*-2-v2.png` and `*-3-v2.png` URLs in the manifest and gallery to prevent cached old PNGs appearing after update. Old stage-II/III assets are removed from the current tree. XP, stages, rarity, ownership and reward logic are unchanged. This is a replacement of ten forms: coverage stays 20 species / 40 of 55 forms.
+
+## Batch 5: complete collection
+
+Fifteen Rainbow sprites ship at `assets/pets/rainbow/{astra,iris,nova,orion,halo}-{1,2,3}.png`. Each successive stage deliberately changes expression, dominant palette and body structure, keeping selected identity motifs. Iris develops one, three, then nine tails. Original standalone transparent PNGs are generated individually; subsequent stages reference the previous stage. The existing gallery and in-game cards show all stages, with mobile-readable stacked triples. All five batches are complete: 25 species / 55 forms. Eggs retain separate SVG illustrations, with no changes to incubation, acquisition, gacha rates, pity, tickets, per-species XP or saved learning data.

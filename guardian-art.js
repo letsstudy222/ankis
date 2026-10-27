@@ -71,6 +71,31 @@
       2: "./assets/pets/legend/griffin-2-v2.png",
       3: "./assets/pets/legend/griffin-3-v2.png",
     },
+    astra: {
+      1: "./assets/pets/rainbow/astra-1.png",
+      2: "./assets/pets/rainbow/astra-2.png",
+      3: "./assets/pets/rainbow/astra-3.png",
+    },
+    iris: {
+      1: "./assets/pets/rainbow/iris-1.png",
+      2: "./assets/pets/rainbow/iris-2.png",
+      3: "./assets/pets/rainbow/iris-3.png",
+    },
+    nova: {
+      1: "./assets/pets/rainbow/nova-1.png",
+      2: "./assets/pets/rainbow/nova-2.png",
+      3: "./assets/pets/rainbow/nova-3.png",
+    },
+    orion: {
+      1: "./assets/pets/rainbow/orion-1.png",
+      2: "./assets/pets/rainbow/orion-2.png",
+      3: "./assets/pets/rainbow/orion-3.png",
+    },
+    halo: {
+      1: "./assets/pets/rainbow/halo-1.png",
+      2: "./assets/pets/rainbow/halo-2.png",
+      3: "./assets/pets/rainbow/halo-3.png",
+    },
   };
   const progress = () => ({
     species: Object.keys(assets).length,

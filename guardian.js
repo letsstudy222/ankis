@@ -900,6 +900,7 @@
     $("guardian-reward").classList.add("g-pop");
     applyArena();
     globalThis.PetRoaming?.render(state());
+    if (clean) globalThis.PetRoaming?.celebrate();
     if (gain.notices.some((t) => t.startsWith("Trứng đã nở")))
       toast(gain.notices.find((t) => t.startsWith("Trứng đã nở")));
     else if (gain.notices.some((t) => t.startsWith("Tiến hóa")))

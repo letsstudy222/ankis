@@ -107,7 +107,7 @@ Expansion 6 follows the owner’s preference to grow common rosters only: five s
 
 Natural Normal refresh: all fifteen Normal companions are ordinary animals. Ten earlier fantasy sprites are replaced at `assets/pets/normal/natural-v2/`; five recent natural animals stay as-is. Stable IDs, costs and saved XP remain intact; `sprout` becomes a brown squirrel. Shared `pet-art-tone.css` reduces displayed saturation for Rare/Epic/Legend/Rainbow at 0.68/0.80/0.88/0.92 respectively while preserving their source art and evolution. The gallery and full-size `pet-portrait.html` use the same presentation. No collection or reward-rule expansion.
 
-The selected hatched companion now moves across a fixed background layer throughout learning and arcade, with a gait animation and direction changes. A compact companion dock provides petting, recall and pause. The old bounded yard is removed. The background is behind the learning UI and never intercepts the answer input; reduced-motion and tab visibility pause animation. Pet interaction does not award XP/currency.
+The selected hatched companion patrols a short horizontal route inside the Guardian battlefield only, with a gentle step animation and a celebratory hop after unaided correct answers. There is no floating corner pet or companion dock. The companion never intercepts input, pauses with the game, and respects reduced motion. Animation does not award XP/currency.
 
 ## Equipment support
 

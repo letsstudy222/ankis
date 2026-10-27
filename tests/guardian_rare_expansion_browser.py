@@ -10,7 +10,7 @@ with sync_playwright() as p:
  page.evaluate("async()=>{await Promise.all([...document.querySelectorAll('#new-rare-species img')].map(async i=>{i.loading='eager';await i.decode();if(i.naturalWidth<1024)throw Error('resolution')}))}")
  page.goto(BASE+'/vocabulary.html');page.evaluate("""()=>{let s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=22000;s.guardian.nursery.tickets=31;for(const w of VOCABULARY.slice(0,40))s.records[w.word]={stage:0,attempts:0,due:0,learned:true};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""");page.reload()
  old=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
- page.locator('#g-open').click();page.get_by_role('button',name='Rare',exact=True).click();assert page.locator('.g-small-card').count()==10
+ page.locator('#g-open').click();page.get_by_role('button',name='Rare',exact=True).click();assert page.locator('.g-small-card').count()==15
  page.locator('[data-tab="eggs"]').click()
  for id in IDS:page.locator(f'[data-buyegg="{id}"]').click();assert page.locator(f'[data-egg="{id}"]').is_visible()
  bought=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")

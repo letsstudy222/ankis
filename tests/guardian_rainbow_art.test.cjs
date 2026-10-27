@@ -10,9 +10,9 @@ const M = GuardianModel,
   N = GuardianNursery,
   A = GuardianArt,
   c = A.progress();
-assert.equal(c.species, 50);
-assert.equal(c.forms, 110);
-assert.equal(c.totalForms, 110);
+assert.equal(c.species, 60);
+assert.equal(c.forms, 125);
+assert.equal(c.totalForms, 125);
 assert.deepEqual(c.completedTiers, [
   "normal",
   "rare",
@@ -36,8 +36,8 @@ for (const pet of M.pets) {
 }
 assert.equal(
   completeHashes.size,
-  110,
-  "all 110 forms must have independent image assets",
+  125,
+  "all 125 forms must have independent image assets",
 );
 const s = M.create();
 N.ensure(s);
@@ -82,5 +82,5 @@ for (const pet of M.pets.filter((p) => p.rarity === "rainbow")) {
   assert(!A.draw(pet, 0, true).includes('data-pet-art="painted"'));
 }
 console.log(
-  "PASS: thirty independent Rainbow RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 50 species / 110 forms.",
+  "PASS: thirty independent Rainbow RGBA sprites; exact level-8 and level-16 switches; final cap; no save mutation; 60 species / 125 forms.",
 );

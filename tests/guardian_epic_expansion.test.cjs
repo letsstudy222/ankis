@@ -55,8 +55,8 @@ for (const [i, id] of ids.entries()) {
   assert(!s.nursery.eggs.includes(id));
   assert(M.valid(JSON.parse(JSON.stringify(s)), ["recall"]));
 }
-assert.equal(M.pets.length, 50);
-assert.equal(GuardianArt.progress().forms, 110);
+assert.equal(M.pets.length, 60);
+assert.equal(GuardianArt.progress().forms, 125);
 console.log(
   "PASS: five new Epic families, disclosed gacha pool and unchanged rate, gacha-only eggs, 100-word hatch, two forms at level 8, 240 duplicate XP, save compatibility.",
 );

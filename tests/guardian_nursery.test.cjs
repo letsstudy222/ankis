@@ -21,9 +21,12 @@ const earn = (s, i, extra = {}) =>
     random: () => 0.99,
     ...extra,
   });
-assert.equal(M.pets.length, 50);
+assert.equal(M.pets.length, 60);
 for (const rarity of Object.keys(N.tiers))
-  assert.equal(M.pets.filter((p) => p.rarity === rarity).length, 10);
+  assert.equal(
+    M.pets.filter((p) => p.rarity === rarity).length,
+    ["normal", "rare"].includes(rarity) ? 15 : 10,
+  );
 let s = state();
 assert(M.valid(s, words));
 assert.equal(s.nursery.tickets, 10);
@@ -178,7 +181,7 @@ const corrupt = structuredClone(old);
 corrupt.nursery.pets.fox.incubation = -1;
 assert(!M.valid(corrupt, words));
 console.log(
-  "PASS: coin-only shop, 50 species, incubation pause/resume/hatching, species duplicate XP, combo tickets/caps/missions, hard+soft pity, ten-rainbow collection, rate sums, Monte Carlo, migration and backup validation.",
+  "PASS: coin-only shop, 60 species, incubation pause/resume/hatching, species duplicate XP, combo tickets/caps/missions, hard+soft pity, ten-rainbow collection, rate sums, Monte Carlo, migration and backup validation.",
 );
 
 const individual = GuardianModel.create();
@@ -249,7 +252,7 @@ for (const pet of M.pets) {
     assert.equal(formsState.nursery.pets[pet.id].xp, xp);
   }
 }
-assert.equal(totalForms, 110);
+assert.equal(totalForms, 125);
 console.log(
-  "PASS: all 50 species follow 1/2/3 forms by rarity, 110 total forms, exact thresholds, final-form cap and existing XP preserved.",
+  "PASS: all 60 species follow 1/2/3 forms by rarity, 125 total forms, exact thresholds, final-form cap and existing XP preserved.",
 );

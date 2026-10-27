@@ -13,11 +13,11 @@ with sync_playwright() as p:
  page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click();assert page.locator('.g-small-card').count()==10
  page.locator('[data-tab="gacha"]').click()
  page.get_by_text('Tỷ lệ từng loài ở lượt tiếp theo',exact=True).click()
- odds=page.locator('.g-probability-list li');assert odds.count()==50
- expected={'normal':5.5,'rare':3,'epic':1.2,'legend':.25,'rainbow':.05}
+ odds=page.locator('.g-probability-list li');assert odds.count()==60
+ expected={'normal':3.667,'rare':2,'epic':1.2,'legend':.25,'rainbow':.05}
  for pet in page.evaluate('GuardianModel.pets.map(p=>({name:p.name,rarity:p.rarity}))'):
   text=odds.filter(has_text=pet['name']+':').inner_text();assert abs(float(text.split(': ')[-1].rstrip('%'))-expected[pet['rarity']])<.0001,text
- assert abs(sum(float(t.split(': ')[-1].rstrip('%')) for t in odds.all_inner_texts())-100)<.001
+ assert abs(sum(float(t.split(': ')[-1].rstrip('%')) for t in odds.all_inner_texts())-100)<.01
 
  page.evaluate("""()=>{const draw=GuardianNursery.summon;let i=0;GuardianNursery.summon=s=>{let k=0;const values=[.98,(5+i+.1)/10];i++;return draw(s,()=>values[k++])}}""")
  for id in IDS:

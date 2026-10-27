@@ -44,13 +44,24 @@ for (const [i, id] of ids.entries()) {
   const g = M.create();
   N.ensure(g);
   let r = 0;
-  const draw = N.summon(g, () => [0, (5 + i + 0.1) / 10][r++]);
+  const draw = N.summon(
+    g,
+    () =>
+      [
+        0,
+        (M.pets
+          .filter((p) => p.rarity === "normal")
+          .findIndex((p) => p.id === id) +
+          0.1) /
+          M.pets.filter((p) => p.rarity === "normal").length,
+      ][r++],
+  );
   assert.equal(draw.species, id);
   assert.equal(draw.rarity, "normal");
   assert.equal(N.rates(g).normal, 55);
 }
-assert.equal(GuardianArt.progress().species, 50);
-assert.equal(GuardianArt.progress().forms, 110);
+assert.equal(GuardianArt.progress().species, 60);
+assert.equal(GuardianArt.progress().forms, 125);
 console.log(
   "PASS: all five new eggs coin-only at exact prices, no charge when short, 30-word hatch, one-form cap, duplicate XP, expanded gacha selection and JSON save compatibility.",
 );

@@ -11,10 +11,10 @@ with sync_playwright() as p:
  page.goto(BASE+'/pet-art-preview.html#rainbow-batch')
  assert page.locator('#rainbow-batch .evolution-card').count()==5
  assert page.locator('#rainbow-batch img').count()==15
- assert page.locator('main img').count()==110
- assert page.evaluate('new Set([...document.querySelectorAll("main img")].map(i=>i.src)).size')==110
+ assert page.locator('main img').count()==125
+ assert page.evaluate('new Set([...document.querySelectorAll("main img")].map(i=>i.src)).size')==125
  page.evaluate("async()=>{await Promise.all([...document.querySelectorAll('#rainbow-batch img')].map(async i=>{i.loading='eager';await i.decode();if(i.naturalWidth<1024)throw Error('low resolution')}))}")
- assert '110 / 110' in page.locator('.progress').inner_text()
+ assert '125 / 125' in page.locator('.progress').inner_text()
  page.locator('#astra').scroll_into_view_if_needed();page.screenshot(path='/tmp/rainbow-desktop.png',animations='disabled')
  page.goto(BASE+'/vocabulary.html')
  page.evaluate("""()=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.coins=8888;s.guardian.nursery.tickets=37;s.guardian.nursery.ticketMisses=6;s.guardian.nursery.pity=11;s.guardian.nursery.pulls=11;for(const p of GuardianModel.pets.filter(p=>p.rarity==='rainbow')){GuardianNursery.receive(s.guardian,p.id);s.guardian.nursery.pets[p.id].hatched=true;s.guardian.nursery.pets[p.id].xp=GuardianModel.threshold(7);s.guardian.nursery.eggs=s.guardian.nursery.eggs.filter(id=>id!==p.id);}s.guardian.pet='astra';s.records.recall={learned:true,stage:0,due:Date.now()+86400000,attempts:0};localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""")

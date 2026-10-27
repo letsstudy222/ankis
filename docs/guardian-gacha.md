@@ -13,9 +13,9 @@ General web search and many commercial sites are blocked by this environment's e
 
 ## Species and acquisition
 
-50 original species: ten per rarity. Colors are green (Normal), blue (Rare), purple (Epic), red-orange (Legend), and a multicolor/rainbow treatment (Rainbow). Text labels accompany color. Nine Normal species and seven Rare species have direct coin acquisition (the starter Fox is a gift, not a free repeat purchase). Other Rare, all Epic/Legend/Rainbow species are gacha-exclusive. All 50 can appear in gacha. There is no paid currency.
+60 original species: fifteen Normal and fifteen Rare, ten each Epic/Legend/Rainbow. Colors are green (Normal), blue (Rare), purple (Epic), red-orange (Legend), and a multicolor/rainbow treatment (Rainbow). Text labels accompany color. Fourteen Normal species and twelve Rare species have direct coin acquisition (the starter Fox is a gift, not a free repeat purchase). Other Rare, all Epic/Legend/Rainbow species are gacha-exclusive. All 60 can appear in gacha. There is no paid currency.
 
-Shop equipment retains its established coin prices, but all level/day requirements are removed, both in UI and execution logic. Egg prices are 400–2000 coins for nine purchasable Normal species, and 1800–4600 for seven Rare species. Buying repeats is allowed and explicitly identifies the duplicate XP benefit before purchase.
+Shop equipment retains its established coin prices, but all level/day requirements are removed, both in UI and execution logic. Egg prices are 400–2000 coins for fourteen purchasable Normal species, and 1800–4600 for twelve Rare species. Buying repeats is allowed and explicitly identifies the duplicate XP benefit before purchase.
 
 ## Exact gacha distribution
 
@@ -35,7 +35,7 @@ At 20 eligible unique completions in a continuous run, random drops average appr
 
 Receiving a new species creates exactly one unhatched egg and its own persistent species record. Choose one egg to incubate. Each clean arcade word advances incubation by one, regardless of repeat-XP/ticket caps: 30/60/100/160/240 words for Normal/Rare/Epic/Legend/Rainbow. Caching/pausing an egg retains its progress. There is no wall-clock or day timer. A hatched species can be equipped. Clean/effort XP from the existing economy goes to the currently selected species; global station XP is retained separately.
 
-A repeat of any owned species (hatched, bagged or incubating) immediately grants 40/100/240/600/1600 XP according to rarity to that species only, and increments its received count. It never adds a second copy of the egg or silently completes incubation. Individual species retain quadratic XP/level thresholds. After approval of the art sample, Normal has one post-hatch form, Rare/Epic have two forms (evolution at level 8), and Legend/Rainbow have three forms (levels 8 and 16), with no active-day requirement. Existing XP is preserved. See [the art rollout](pet-art-rollout.md) for the original production plan, expansions and current 110-form collection.
+A repeat of any owned species (hatched, bagged or incubating) immediately grants 40/100/240/600/1600 XP according to rarity to that species only, and increments its received count. It never adds a second copy of the egg or silently completes incubation. Individual species retain quadratic XP/level thresholds. After approval of the art sample, Normal has one post-hatch form, Rare/Epic have two forms (evolution at level 8), and Legend/Rainbow have three forms (levels 8 and 16), with no active-day requirement. Existing XP is preserved. See [the art rollout](pet-art-rollout.md) for the original production plan, expansions and current 125-form collection.
 
 ## Persistence, tests and limits
 
@@ -62,3 +62,7 @@ The per-species probability UI now divides by the live rarity-pool size instead 
 ## Expansion 5: five Rainbow families
 
 Aurora red panda, leviathan sea dragon, sphinx, moon rabbit and butterfly dragon add fifteen real-alpha sprites with three distinct stages. Gacha-only Rainbow eggs, 240 clean-word incubation, evolutions at levels 8/16, 1600 duplicate species XP. Rainbow remains 0.5% base, soft pity from draw 41 and guaranteed at 50; the unseen-species pool now has ten species including original ownership and unhatched eggs. Maximum 500 draws for all ten from zero, or 250 additional for five missing species when the original five are owned. No pity, tickets, egg progress, XP or learning data reset. Total 50 species / 110 forms, ten in each rarity. Any earlier five-Rainbow/250-draw or smaller collection counts describe historical rosters; this section is the current expansion rule.
+
+## Expansion 6: common natural animals only
+
+Five Normal (shiba, duck, hamster, frog, sparrow) and five Rare (squirrel, ferret, crab, puffin, gecko), fifteen original sprites. Modest earth/pastel palettes: about two natural material colors for Normal, two/three for Rare, plain small eyes, minimal flat shading; no jewels, auras, gold, neon, rainbow, stars or complex ornaments. Normal coin eggs 700/800/900/1000/1100 and 30-word hatch; Rare coin eggs 2000/2200/2400/2600/2800 and 60-word hatch, level-8 second form. Standard 40/100 duplicate XP. Epic, Legend and Rainbow remain at ten species each; owner preference is to prioritize Normal/Rare rather than adding more prestigious species without a new explicit request. Existing earlier artwork remains as-is. Total 60 species / 125 forms. Tier odds, pity and old save data unchanged; per-species Normal odds are 55/15%, Rare 30/15%. UI rounds individual percentages to three decimals.

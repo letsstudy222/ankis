@@ -101,6 +101,26 @@
     raccoon: { 1: "./assets/pets/normal/raccoon-1.png" },
     otter: { 1: "./assets/pets/normal/otter-1.png" },
     seahorse: { 1: "./assets/pets/normal/seahorse-1.png" },
+    koi: {
+      1: "./assets/pets/rare/koi-1.png",
+      2: "./assets/pets/rare/koi-2.png",
+    },
+    bat: {
+      1: "./assets/pets/rare/bat-1.png",
+      2: "./assets/pets/rare/bat-2.png",
+    },
+    chameleon: {
+      1: "./assets/pets/rare/chameleon-1.png",
+      2: "./assets/pets/rare/chameleon-2.png",
+    },
+    seal: {
+      1: "./assets/pets/rare/seal-1.png",
+      2: "./assets/pets/rare/seal-2.png",
+    },
+    peacock: {
+      1: "./assets/pets/rare/peacock-1.png",
+      2: "./assets/pets/rare/peacock-2.png",
+    },
   };
   const progress = () => ({
     species: Object.keys(assets).length,

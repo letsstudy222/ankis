@@ -42,3 +42,7 @@ Fifteen Rainbow sprites ship at `assets/pets/rainbow/{astra,iris,nova,orion,halo
 ## Expansion 1: five more Normal species
 
 Penguin, hedgehog, raccoon, otter and seahorse add five individually generated transparent PNGs in `assets/pets/normal/`. Collection total is now 30 species / 60 forms. Normal contains ten species; the other tiers retain five each. All five new eggs are coin purchases (1200–2000 coins), also eligible for Normal gacha; Normal total remains 55%, split equally. Incubation requires 30 clean words, duplicate grants 40 species XP, no day gates. No save migration/reset is required because species records are keyed by stable IDs. The original 25-species / 55-form rollout above is retained as history.
+
+## Expansion 2: five Rare families
+
+Koi, bat, chameleon, seal and peacock add ten standalone real-alpha PNGs in `assets/pets/rare/`. Stage II deliberately changes expression, dominant palette and anatomy while retaining identity motifs. Egg prices 3000/3400/3800/4200/4600 coins, incubation 60 clean words, evolution level 8, duplicate 100 species XP. All appear in Rare gacha; the tier remains 30% split evenly across ten species (3% each). No day gate or save reset. Total 35 species / 70 forms, with ten Normal, ten Rare, five each Epic/Legend/Rainbow. Earlier batch counts are retained as historical records.

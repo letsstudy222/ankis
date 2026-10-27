@@ -28,11 +28,16 @@ with sync_playwright() as p:
   page.evaluate("""level=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.guardian.nursery.pets.dragon.xp=GuardianModel.threshold(level)-8;delete s.guardian.day.words.recall;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""",threshold)
   page.reload();page.locator('#game').click();assert page.locator(f'#arena-companion [data-form="{previous}"]').is_visible()
   page.locator('#answer').press_sequentially('recall');assert page.locator(f'#arena-companion [data-form="{form}"]').is_visible()
-  assert f'dragon-{form}.png' in page.locator('#arena-companion image').get_attribute('href');assert page.locator('#next').is_hidden()
+  assert f'dragon-{form}-v2.png' in page.locator('#arena-companion image').get_attribute('href');assert page.locator('#next').is_hidden()
   page.reload();assert page.locator(f'#g-home-art [data-form="{form}"]').is_visible()
  for level,form in [(8,2),(16,3)]:
   page.evaluate("""level=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(const p of GuardianModel.pets.filter(p=>p.rarity==='legend'))s.guardian.nursery.pets[p.id].xp=GuardianModel.threshold(level);localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""",level)
-  page.reload();page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click();assert page.locator(f'.g-small-card [data-form="{form}"]').count()==5;page.locator('#g-close').click()
+  page.reload();page.locator('#g-open').click();page.get_by_role('button',name='Legend',exact=True).click();assert page.locator(f'.g-small-card [data-form="{form}"]').count()==5
+  for species in SPECIES:
+   sprite=page.locator(f'.g-small-card [data-species="{species}"] image')
+   assert sprite.get_attribute('href').endswith(f'{species}-{form}-v2.png')
+  page.evaluate("async()=>{await Promise.all([...document.querySelectorAll('.g-small-card image')].map(async e=>{const i=new Image();i.src=e.getAttribute('href');await i.decode()}))}")
+  page.locator('#g-close').click()
  page.set_viewport_size({'width':390,'height':844});page.goto(BASE+'/pet-art-preview.html#legend-batch')
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  for species in SPECIES:

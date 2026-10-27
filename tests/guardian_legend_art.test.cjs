@@ -24,7 +24,9 @@ for (const pet of M.pets.filter((p) => p.rarity === "legend")) {
   for (const form of [1, 2, 3]) {
     const url = A.assets[pet.id][form],
       file = fs.readFileSync(path.join(__dirname, "..", url));
-    assert(url.includes(`/legend/${pet.id}-${form}.png`));
+    assert(
+      url.includes(`/legend/${pet.id}-${form}${form > 1 ? "-v2" : ""}.png`),
+    );
     assert.equal(file.subarray(0, 8).toString("hex"), "89504e470d0a1a0a");
     assert(file.readUInt32BE(16) >= 1024);
     assert(file.readUInt32BE(20) >= 1024);

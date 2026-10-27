@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" fill="none">
+<defs>
+ <radialGradient id="space"><stop stop-color="#193c50"/><stop offset="1" stop-color="#071727"/></radialGradient>
+ <linearGradient id="planet" x1="900" y1="40" x2="1100" y2="330" gradientUnits="userSpaceOnUse"><stop stop-color="#8fe3cf"/><stop offset=".4" stop-color="#317a95"/><stop offset="1" stop-color="#15314b"/></linearGradient>
+ <linearGradient id="moon"><stop stop-color="#ffc88c"/><stop offset="1" stop-color="#a97170"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#6edbc4" stop-opacity=".15"/><stop offset="1" stop-color="#6edbc4" stop-opacity="0"/></radialGradient>
+</defs>
+<path fill="url(#space)" d="M0 0h1200v720H0z"/>
+<ellipse cx="640" cy="620" rx="580" ry="400" fill="url(#glow)"/>
+<g stroke="#82b7c7" stroke-opacity=".09"><ellipse cx="570" cy="820" rx="720" ry="400"/><ellipse cx="570" cy="820" rx="630" ry="330"/><ellipse cx="570" cy="820" rx="540" ry="260"/><path d="M70 720 550 480M1130 720 550 480M370 720 550 480M820 720 550 480"/></g>
+<circle cx="1030" cy="146" r="116" fill="url(#planet)"/><path d="M922 105q95-18 208 61M921 142q96-11 204 58M939 193q91 3 157 42" stroke="#b7e6cd" stroke-width="11" opacity=".13"/>
+<ellipse cx="1030" cy="154" rx="180" ry="34" transform="rotate(-24 1030 154)" stroke="#89c3ba" stroke-width="7" opacity=".28"/>
+<circle cx="112" cy="340" r="32" fill="url(#moon)" opacity=".7"/><circle cx="101" cy="329" r="7" fill="#72515e" opacity=".4"/><circle cx="125" cy="350" r="10" fill="#72515e" opacity=".3"/>
+<g fill="#d5eeed" opacity=".6"><circle cx="68" cy="62" r="2"/><circle cx="196" cy="118" r="1.5"/><circle cx="350" cy="52" r="2"/><circle cx="460" cy="174" r="1"/><circle cx="632" cy="92" r="2"/><circle cx="762" cy="215" r="1.5"/><circle cx="840" cy="54" r="1"/><circle cx="1152" cy="388" r="2"/><circle cx="938" cy="420" r="1"/><circle cx="215" cy="515" r="1.5"/><circle cx="540" cy="452" r="1"/><circle cx="668" cy="350" r="1.5"/><circle cx="380" cy="301" r="1.5"/><circle cx="73" cy="616" r="1"/><circle cx="740" cy="598" r="1.5"/><circle cx="1090" cy="610" r="1"/></g>
+<g stroke="#b1e5de" stroke-linecap="round" opacity=".5"><path d="M278 208v12m-6-6h12M818 350v10m-5-5h10M584 34v8m-4-4h8"/></g>
+</svg>

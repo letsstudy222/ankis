@@ -123,3 +123,15 @@ The selected hatched companion patrols a short horizontal route inside the Guard
 Hint storage caps at one; no progress is banked while full. Use Tab only from the active unpaused arcade answer input, or the visible hint button; Shift+Tab and Tab elsewhere remain native. Using a hint marks the word assisted and does not refill the meter. Free review hints remain available. Charge/progress live in optional validated `guardian.gear` fields inside existing JSON backup, with backward-compatible migration. Switching ships cannot grant free charges. Coin bonuses encourage vocabulary variety; repeated words do not receive extra trail coins. Background/pet state does not affect support rewards.
 
 Additional verification: `node tests/guardian_equipment.test.cjs`, `BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_support_browser.py`.
+
+
+## Word Orbit flight interface
+
+The learning home now recommends due review first, with an original vector space theme shared by the arcade. Flights have three shields, adaptive thinking time for fragile memories, letter-hit feedback and an arena-only companion. Timeout or Alt+2 opens a stopped-clock word/context/pronunciation panel; supported copying never counts as clean recall. Missed words reappear after three distinct other words when possible, with bounded retries, and can be reviewed without a timer from the result screen. Correct typing still advances instantly without Enter. Old progress, wallet, gear and pet ownership are preserved. See [design and access limitations](docs/vocabulary-flight-design.md).
+
+Additional checks:
+
+```bash
+node tests/vocabulary_practice.test.cjs
+BASE_URL=http://127.0.0.1:8008 python3 tests/vocabulary_flight_browser.py
+```

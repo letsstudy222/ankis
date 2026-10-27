@@ -14,7 +14,8 @@
   let session = null,
     frame = 0,
     sound = false,
-    audio;
+    audio,
+    reviewIds = [];
   function valid(x) {
     return (
       x &&
@@ -180,6 +181,7 @@
       ...old,
       learningStep: step + 1,
       learned: step === 2,
+      introducedOn: step === 2 ? date() : old.introducedOn,
       due: step === 2 ? Date.now() + 10 * 60000 : old.due,
     };
     save();
@@ -246,14 +248,46 @@
     $("infinite").disabled = !seen;
     $("game").disabled = !seen;
     Guardian.renderHome();
+    const newToday = Object.values(store.records).filter(
+      (record) => record.learned && record.introducedOn === date(),
+    ).length;
+    const lightPractice = newToday >= 5;
+    const recommendation = remaining.length
+      ? "daily"
+      : lightPractice
+        ? "infinite"
+        : fresh
+          ? "learn"
+          : "game";
+    $("route-title").textContent = remaining.length
+      ? `${remaining.length} từ đang chờ bạn nhớ lại`
+      : lightPractice
+        ? "Đã làm quen đủ một nhóm hôm nay"
+        : fresh
+          ? "Một nhóm nhỏ, năm từ mới"
+          : "Sẵn sàng cho một chuyến bay?";
+    $("route-copy").textContent = remaining.length
+      ? "Ôn từ đến hạn trước, rồi ghé sân chơi. Vài phút cũng là một bước tiến."
+      : lightPractice
+        ? "Nghỉ một chút để từ lắng lại. Nếu muốn luyện tiếp, thử tự nhớ không có đồng hồ; bạn vẫn có thể chủ động học thêm."
+        : fresh
+          ? "Xem nghĩa và câu → nhận diện → gõ theo mẫu. Không cần thuộc ngay."
+          : "Từ đã làm quen, độ khó vừa sức. Dừng lúc nào cũng giữ tiến độ.";
+    $("route-start").textContent =
+      lightPractice && !remaining.length ? "Luyện nhẹ →" : "Bắt đầu →";
+    $("route-start").onclick = () => $(recommendation).click();
   }
-  function start(mode) {
+  function start(mode, selectedIds) {
     Guardian.clear();
     plan();
-    const queue =
-      mode === "daily"
+    const familiar = words.map((_, i) => i).filter((i) => introduced(words[i]));
+    const queue = selectedIds?.length
+      ? selectedIds.slice()
+      : mode === "daily"
         ? store.daily.ids.filter((i) => !store.daily.done.includes(i))
-        : shuffle(words.map((_, i) => i).filter((i) => introduced(words[i])));
+        : mode === "game"
+          ? VocabularyPractice.queue(familiar, words, store.records)
+          : shuffle(familiar);
     if (!queue.length) return;
     session = {
       mode,
@@ -267,12 +301,20 @@
       paused: false,
       elapsed: 0,
       last: 0,
+      shields: 3,
+      streak: 0,
+      weak: new Set(),
+      retries: {},
+      fixedPool: selectedIds?.slice() || null,
     };
     $("home").hidden = true;
     $("result").hidden = true;
     $("session").hidden = false;
     window.scrollTo(0, 0);
     $("arena").hidden = mode !== "game";
+    $("flight-status").hidden = mode !== "game";
+    $("game-study").hidden = mode !== "game";
+    $("flight-coach").hidden = true;
     $("pause").hidden = mode !== "game";
     $("hint").hidden = mode === "game";
     $("reveal").hidden = mode === "game";
@@ -311,14 +353,24 @@
     const value = $("answer").value.toLowerCase();
     $("letters").replaceChildren(...slots(word, value));
     $("enemy-letters").replaceChildren(...slots(word, value));
+    let matched = 0;
+    while (matched < word.length && value[matched] === word[matched]) matched++;
+    $("enemy-art").style.setProperty(
+      "--target-progress",
+      `${(matched / word.length) * 100}%`,
+    );
   }
   function nextQuestion() {
     cancelAnimationFrame(frame);
     if (session.cursor >= session.queue.length) {
       if (session.mode === "daily") return finish(false);
-      let q = shuffle(
-        words.map((_, i) => i).filter((i) => introduced(words[i])),
-      );
+      const ids =
+        session.fixedPool ||
+        words.map((_, i) => i).filter((i) => introduced(words[i]));
+      let q =
+        session.mode === "game"
+          ? VocabularyPractice.queue(ids, words, store.records)
+          : shuffle(ids);
       if (q[0] === session.queue.at(-1) && q.length > 1)
         [q[0], q[1]] = [q[1], q[0]];
       session.queue.push(...q);
@@ -330,8 +382,15 @@
       paused: false,
       elapsed: 0,
       last: 0,
+      coaching: false,
+      failureRecorded: false,
+      clockSecond: -1,
     });
     const w = current();
+    $("flight-coach").hidden = true;
+    $("arena").classList.remove("is-coaching", "is-danger");
+    $("game-study").disabled = false;
+    $("answer").removeAttribute("aria-invalid");
     $("answer").value = "";
     $("answer").disabled = false;
     $("check").disabled = false;
@@ -354,10 +413,16 @@
     $("answer").focus();
     if (session.mode === "game") {
       Guardian.question();
-      session.duration =
-        { slow: 55000, normal: 38000, fast: 24000 }[$("speed").value] +
-        w.word.length * 1100 +
-        Guardian.timeBonus() * 1000;
+      $("g-ship-hint").disabled = !GuardianEquipment.ensure(store.guardian)
+        .hintCharge;
+      session.duration = VocabularyPractice.duration(
+        $("speed").value,
+        w.word,
+        store.records[w.word],
+        session.streak,
+        Guardian.timeBonus(),
+      );
+      updateFlight();
       frame = requestAnimationFrame(tick);
     }
   }
@@ -387,7 +452,18 @@
     session.completed++;
     if (clean) session.correct++;
     const wasDue = store.records[current().word]?.due <= Date.now();
-    record(clean);
+    if (!session.failureRecorded) record(clean);
+    if (!clean) session.weak.add(session.queue[session.cursor]);
+    if (session.mode === "game") {
+      session.streak = clean ? session.streak + 1 : 0;
+      if (!clean)
+        VocabularyPractice.retry(
+          session.queue,
+          session.cursor,
+          session.retries,
+        );
+      flightEffect(clean ? "clear" : "learn");
+    }
     if (session.mode === "game") Guardian.onWord(current().word, clean, wasDue);
     if (session.mode === "daily") {
       const id = session.queue[session.cursor];
@@ -413,17 +489,126 @@
     tone(720);
     $("next").focus();
   }
+  function updateFlight() {
+    if (!session || session.mode !== "game") return;
+    const second = Math.max(
+      0,
+      Math.ceil((session.duration - session.elapsed) / 1000),
+    );
+    session.clockSecond = second;
+    $("flight-leg").textContent =
+      `CHẶNG ${String(Math.floor(session.completed / 12) + 1).padStart(2, "0")}`;
+    $("flight-goal").textContent = `${session.completed % 12} / 12 mục tiêu`;
+    const shields =
+      "◆ ".repeat(session.shields) + "◇ ".repeat(3 - session.shields);
+    if ($("flight-shields").textContent !== shields) {
+      $("flight-shields").textContent = shields;
+      $("flight-shields").setAttribute(
+        "aria-label",
+        `${session.shields} lá chắn còn lại`,
+      );
+    }
+    $("flight-time").textContent = session.coaching ? "HỌC LẠI" : `${second}s`;
+    $("flight-timebar").value = Math.max(
+      0,
+      100 * (1 - session.elapsed / session.duration),
+    );
+    $("flight-pace").textContent = session.coaching
+      ? "Không giới hạn thời gian"
+      : store.records[current().word]?.stage === 0
+        ? "Từ còn mới · thêm thời gian"
+        : "Nhịp theo độ quen từ";
+  }
+  function studyWord(timedOut = false) {
+    if (
+      !session ||
+      session.mode !== "game" ||
+      session.resolved ||
+      session.paused ||
+      session.coaching
+    )
+      return;
+    cancelAnimationFrame(frame);
+    session.coaching = session.helped = true;
+    session.streak = 0;
+    session.weak.add(session.queue[session.cursor]);
+    if (!session.failureRecorded) {
+      record(false);
+      session.failureRecorded = true;
+    }
+    Guardian.mistake();
+    $("flight-coach").hidden = false;
+    $("coach-word").textContent = `${current().word} — ${current().meaning}`;
+    $("coach-context").textContent = current().context;
+    $("arena").classList.remove("is-danger");
+    $("arena").classList.add("is-coaching");
+    $("enemy").style.transform = "translateY(0px)";
+    $("game-study").disabled = true;
+    $("g-ship-hint").disabled = true;
+    $("feedback").textContent = timedOut
+      ? `Còn ${session.shields} lá chắn. Mình học lại từ này rồi bay tiếp nhé.`
+      : "Xem từ cũng là học. Lượt này không tăng combo, xu hay vé từ đúng.";
+    updateFlight();
+    $("answer").focus({ preventScroll: true });
+  }
+  function flightEffect(kind) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const layer = $("flight-effects");
+    if (layer.childElementCount > 24) return;
+    const box = $("enemy").getBoundingClientRect(),
+      arena = $("arena").getBoundingClientRect();
+    const effect = document.createElement("span");
+    effect.className = `flight-fx fx-${kind}`;
+    effect.style.left = `${box.left - arena.left + box.width / 2}px`;
+    effect.style.top = `${box.top - arena.top + Math.min(45, box.height / 2)}px`;
+    effect.textContent = kind === "clear" ? "✦" : kind === "learn" ? "✓" : "·";
+    layer.append(effect);
+    effect.addEventListener("animationend", () => effect.remove(), {
+      once: true,
+    });
+    setTimeout(() => effect.remove(), 1000);
+  }
+  $("game-study").onclick = () => studyWord();
+  $("coach-listen").onclick = () => {
+    if (!session?.coaching || session.paused) return;
+    if (!("speechSynthesis" in window)) {
+      $("feedback").textContent = "Trình duyệt này chưa hỗ trợ đọc từ.";
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(current().word);
+    utterance.lang = "en-GB";
+    utterance.rate = 0.8;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  };
   function tick(now) {
-    if (!session || session.mode !== "game" || session.resolved) return;
+    if (
+      !session ||
+      session.mode !== "game" ||
+      session.resolved ||
+      session.coaching
+    )
+      return;
     if (!session.paused) {
       if (session.last) session.elapsed += Math.min(now - session.last, 100);
       const ratio = session.elapsed / session.duration;
-      const max = $("arena").clientHeight - 38 - $("enemy").offsetHeight;
+      const max =
+        $("arena").querySelector(".danger").offsetTop - $("enemy").offsetHeight;
       $("enemy").style.transform =
         `translateY(${Math.max(0, max) * Math.min(1, ratio)}px)`;
+      const second = Math.ceil((session.duration - session.elapsed) / 1000);
+      if (second !== session.clockSecond) updateFlight();
+      $("arena").classList.toggle("is-danger", ratio >= 0.78);
       if (ratio >= 1) {
-        record(false);
-        return finish(true);
+        session.shields--;
+        updateFlight();
+        Guardian.mistake();
+        if (!session.shields) {
+          session.weak.add(session.queue[session.cursor]);
+          record(false);
+          return finish(true);
+        }
+        return studyWord(true);
       }
     }
     session.last = now;
@@ -449,13 +634,26 @@
     $("home").hidden = true;
     $("result").hidden = false;
     $("result-title").textContent = lost
-      ? "Chạm vạch rồi!"
+      ? "Về trạm nạp lại nào."
       : s.mode === "daily"
         ? "Hoàn thành hôm nay."
         : "Hẹn gặp lại.";
     $("result-copy").textContent =
       `${s.completed} lượt luyện · ${s.correct} lượt đúng không gợi ý.\n${lost ? `Từ vừa rơi: ${answer.word} — ${answer.meaning}\n${answer.context}` : "Tiến độ đã lưu. Từ cần hỗ trợ sẽ đến hạn sau 10 phút; từ tự nhớ đúng được hẹn từ ngày mai."}`;
     if (s.mode === "game") Guardian.finish();
+    reviewIds = [...s.weak];
+    $("weak-review").hidden = !reviewIds.length;
+    $("weak-words").replaceChildren(
+      ...reviewIds.map((id) => {
+        const row = document.createElement("div"),
+          word = document.createElement("strong"),
+          meaning = document.createElement("span");
+        word.textContent = words[id].word;
+        meaning.textContent = words[id].meaning;
+        row.append(word, meaning);
+        return row;
+      }),
+    );
     session = null;
   }
   function tone(freq) {
@@ -495,9 +693,13 @@
       if (!target.startsWith(value)) {
         session.mistake = true;
         Guardian.mistake();
-        $("feedback").textContent = "Lệch mục tiêu — sửa chữ màu đỏ.";
+        $("answer").setAttribute("aria-invalid", "true");
+        $("feedback").textContent =
+          "Sửa chữ màu đỏ; chưa cần vội. Chưa nhớ thì bấm Alt+2 để học lại.";
       } else {
-        $("feedback").textContent = "";
+        $("answer").removeAttribute("aria-invalid");
+        if (!session.coaching) $("feedback").textContent = "";
+        flightEffect("shot");
         $("laser").classList.remove("fire");
         void $("laser").offsetWidth;
         $("laser").classList.add("fire");
@@ -510,6 +712,7 @@
     if (
       !session ||
       session.mode !== "game" ||
+      session.coaching ||
       session.paused ||
       session.resolved ||
       !Guardian.useHint()
@@ -551,6 +754,7 @@
   $("pause").onclick = pause;
   $("quit").onclick = () => finish(false);
   $("back").onclick = home;
+  $("review-weak").onclick = () => start("infinite", reviewIds);
   document.addEventListener("visibilitychange", () => {
     if (
       document.hidden &&
@@ -642,6 +846,7 @@
         session.mode === "game" &&
         !session.paused &&
         !session.resolved &&
+        !session.coaching &&
         GuardianEquipment.ensure(store.guardian).hintCharge
       )
         action = useShipHint;
@@ -650,7 +855,13 @@
         action = () => activate("pause");
       else if (shortcut === "Alt+1")
         action = session.mode === "game" ? useShipHint : () => activate("hint");
-      else if (shortcut === "Alt+2") action = () => activate("reveal");
+      else if (shortcut === "Alt+2")
+        action =
+          session.mode === "game"
+            ? () => studyWord()
+            : () => activate("reveal");
+      else if (shortcut === "Alt+3" && session.coaching)
+        action = () => activate("coach-listen");
       else if (e.key === "Enter" && session.resolved)
         action = () => activate("next");
       else if (e.key === "Enter" && !session.paused)

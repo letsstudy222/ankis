@@ -26,6 +26,8 @@ with sync_playwright() as p:
  state=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
  assert len(state['records'])==5 and all(r['learned'] and r['stage']==0 for r in state['records'].values())
  assert page.locator('#daily').is_disabled()
+ assert 'đủ một nhóm' in page.locator('#route-title').inner_text()
+ assert all(r.get('introducedOn') for r in state['records'].values())
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  # Review is only unlocked once learned words are due.
  page.evaluate("""() => {let s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));for(const r of Object.values(s.records))r.due=Date.now()-1;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s));}""")

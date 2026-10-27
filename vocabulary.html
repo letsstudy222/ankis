@@ -4,17 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Quỹ đạo từ vựng · LetsStudy</title>
+    <link rel="stylesheet" href="vocabulary.css?v=20261027-orbit-flight-4" />
     <link
       rel="stylesheet"
-      href="vocabulary.css?v=20261027-arena-pet-3"
+      href="./pet-art-tone.css?v=20261027-orbit-flight-4"
     />
+    <link rel="stylesheet" href="./pet-roaming.css?v=20261027-orbit-flight-4" />
     <link
       rel="stylesheet"
-      href="./pet-art-tone.css?v=20261027-arena-pet-3"
-    />
-    <link
-      rel="stylesheet"
-      href="./pet-roaming.css?v=20261027-arena-pet-3"
+      href="vocabulary-flight.css?v=20261027-orbit-flight-4"
     />
   </head>
   <body>
@@ -24,12 +22,35 @@
         ><button id="sound" aria-pressed="false">Âm thanh: tắt</button>
       </header>
       <section id="home">
-        <p class="eyebrow">NHỚ NGHĨA. GÕ TỪ. CHINH PHỤC.</p>
-        <h1>Quỹ đạo<br /><em>từ vựng.</em></h1>
-        <p class="intro">
-          Bắt đầu bằng 5 từ: xem từ và câu ví dụ, chọn nghĩa, rồi gõ theo mẫu.
-          Khi đã làm quen, quay lại điền từ để tự kiểm tra trí nhớ.
-        </p>
+        <div class="welcome">
+          <div>
+            <p class="eyebrow">WORD LAB / MỖI NGÀY MỘT CHÚT</p>
+            <h1>Học một từ.<br /><em>Mở một quỹ đạo.</em></h1>
+            <p class="intro">
+              Bắt đầu bằng 5 từ: xem từ và câu ví dụ, chọn nghĩa, rồi gõ theo
+              mẫu. Khi đã làm quen, lái tàu bằng những từ bạn tự nhớ được.
+            </p>
+          </div>
+          <div class="welcome-art" aria-hidden="true">
+            <span class="orbit-tag">YOUR NEXT SMALL ADVENTURE</span>
+            <div class="orbit-planet"></div>
+            <span class="orbit-satellite">✦</span
+            ><span class="orbit-coordinate">LEARN · RECALL · EXPLORE</span>
+          </div>
+        </div>
+        <section
+          id="study-route"
+          class="study-route"
+          aria-label="Gợi ý học tiếp"
+        >
+          <span class="route-marker" aria-hidden="true">→</span>
+          <div>
+            <small>BƯỚC TIẾP THEO CỦA BẠN</small>
+            <h2 id="route-title"></h2>
+            <p id="route-copy"></p>
+          </div>
+          <button id="route-start">Bắt đầu →</button>
+        </section>
         <div id="stats" class="stats"></div>
         <section id="guardian-home" class="g-station" aria-label="Trạm Sao">
           <div id="g-home-art" class="g-home-art"></div>
@@ -49,21 +70,63 @@
             ><small>Học đều. Nuôi lớn. Đi xa.</small>
           </div>
         </section>
+        <div class="mode-heading">
+          <h2>Chọn một chuyến đi</h2>
+          <span>Học trước → tự nhớ → luyện phản xạ</span>
+        </div>
         <div class="modes">
           <article class="learn-card">
-            <span>01 / HỌC TRƯỚC</span>
+            <svg
+              class="mode-icon"
+              viewBox="0 0 60 56"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 9q9-4 18 0v28q-9-4-18 0V9Zm18 0q9-4 18 0v28q-9-4-18 0M18 16h6m-6 7h6m12-7h6m-6 7h6"
+              /></svg
+            ><span>01 / HỌC TRƯỚC</span>
             <h2>Làm quen 5 từ</h2>
             <p id="learn-description"></p>
             <button id="learn">Học từ mới →</button>
           </article>
           <article>
-            <span>02 / NHỚ LẠI</span>
+            <svg
+              class="mode-icon"
+              viewBox="0 0 60 56"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="30" cy="25" r="17" />
+              <path d="M30 14v12l9 5M16 6l-6 6m34-6 6 6M23 46h14" /></svg
+            ><span>02 / NHỚ LẠI</span>
             <h2>Ôn hôm nay</h2>
             <p id="daily-description"></p>
             <button id="daily">Bắt đầu hôm nay →</button>
           </article>
           <article>
-            <span>03 / LUYỆN THÊM</span>
+            <svg
+              class="mode-icon"
+              viewBox="0 0 60 56"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M30 12c-15-17-34 13-14 22 7 3 14-8 14-8s7-11 14-8c20 9 1 39-14 22M13 42l-6-1 1 6m39-39 6 1-1-6"
+              /></svg
+            ><span>03 / LUYỆN THÊM</span>
             <h2>Luyện vô hạn</h2>
             <p>
               Chỉ dùng từ đã làm quen. Xáo trộn hết nhóm trước khi sang vòng
@@ -72,19 +135,31 @@
             <button id="infinite">Luyện điền chữ →</button>
           </article>
           <article class="arcade">
-            <span>04 / PHẢN XẠ</span>
+            <svg
+              class="mode-icon"
+              viewBox="0 0 60 56"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="m30 5 9 25-9-4-9 4L30 5Zm-8 20L9 40l16-5m13-10 13 15-16-5M26 40l4 11 4-11"
+              /></svg
+            ><span>04 / PHẢN XẠ</span>
             <h2>Vệ binh từ vựng</h2>
             <p>
-              Chỉ chơi với từ đã làm quen. Nghĩa rơi từ trên xuống. Gõ đúng từng
-              chữ để bắn; hoàn thành từ trước khi chạm vạch đỏ! Gõ đúng sẽ tự
-              chuyển từ tiếp theo, không cần Enter. Tích điểm, nuôi linh thú và
-              kiếm xu mở tàu, bầu trời mới.
+              Lái tàu bằng trí nhớ: gõ từng chữ để phá mục tiêu. Có 3 lá chắn,
+              tốc độ theo độ quen từ và linh thú đi cùng. Quên từ? Học lại ngay,
+              rồi thử tự nhớ sau vài mục tiêu khác. Đúng là tự sang từ mới.
             </p>
             <label
               >Tốc độ
               <select id="speed">
                 <option value="slow">Làm quen</option>
-                <option value="normal" selected>Vừa sức</option>
+                <option value="normal" selected>Vừa sức · tự điều chỉnh</option>
                 <option value="fast">Thử thách</option>
               </select></label
             ><button id="game">Vào trận →</button>
@@ -166,8 +241,37 @@
           <p id="g-ticket-rate" class="g-ticket-rate"></p>
           <p id="guardian-reward" role="status"></p>
         </div>
+        <div id="flight-status" hidden>
+          <div class="flight-sector">
+            <span class="live-dot"></span><span id="flight-leg">CHẶNG 01</span
+            ><small id="flight-goal">0 / 12 mục tiêu</small>
+          </div>
+          <div
+            id="flight-shields"
+            title="Mỗi lần hết giờ mất 1 lá chắn. Hết 3 lá chắn thì về trạm."
+            role="status"
+            aria-label="3 lá chắn"
+          >
+            ◆ ◆ ◆
+          </div>
+          <div class="flight-clock">
+            <span id="flight-time">—</span
+            ><small id="flight-pace">Vừa sức</small>
+          </div>
+          <progress
+            id="flight-timebar"
+            value="100"
+            max="100"
+            aria-label="Thời gian còn lại"
+          ></progress>
+        </div>
         <div id="arena" hidden>
           <div class="stars"></div>
+          <div class="orbit-haze" aria-hidden="true"></div>
+          <div id="flight-effects" aria-hidden="true"></div>
+          <div class="arena-coordinate" aria-hidden="true">
+            SECTOR / WORD ORBIT
+          </div>
           <div id="g-boss-label" hidden></div>
           <div id="enemy">
             <div id="enemy-art"></div>
@@ -175,7 +279,7 @@
             <div id="enemy-letters"></div>
           </div>
           <div id="laser"></div>
-          <div class="danger">VẠCH PHÒNG THỦ</div>
+          <div class="danger"><span>VẠCH PHÒNG THỦ</span></div>
           <div id="guardian-ship" class="ship"></div>
           <div id="arena-companion"></div>
           <div id="g-toast" role="status" hidden></div>
@@ -186,6 +290,18 @@
           <h2 id="meaning"></h2>
           <div id="letters" aria-hidden="true"></div>
           <p id="length"></p>
+          <div id="flight-coach" hidden role="status">
+            <span class="coach-badge"
+              >XƯỞNG TRÍ NHỚ / KHÔNG TÍNH TỰ NHỚ ĐÚNG</span
+            ><strong id="coach-word"></strong>
+            <p id="coach-context"></p>
+            <button id="coach-listen" type="button" aria-keyshortcuts="Alt+3">
+              Nghe từ · Alt+3</button
+            ><small
+              >Đọc cả câu rồi gõ lại từ phía trên. Đồng hồ đang dừng; từ này sẽ
+              được ôn lại.</small
+            >
+          </div>
           <form id="answer-form">
             <label for="answer">Gõ từ tiếng Anh</label
             ><input
@@ -198,6 +314,14 @@
           </form>
           <p id="feedback" aria-live="polite"></p>
           <button id="g-ship-hint" type="button" hidden>Gợi ý tàu · Tab</button>
+          <button
+            id="game-study"
+            type="button"
+            hidden
+            aria-keyshortcuts="Alt+2"
+          >
+            Chưa nhớ? Học lại từ · Alt+2
+          </button>
           <div class="actions">
             <button id="hint" aria-keyshortcuts="Alt+1">
               Gợi ý chữ tiếp · Alt+1</button
@@ -214,6 +338,12 @@
         <p class="eyebrow">THÊM MỘT BƯỚC TIẾN</p>
         <h1 id="result-title">Làm tốt lắm.</h1>
         <p id="result-copy"></p>
+        <section id="weak-review" hidden aria-label="Từ cần củng cố">
+          <h2>Mang những từ này về trạm</h2>
+          <p>Thử tự nhớ trong bài điền không có đồng hồ.</p>
+          <div id="weak-words"></div>
+          <button id="review-weak">Luyện lại các từ này →</button>
+        </section>
         <button id="back">Về khu học từ →</button>
       </section>
       <dialog id="guardian-dialog" aria-labelledby="g-dialog-title">
@@ -243,19 +373,21 @@
           Tab / Shift+Tab = chuyển nút, Enter / Space = bấm nút. Phím tắt: Enter
           = tiếp tục / kiểm tra · 1–4 = chọn nghĩa · Alt+1 = gợi ý · Alt+2 = đáp
           án · Alt+3 = nghe từ · Alt+4 = tạm dừng game · Esc = về khu học. Phím
-          Alt+1/Alt+2 dùng được ngay trong ô nhập. Trong Vệ binh, Tab ở ô trả
-          lời dùng một lượt mở chữ của tàu khi đã nạp; Shift+Tab vẫn chuyển nút.
+          Alt+1/Alt+2 dùng được ngay trong ô nhập. Trong Vệ binh, Alt+2 mở phần
+          học lại từ; không tính là tự nhớ đúng. Trong Vệ binh, Tab ở ô trả lời
+          dùng một lượt mở chữ của tàu khi đã nạp; Shift+Tab vẫn chuyển nút.
         </p>
         Học chậm mà chắc. Mỗi lần tự nhớ là một lần tiến bộ.
       </footer>
     </main>
-    <script src="vocabulary-data.js?v=20261027-arena-pet-3"></script>
-    <script src="guardian-model.js?v=20261027-arena-pet-3"></script>
-    <script src="guardian-nursery.js?v=20261027-arena-pet-3"></script>
-    <script src="guardian-equipment.js?v=20261027-arena-pet-3"></script>
-    <script src="guardian-art.js?v=20261027-arena-pet-3"></script>
-    <script src="guardian.js?v=20261027-arena-pet-3"></script>
-    <script src="pet-roaming.js?v=20261027-arena-pet-3"></script>
-    <script src="vocabulary.js?v=20261027-arena-pet-3"></script>
+    <script src="vocabulary-data.js?v=20261027-orbit-flight-4"></script>
+    <script src="guardian-model.js?v=20261027-orbit-flight-4"></script>
+    <script src="guardian-nursery.js?v=20261027-orbit-flight-4"></script>
+    <script src="guardian-equipment.js?v=20261027-orbit-flight-4"></script>
+    <script src="guardian-art.js?v=20261027-orbit-flight-4"></script>
+    <script src="guardian.js?v=20261027-orbit-flight-4"></script>
+    <script src="pet-roaming.js?v=20261027-orbit-flight-4"></script>
+    <script src="vocabulary-practice.js?v=20261027-orbit-flight-4"></script>
+    <script src="vocabulary.js?v=20261027-orbit-flight-4"></script>
   </body>
 </html>

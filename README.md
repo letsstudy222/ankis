@@ -67,6 +67,7 @@ BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_nursery_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_ticket_browser.py
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_art_browser.py
+BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_natural_refresh_browser.py
 node tests/guardian_simple_expansion.test.cjs
 BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_simple_expansion_browser.py
 node tests/guardian_rainbow_expansion.test.cjs
@@ -102,3 +103,5 @@ Expansion 4 adds tiger, genbu, swan, elephant and dragon-horse: Legend gacha egg
 Expansion 5 adds aurora red panda, leviathan sea dragon, sphinx, moon rabbit and butterfly dragon: Rainbow gacha eggs, 240-word incubation, three forms at levels 8/16 and 1600 duplicate species XP. Rainbow remains 0.5% base with unchanged soft/hard pity; unseen preference now covers ten species including the original five and eggs. At most 500 draws collect all ten from zero, or 250 additional draws collect five new species if the original five are owned. Existing pity, ownership and tickets are preserved. Total 50 species / 110 forms.
 
 Expansion 6 follows the owner’s preference to grow common rosters only: five simple Normal animals and five restrained Rare animals, 15 sprites total. Normal eggs 700–1100 coins, 30 clean words; Rare eggs 2000–2800 coins, 60 clean words and level-8 evolution. Low-saturation natural two/three-color palettes, plain eyes and minimal shading, no glitter or ornaments. Higher-tier roster sizes stay fixed at ten each. Total 60 species / 125 forms.
+
+Natural Normal refresh: all fifteen Normal companions are ordinary animals. Ten earlier fantasy sprites are replaced at `assets/pets/normal/natural-v2/`; five recent natural animals stay as-is. Stable IDs, costs and saved XP remain intact; `sprout` becomes a brown squirrel. Shared `pet-art-tone.css` reduces displayed saturation for Rare/Epic/Legend/Rainbow at 0.68/0.80/0.88/0.92 respectively while preserving their source art and evolution. The gallery and full-size `pet-portrait.html` use the same presentation. No collection or reward-rule expansion.

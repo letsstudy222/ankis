@@ -1,0 +1,25 @@
+/* Shared presentation: source illustrations and saved collection data stay intact. */
+[data-art-rarity="normal"] {
+  --pet-saturation: 1;
+}
+[data-art-rarity="rare"] {
+  --pet-saturation: 0.68;
+}
+[data-art-rarity="epic"] {
+  --pet-saturation: 0.8;
+}
+[data-art-rarity="legend"] {
+  --pet-saturation: 0.88;
+}
+[data-art-rarity="rainbow"] {
+  --pet-saturation: 0.92;
+}
+.g-pet-svg[data-art-rarity],
+img[data-art-rarity] {
+  filter: saturate(var(--pet-saturation, 1));
+}
+/* These selectors also override the gallery's former glossy drop shadows. */
+.evolution-pair img[data-art-rarity],
+.portrait img[data-art-rarity] {
+  filter: saturate(var(--pet-saturation, 1));
+}

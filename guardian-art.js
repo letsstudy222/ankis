@@ -1,11 +1,11 @@
 "use strict";
 (() => {
   const assets = {
-    fox: { 1: "./assets/pets/normal/fox-1.png" },
-    sprout: { 1: "./assets/pets/normal/sprout-1.png" },
-    rabbit: { 1: "./assets/pets/normal/rabbit-1.png" },
-    cat: { 1: "./assets/pets/normal/cat-1.png" },
-    turtle: { 1: "./assets/pets/normal/turtle-1.png" },
+    fox: { 1: "./assets/pets/normal/natural-v2/fox-1.png" },
+    sprout: { 1: "./assets/pets/normal/natural-v2/sprout-1.png" },
+    rabbit: { 1: "./assets/pets/normal/natural-v2/rabbit-1.png" },
+    cat: { 1: "./assets/pets/normal/natural-v2/cat-1.png" },
+    turtle: { 1: "./assets/pets/normal/natural-v2/turtle-1.png" },
     axolotl: {
       1: "./assets/pets/rare/axolotl-1.png",
       2: "./assets/pets/rare/axolotl-2.png",
@@ -96,11 +96,11 @@
       2: "./assets/pets/rainbow/halo-2.png",
       3: "./assets/pets/rainbow/halo-3.png",
     },
-    penguin: { 1: "./assets/pets/normal/penguin-1.png" },
-    hedgehog: { 1: "./assets/pets/normal/hedgehog-1.png" },
-    raccoon: { 1: "./assets/pets/normal/raccoon-1.png" },
-    otter: { 1: "./assets/pets/normal/otter-1.png" },
-    seahorse: { 1: "./assets/pets/normal/seahorse-1.png" },
+    penguin: { 1: "./assets/pets/normal/natural-v2/penguin-1.png" },
+    hedgehog: { 1: "./assets/pets/normal/natural-v2/hedgehog-1.png" },
+    raccoon: { 1: "./assets/pets/normal/natural-v2/raccoon-1.png" },
+    otter: { 1: "./assets/pets/normal/natural-v2/otter-1.png" },
+    seahorse: { 1: "./assets/pets/normal/natural-v2/seahorse-1.png" },
     koi: {
       1: "./assets/pets/rare/koi-1.png",
       2: "./assets/pets/rare/koi-2.png",
@@ -243,7 +243,7 @@
     const maximum = GuardianModel.formCount(p.id);
     const form = Math.max(1, Math.min(maximum, stage));
     if (!egg && assets[p.id]?.[form]) {
-      return `<svg class="g-pet-svg g-painted-pet" data-pet-art="painted" data-species="${p.id}" data-form="${form}" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><image href="${assets[p.id][form]}" width="160" height="160" preserveAspectRatio="xMidYMid meet"/></svg>`;
+      return `<svg class="g-pet-svg g-painted-pet" data-pet-art="painted" data-art-rarity="${p.rarity}" data-species="${p.id}" data-form="${form}" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><image href="${assets[p.id][form]}" width="160" height="160" preserveAspectRatio="xMidYMid meet"/></svg>`;
     }
     const id = "creature-" + ++count,
       rainbow = p.rarity === "rainbow",
@@ -351,7 +351,7 @@
       !egg && stage >= 4
         ? `<path d="M62 16L64 3L78 11L93 1L98 16Z" fill="#ffdf93" stroke="#fff1bb"/>`
         : "";
-    return `<svg class="g-pet-svg ${egg ? "g-egg" : ""}" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">${defs}${orb}${aura}${shape}${crown}${star(24, 23, 5)}${star(138, 91, 4)}${rainbow ? star(126, 17, 7) + star(17, 83, 5) : ""}</svg>`;
+    return `<svg class="g-pet-svg ${egg ? "g-egg" : ""}" data-art-rarity="${p.rarity}" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">${defs}${orb}${aura}${shape}${crown}${star(24, 23, 5)}${star(138, 91, 4)}${rainbow ? star(126, 17, 7) + star(17, 83, 5) : ""}</svg>`;
   }
   globalThis.GuardianArt = { draw, assets, progress };
 })();

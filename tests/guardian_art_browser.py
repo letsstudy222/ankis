@@ -5,7 +5,7 @@ from PIL import Image
 from playwright.sync_api import sync_playwright
 BASE=os.environ.get('BASE_URL','http://127.0.0.1:8007')
 for name in ['fox','sprout','rabbit','cat','turtle']:
- with Image.open(Path(__file__).resolve().parents[1]/'assets/pets/normal'/f'{name}-1.png') as image:
+ with Image.open(Path(__file__).resolve().parents[1]/'assets/pets/normal/natural-v2'/f'{name}-1.png') as image:
   assert image.mode=='RGBA'
   assert image.width>=1024 and image.height>=1024
   assert image.getchannel('A').getextrema()[0]==0
@@ -35,7 +35,7 @@ with sync_playwright() as p:
  # XP stays intact while each rarity maps high-level creatures to its own final form.
  for id,forms in [('fox',1),('axolotl',2),('butterfly',2),('dragon',3),('astra',3)]:
   assert page.evaluate('(id)=>GuardianModel.stage(JSON.parse(localStorage.getItem("letsstudy-vocabulary-v1")).guardian,id).index',id)==forms
- page.locator('.g-small-card').filter(has_text='Mèo Trăng Non').get_by_role('button').click()
+ page.locator('.g-small-card').filter(has_text='Mèo Xám').get_by_role('button').click()
  assert page.locator('#g-home-art [data-pet-art="painted"]').get_attribute('data-species')=='cat'
  page.locator('#g-close').click();page.locator('#game').click()
  assert page.locator('#arena-companion [data-pet-art="painted"]').get_attribute('data-species')=='cat'

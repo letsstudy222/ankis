@@ -8,7 +8,7 @@ with sync_playwright() as p:
  page=b.new_page(viewport={'width':1280,'height':1000}); errors=[]
  page.on('pageerror',lambda e:errors.append(e.stack))
  page.goto(BASE+'/vocabulary.html')
- assert page.locator('#g-home-name').inner_text()=='Hồ Ly Tinh Vân'
+ assert page.locator('#g-home-name').inner_text()=='Cáo Đỏ'
  page.locator('#g-open').click();assert page.locator('#guardian-dialog').is_visible()
  page.locator('[data-tab="shop"]').click();assert page.locator('[data-item="ship-kite"]').is_disabled()
  page.keyboard.press('Escape');assert not page.locator('#guardian-dialog').is_visible()

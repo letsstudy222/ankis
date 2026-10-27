@@ -29,8 +29,8 @@ with sync_playwright() as p:
  assert state['guardian']['nursery']['pets']['sprout']['hatched']
  assert state['guardian']['nursery']['incubator'] is None
  page.keyboard.press('Escape');page.keyboard.press('Enter');page.locator('#g-open').click();page.locator('[data-tab="pet"]').click()
- page.locator('.g-small-card').filter(has_text='Mầm Lá Sao').get_by_role('button').click()
- assert page.locator('#g-home-name').inner_text()=='Mầm Lá Sao'
+ page.locator('.g-small-card').filter(has_text='Sóc Nâu').get_by_role('button').click()
+ assert page.locator('#g-home-name').inner_text()=='Sóc Nâu'
  page.locator('[data-tab="gacha"]').click()
  assert 'Lượt tiếp theo chắc chắn Rainbow' in page.locator('#g-dialog-body').inner_text()
  page.locator('#g-summon').click()

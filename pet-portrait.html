@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Ảnh linh thú · LetsStudy</title>
+    <style>
+      :root {
+        font-family: system-ui, sans-serif;
+        color: #eeeaf5;
+        background: #151622;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-width: 980px;
+        margin: auto;
+        padding: 24px;
+      }
+      a {
+        color: #d2c1ef;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        font-size: clamp(24px, 4vw, 36px);
+        margin: 20px 0 8px;
+      }
+      p {
+        color: #bdb8c9;
+        line-height: 1.7;
+      }
+      #portrait {
+        display: block;
+        max-width: 100%;
+        width: min(78vh, 820px);
+        height: auto;
+        aspect-ratio: 1;
+        object-fit: contain;
+        margin: 22px auto;
+        background: #e9e8e2;
+        border-radius: 20px;
+        padding: 18px;
+      }
+      #forms {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      #forms a {
+        padding: 10px 14px;
+        border: 1px solid #797282;
+        border-radius: 10px;
+        text-decoration: none;
+      }
+      #forms a[aria-current] {
+        color: #151622;
+        background: #d2c1ef;
+      }
+      a:focus-visible {
+        outline: 3px solid #89d2b1;
+        outline-offset: 4px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (max-width: 500px) {
+        main {
+          padding: 18px;
+        }
+        #portrait {
+          padding: 8px;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="./pet-art-tone.css?v=20261027-natural-refresh-2"
+    />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a id="back" href="./pet-art-preview.html">← Bộ sưu tập</a
+        ><a href="./vocabulary.html?v=20261027-natural-refresh-2"
+          >Vào khu học →</a
+        >
+      </header>
+      <h1 id="name">Ảnh linh thú</h1>
+      <p id="caption"></p>
+      <nav id="forms" aria-label="Chọn hình thái"></nav>
+      <img id="portrait" hidden alt="" width="1254" height="1254" />
+    </main>
+    <script src="./guardian-model.js?v=20261027-natural-refresh-2"></script>
+    <script src="./guardian-nursery.js?v=20261027-natural-refresh-2"></script>
+    <script src="./guardian-art.js?v=20261027-natural-refresh-2"></script>
+    <script>
+      "use strict";
+      (() => {
+        const query = new URLSearchParams(location.search),
+          pet = GuardianModel.pets.find((p) => p.id === query.get("pet"));
+        if (!pet) {
+          document.getElementById("caption").textContent =
+            "Không tìm thấy linh thú này. Mở lại ảnh từ bộ sưu tập nhé.";
+          return;
+        }
+        const total = GuardianModel.formCount(pet.id),
+          requested = Number(query.get("form")),
+          form =
+            Number.isInteger(requested) && requested >= 1 && requested <= total
+              ? requested
+              : 1;
+        const picture = document.getElementById("portrait");
+        picture.src = GuardianArt.assets[pet.id][form];
+        picture.alt = `${pet.name} · Bậc ${form}`;
+        picture.dataset.artRarity = pet.rarity;
+        picture.hidden = false;
+        document.title = `${pet.name} · Bậc ${form} · LetsStudy`;
+        document.getElementById("name").textContent = pet.name;
+        document.getElementById("caption").textContent =
+          `${GuardianNursery.tiers[pet.rarity].name} · ${total === 1 ? "Một hình thái hoàn chỉnh sau nở" : `Bậc ${form} / ${total}${form === 2 ? " · Cấp 8" : form === 3 ? " · Cấp 16" : " · Mới nở"}`}`;
+        document.getElementById("back").href =
+          "./pet-art-preview.html#" + pet.id;
+        for (let f = 1; f <= total; f++) {
+          const link = document.createElement("a");
+          link.href = `?pet=${pet.id}&form=${f}`;
+          link.textContent = `Bậc ${f}`;
+          if (f === form) link.setAttribute("aria-current", "page");
+          document.getElementById("forms").append(link);
+        }
+        document.addEventListener("keydown", (e) => {
+          if (e.altKey || e.ctrlKey || e.metaKey) return;
+          const next =
+            e.key === "ArrowRight"
+              ? form + 1
+              : e.key === "ArrowLeft"
+                ? form - 1
+                : 0;
+          if (next >= 1 && next <= total) {
+            e.preventDefault();
+            location.search = `?pet=${pet.id}&form=${next}`;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

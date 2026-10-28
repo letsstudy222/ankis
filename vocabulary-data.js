@@ -221,8 +221,8 @@ window.VOCABULARY = [
   },
   {
     "word": "vulnerable",
-    "meaning": "dễ bị ảnh hưởng / tổn thương",
-    "context": "Some people may be particularly vulnerable to their surroundings."
+    "meaning": "dễ bị tổn thương / dễ bị ảnh hưởng",
+    "context": "Such change could make communities more vulnerable to other problems."
   },
   {
     "word": "deliberate",
@@ -316,8 +316,8 @@ window.VOCABULARY = [
   },
   {
     "word": "interpretation",
-    "meaning": "cách hiểu / sự diễn giải",
-    "context": "This interpretation can reduce persistence."
+    "meaning": "sự / cách diễn giải",
+    "context": "The interpretation of archaeological evidence requires caution."
   },
   {
     "word": "persistence",
@@ -518,5 +518,195 @@ window.VOCABULARY = [
     "word": "conversely",
     "meaning": "ngược lại",
     "context": "Conversely, a dry region may achieve a reliable water supply."
+  },
+  {
+    "word": "excavate",
+    "meaning": "khai quật",
+    "context": "Archaeologists excavate ancient sites to uncover remains and artefacts."
+  },
+  {
+    "word": "settlement",
+    "meaning": "khu định cư / nơi cư trú",
+    "context": "Archaeologists often discover the remains of settlements that were once home to large populations."
+  },
+  {
+    "word": "abandoned",
+    "meaning": "bị bỏ hoang / bị rời bỏ",
+    "context": "Settlements that were once home to large populations were later abandoned."
+  },
+  {
+    "word": "prosper",
+    "meaning": "phát triển thịnh vượng",
+    "context": "Some settlements prospered because they were located on important trade routes."
+  },
+  {
+    "word": "decline",
+    "meaning": "suy giảm",
+    "context": "A settlement may have faced environmental stress, economic decline and political instability at the same time."
+  },
+  {
+    "word": "tempting",
+    "meaning": "dễ khiến người ta muốn tin / làm điều gì",
+    "context": "At first glance, it is tempting to assume that a single disaster must have forced residents to leave."
+  },
+  {
+    "word": "fertile",
+    "meaning": "màu mỡ",
+    "context": "A region that had once supported farming may gradually become drier, colder or less fertile."
+  },
+  {
+    "word": "sustain",
+    "meaning": "duy trì / giúp tiếp tục tồn tại",
+    "context": "A settlement could become increasingly difficult to sustain."
+  },
+  {
+    "word": "conflict",
+    "meaning": "xung đột",
+    "context": "Conflict is another factor frequently considered by researchers."
+  },
+  {
+    "word": "interpret",
+    "meaning": "diễn giải / hiểu theo một cách",
+    "context": "Archaeologists are cautious about interpreting such evidence."
+  },
+  {
+    "word": "interpreting",
+    "meaning": "việc diễn giải",
+    "context": "Archaeologists are cautious about interpreting such evidence."
+  },
+  {
+    "word": "precaution",
+    "meaning": "biện pháp phòng ngừa",
+    "context": "A wall may have been built as a precaution rather than in response to an actual attack."
+  },
+  {
+    "word": "merchant",
+    "meaning": "thương nhân",
+    "context": "A town that had once benefited from passing merchants might gradually lose both income and population."
+  },
+  {
+    "word": "instability",
+    "meaning": "sự bất ổn",
+    "context": "A settlement may have faced environmental stress, economic decline and political instability at the same time."
+  },
+  {
+    "word": "at first glance",
+    "meaning": "thoạt nhìn",
+    "context": "At first glance, it is tempting to assume that a single disaster must have forced residents to leave."
+  },
+  {
+    "word": "collapse",
+    "meaning": "sự sụp đổ",
+    "context": "Such change did not always cause immediate collapse."
+  },
+  {
+    "word": "reinforce",
+    "meaning": "củng cố / làm mạnh thêm",
+    "context": "Several problems reinforced one another."
+  },
+  {
+    "word": "adaptation",
+    "meaning": "sự thích nghi",
+    "context": "One important adaptation involves food."
+  },
+  {
+    "word": "hostile",
+    "meaning": "khắc nghiệt / bất lợi / không thân thiện",
+    "context": "Cities are often assumed to be hostile environments for wildlife."
+  },
+  {
+    "word": "exploit",
+    "meaning": "tận dụng",
+    "context": "Some species have adjusted their behaviour in ways that allow them to exploit new opportunities."
+  },
+  {
+    "word": "discarded",
+    "meaning": "bị vứt bỏ",
+    "context": "Animals may begin feeding on discarded human food or refuse."
+  },
+  {
+    "word": "disrupt",
+    "meaning": "làm gián đoạn / phá vỡ",
+    "context": "Urban noise can also disrupt communication."
+  },
+  {
+    "word": "territory",
+    "meaning": "lãnh thổ / khu vực được bảo vệ",
+    "context": "Many birds rely on calls to attract mates or defend territory."
+  },
+  {
+    "word": "low-frequency",
+    "meaning": "tần số thấp",
+    "context": "Low-frequency traffic noise can mask those signals."
+  },
+  {
+    "word": "mask",
+    "meaning": "che lấp / làm khó nghe thấy",
+    "context": "Low-frequency traffic noise can mask those signals."
+  },
+  {
+    "word": "compensate for",
+    "meaning": "bù đắp cho",
+    "context": "Some species appear to compensate for this by singing at a higher pitch."
+  },
+  {
+    "word": "capable",
+    "meaning": "có khả năng",
+    "context": "Not all species are equally capable of making such adjustments."
+  },
+  {
+    "word": "disoriented",
+    "meaning": "mất phương hướng",
+    "context": "Insects may become disoriented around street lamps."
+  },
+  {
+    "word": "reproduction",
+    "meaning": "sự sinh sản",
+    "context": "These changes can influence feeding, migration and reproduction."
+  },
+  {
+    "word": "disturbance",
+    "meaning": "sự quấy nhiễu / xáo trộn",
+    "context": "Human disturbance may cause stress or force animals to abandon otherwise suitable habitat."
+  },
+  {
+    "word": "otherwise",
+    "meaning": "nếu không có yếu tố đó thì vốn dĩ / về mặt khác",
+    "context": "Human disturbance may force animals to abandon otherwise suitable habitat."
+  },
+  {
+    "word": "altogether",
+    "meaning": "hoàn toàn",
+    "context": "Animals that are naturally more cautious may avoid cities altogether."
+  },
+  {
+    "word": "bolder",
+    "meaning": "táo bạo hơn / ít sợ hơn",
+    "context": "Bolder individuals are more likely to enter and remain in urban areas."
+  },
+  {
+    "word": "tough",
+    "meaning": "cứng cỏi / chịu đựng tốt",
+    "context": "Researchers reconsider the idea that successful urban species are simply those that are naturally tough."
+  },
+  {
+    "word": "pattern",
+    "meaning": "kiểu / mô hình / quy luật",
+    "context": "Species may alter feeding, communication, movement or activity patterns."
+  },
+  {
+    "word": "behavioural flexibility",
+    "meaning": "tính linh hoạt trong hành vi",
+    "context": "A more useful concept may be behavioural flexibility."
+  },
+  {
+    "word": "resilient",
+    "meaning": "có khả năng chống chịu / phục hồi tốt",
+    "context": "Species with greater flexibility may be more resilient."
+  },
+  {
+    "word": "specialised",
+    "meaning": "chuyên biệt / có mức chuyên môn hóa cao",
+    "context": "Those with highly specialised habits can decline rapidly."
   }
 ];

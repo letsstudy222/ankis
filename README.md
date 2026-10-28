@@ -4,7 +4,7 @@ Static flashcards and Vietnamese-to-English vocabulary practice, published with 
 
 - `index.html`: existing bundled flashcards (existing browser storage preserved).
 - `vocabulary.html`, `vocabulary.css`, `vocabulary.js`: dedicated typing and falling-word arcade modes.
-- `vocabulary-data.js`: 104 entries supplied by the owner, with Vietnamese meanings and context sentences.
+- `vocabulary-data.js`: 142 entries supplied by the owner, with Vietnamese meanings and context sentences.
 
 ## Development
 

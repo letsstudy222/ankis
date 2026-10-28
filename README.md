@@ -147,3 +147,12 @@ All sixteen non-pet catalog entries now have detailed original vector presentati
 `guardian-gear-art.js` draws the shared equipment and previews, `guardian-gear-art.css` styles the hangar and sparse meteor/nebula effects, and `assets/scenes/gear-*.svg` supplies the four small local sky illustrations. SVG gradient IDs are unique across cards and arena. Meteor/engine motion pauses with the game, and reduced motion hides meteors and stops decorative animations. Beams now align with the ship center.
 
 Check: `BASE_URL=http://127.0.0.1:8008 python3 tests/guardian_gear_art_browser.py` covers sixteen previews without state changes, SVG isolation, real purchases and equipped assets, beam alignment, meteor visibility/pause, mobile/reduced motion and the egg collection.
+
+
+## Species eggs, album and ten summons
+
+Trạm Sao → **Bộ sưu tập** displays all 60 species. Unowned portraits are dark silhouettes; receiving an egg lights up that species before hatching. Filter by Normal, Rare, Epic, Legend or Rainbow, or view owned species only. Egg shells now carry species-inspired ears, horns, wings, fins or other accessories plus a crest showing the matching companion.
+
+**Triệu hồi x10** costs 100 tickets and requires the full amount before drawing. All ten pulls apply the existing rates and pity sequentially; duplicates still award species XP. The result panel names each received egg and shows duplicate XP. Acknowledge results before drawing again. Existing collection, incubation and backup formats remain compatible.
+
+Checks: `node tests/guardian_multisummon.test.cjs` and `BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_collection_browser.py`.

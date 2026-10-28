@@ -852,6 +852,13 @@
     n.history = n.history.slice(0, 50);
     return { ...result, rarity, guaranteed, pull: n.pulls };
   }
+  function summonMany(s, count = 1, random = rng) {
+    const n = ensure(s);
+    if (![1, 10].includes(count)) return { ok: false, message: "Chọn triệu hồi x1 hoặc x10." };
+    if (n.tickets < count * 10) return { ok: false, message: `Cần đủ ${count * 10} vé cho ${count} lần triệu hồi.` };
+    const results = Array.from({ length: count }, () => summon(s, random));
+    return { ok: true, results, message: count === 1 ? results[0].message : "Đã triệu hồi 10 lần · dùng 100 vé. Trứng trùng được đổi thành XP cho loài tương ứng." };
+  }
   M.reward = (s, args) => {
     const n = ensure(s),
       before = M.stage(s).index,
@@ -901,6 +908,7 @@
     pauseIncubation,
     rates,
     summon,
+    summonMany,
   };
   globalThis.GuardianNursery = API;
 })();

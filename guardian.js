@@ -9,7 +9,8 @@
     filter = "ship",
     previewGear = "",
     toastTimer,
-    collectionFilter = "owned",
+    collectionFilter = "all",
+    lastSummonResults = null,
     summonBusy = false;
   const localDate = () => new Date().toLocaleDateString("sv-SE");
   const state = () => {
@@ -197,6 +198,10 @@
     artLink.href = "./pet-art-preview.html";
     artStatus.append(artLink);
     body.append(artStatus);
+    collectionPage(body);
+  }
+  function collectionPage(body) {
+    const s = state(), n = N.ensure(s);
     const filters = node("div", "g-filters");
     for (const [key, label] of [
       ["owned", "Đã nhận"],
@@ -204,6 +209,7 @@
       ...Object.entries(N.tiers).map(([k, v]) => [k, v.name]),
     ]) {
       const b = node("button", "", label);
+      b.dataset.collectionFilter = key;
       b.setAttribute("aria-pressed", String(collectionFilter === key));
       b.onclick = () => {
         collectionFilter = key;
@@ -229,11 +235,10 @@
     for (const p of list) {
       const own = n.pets[p.id],
         card = node("article", "g-small-card rarity-" + p.rarity);
-      card.innerHTML = GuardianArt.draw(
-        p,
-        own?.hatched ? M.stage(s, p.id).index : 1,
-        !!own && !own.hatched,
-      );
+      card.dataset.species = p.id;
+      card.classList.toggle("g-unowned", !own);
+      card.innerHTML = GuardianArt.draw(p, own?.hatched ? M.stage(s, p.id).index : 1);
+      card.append(node("small", "g-collection-state", own ? "Đã sở hữu" : "Chưa sở hữu"));
       card.append(
         rarityTag(p),
         node("h4", "", p.name),
@@ -448,28 +453,37 @@
         `${n.pity} / 50 lượt chưa ra Rainbow · đã triệu hồi ${n.pulls} lần`,
       ),
     );
-    const summon = node("button", "", "Triệu hồi · 10 vé");
-    summon.id = "g-summon";
-    summon.disabled = n.tickets < 10 || summonBusy;
-    summon.onclick = () => {
-      if (summonBusy) return;
-      summonBusy = true;
-      const result = N.summon(s);
-      if (!result.ok) {
-        summonBusy = false;
+    for (const count of [1, 10]) {
+      const summon = node("button", "", count === 1 ? "Triệu hồi · 10 vé" : "Triệu hồi x10 · 100 vé");
+      summon.id = count === 1 ? "g-summon" : "g-summon-ten";
+      summon.disabled = n.tickets < count * 10 || summonBusy;
+      summon.onclick = () => {
+        if (summonBusy) return;
+        const result = N.summonMany(s, count);
+        if (!result.ok) { notify(result.message); return; }
+        summonBusy = true;
+        lastSummonResults = n.history.slice(0, count).reverse();
+        options.save();
+        renderHome();
+        renderDialog();
         notify(result.message);
-        return;
-      }
-      options.save();
-      renderHome();
-      renderDialog();
-      notify(result.message);
-      $("g-ack")?.focus({ preventScroll: false });
-    };
-    portal.append(summon);
+        $("g-results-title")?.focus({ preventScroll: true });
+        $("g-results-title")?.scrollIntoView({ block: "start" });
+      };
+      portal.append(summon);
+    }
     body.append(portal);
-    const last = n.history[0];
-    if (last) {
+    const results = lastSummonResults || n.history.slice(0, 1);
+    const resultPanel = node("section", "g-summon-results");
+    resultPanel.setAttribute("aria-label", "Kết quả triệu hồi");
+    if (results.length) {
+      const title = node("h3", "", `Đã nhận ${results.length} kết quả triệu hồi`);
+      title.id = "g-results-title";
+      title.tabIndex = -1;
+      resultPanel.append(title);
+    }
+    const resultGrid = node("div", results.length > 1 ? "g-draw-grid" : "");
+    for (const last of results) {
       const p = M.pets.find((p) => p.id === last.species),
         result = node(
           "div",
@@ -477,11 +491,8 @@
             p.rarity +
             (summonBusy ? " g-new-draw" : ""),
         );
-      result.innerHTML = GuardianArt.draw(
-        p,
-        M.stage(s, p.id).index,
-        !n.pets[p.id].hatched,
-      );
+      result.dataset.species = p.id;
+      result.innerHTML = GuardianArt.draw(p, 0, true);
       const info = node("div");
       info.append(
         rarityTag(p),
@@ -490,7 +501,7 @@
           "eyebrow",
           `KẾT QUẢ LƯỢT #${last.pull}${last.guaranteed ? " · BẢO HIỂM 50" : ""}`,
         ),
-        node("h3", "", p.name),
+        node("h3", "", `Nhận được trứng ${p.name}`),
         node(
           "p",
           "",
@@ -500,18 +511,17 @@
         ),
         node("p", "g-muted", p.description),
       );
-      if (summonBusy) {
-        const ack = node("button", "", "Đã nhận kết quả");
-        ack.id = "g-ack";
-        ack.onclick = () => {
-          summonBusy = false;
-          renderDialog();
-        };
-        info.append(ack);
-      }
       result.append(info);
-      body.insertBefore(result, portal);
+      resultGrid.append(result);
     }
+    resultPanel.append(resultGrid);
+    if (summonBusy) {
+      const ack = node("button", "", "Đã nhận kết quả");
+      ack.id = "g-ack";
+      ack.onclick = () => { summonBusy = false; renderDialog(); $("g-summon")?.focus(); };
+      resultPanel.append(ack);
+    }
+    if (results.length) body.insertBefore(resultPanel, portal);
     const table = node("table", "g-odds");
     const caption = node("caption", "", "Tỷ lệ của lượt tiếp theo");
     table.append(caption);
@@ -838,6 +848,7 @@
     (
       ({
         pet: petPage,
+        collection: collectionPage,
         eggs: eggsPage,
         gacha: gachaPage,
         shop: shopPage,

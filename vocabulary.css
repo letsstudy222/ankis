@@ -918,14 +918,6 @@ progress::-moz-progress-bar {
   filter: drop-shadow(0 0 12px #ffd584a0);
   transform: scale(1.2);
 }
-.g-boss #enemy-art::after {
-  content: "♛";
-  position: absolute;
-  color: #ffe09d;
-  font-size: 25px;
-  top: -22px;
-  left: 24px;
-}
 #g-boss-label {
   position: absolute;
   right: 14px;
@@ -1522,4 +1514,25 @@ progress::-moz-progress-bar {
   text-align: center;
   font-size: 12px;
   line-height: 1.6;
+}
+
+/* Species album and multi-summon results. */
+.g-small-card.g-unowned > .g-pet-svg {
+  filter: grayscale(1) brightness(.22);
+  opacity: .65;
+}
+.g-collection-state { display: block; color: var(--muted); }
+.g-small-card:not(.g-unowned) .g-collection-state { color: #a8e8c0; }
+.g-draw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.g-draw-grid .g-summon-result { display: block; padding: 16px; min-width: 0; }
+.g-draw-grid .g-summon-result > svg { width: 100%; height: 120px; }
+.g-draw-grid .g-summon-result h3 { font-size: 18px; overflow-wrap: anywhere; }
+.g-summon-results > button { margin: 16px 0; }
+#g-summon-ten { margin-top: 10px; width: 100%; max-width: 550px; }
+@media (max-width: 520px) {
+  .g-draw-grid { grid-template-columns: 1fr; }
 }

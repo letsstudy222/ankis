@@ -45,7 +45,7 @@ with sync_playwright() as p:
  page.screenshot(animations='disabled',path='/tmp/nursery-rainbow-result.png')
  page.locator('#g-ack').click()
  # Deterministic normal/fox duplicate via the production draw code with an injected test RNG.
- page.evaluate("""() => {const draw=GuardianNursery.summon;GuardianNursery.summon=s=>draw(s,()=>0);}""")
+ page.evaluate("""() => {const draw=GuardianNursery.summonMany;GuardianNursery.summonMany=(s,count)=>draw(s,count,()=>0);}""")
  page.locator('#g-summon').click()
  assert 'Trùng loài → +40 XP' in page.locator('.g-summon-result').inner_text()
  page.locator('#g-ack').click();page.locator('[data-tab="pet"]').click()

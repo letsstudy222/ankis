@@ -323,7 +323,7 @@ footer {
 }
 /* Cockpit: one target, one place to type, secondary rewards kept quiet. */
 .g-playing main {
-  max-width: 1000px;
+  max-width: 1180px;
 }
 .g-playing header {
   display: none;
@@ -439,7 +439,7 @@ footer {
 }
 #arena,
 #arena[data-sky] {
-  height: 390px;
+  height: clamp(390px, calc(100svh - 400px), 560px);
   border-radius: 18px;
   border-color: #82b8b64d;
   background: url("assets/scenes/orbit.svg") center/cover #091d2d;

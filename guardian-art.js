@@ -262,7 +262,27 @@
     const head = `<ellipse cx="80" cy="58" rx="35" ry="29" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>`;
     let shape = "";
     if (egg) {
-      shape = `<ellipse cx="80" cy="67" rx="33" ry="43" fill="${fill}" stroke="${tier.color}" stroke-width="2"/><ellipse cx="66" cy="45" rx="8" ry="14" fill="white" opacity=".45" transform="rotate(25 66 45)"/><path d="M53 70L68 63L80 75L91 62L109 69" stroke="${tier.color}" stroke-width="3" opacity=".8"/><path d="M80 34L84 44L94 48L84 52L80 62L76 52L66 48L76 44Z" fill="white" opacity=".8"/><circle cx="66" cy="89" r="5" fill="${tier.color}"/><circle cx="96" cy="84" r="4" fill="${tier.color}"/>`;
+      // Shell accessories echo the species; the inset crest uses its own art.
+      const kind = p.art;
+      let traits = "";
+      if (["rabbit", "moonrabbit"].includes(kind))
+        traits = `<path d="M59 34Q39-10 57 3Q72 10 71 31M89 31Q88 10 103 3Q121-10 101 34" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+      else if (["fox", "cat", "wolf", "lynx", "shiba", "aurora", "sphinx"].includes(kind))
+        traits = `<path d="M49 42 39 12 69 29M91 29 121 12 111 42" fill="${fill}" stroke="${stroke}" stroke-width="2"/><path d="m47 23 7 15 8-9m51-6-7 15-8-9" fill="#e9b6ad"/>`;
+      else if (["deer", "kirin", "dragonhorse", "dragon", "leviathan"].includes(kind))
+        traits = `<path d="M58 35 48 20 48 6m0 14-12-7m66 22 10-15V6m0 14 12-7" stroke="${stroke}" stroke-width="5" stroke-linecap="round"/><path d="m75 27 5-23 6 23" fill="#f4dfad"/>`;
+      else if (["butterfly", "stargazer", "bat", "phoenix", "griffin", "swan", "crane", "peacock", "sparrow", "duck", "penguin", "puffin", "owl"].includes(kind))
+        traits = `<path d="M51 62Q8 18 20 61L10 66Q23 96 52 89M109 62Q152 18 140 61L150 66Q137 96 108 89" fill="${fill}" stroke="${stroke}" stroke-width="2"/><path d="m25 58 23 19m87-19-23 19" stroke="${stroke}" stroke-width="2"/>`;
+      else if (["jelly", "octopus", "axolotl"].includes(kind))
+        traits = `<path d="M51 56 27 42m22 26-27 2m30 11-24 15m81-40 24-14m-22 26 27 2m-30 11 24 15" stroke="${stroke}" stroke-width="7" stroke-linecap="round"/>`;
+      else if (["whale", "manta", "koi", "seal", "seahorse"].includes(kind))
+        traits = `<path d="M51 71 24 53Q16 80 49 87M109 71 136 53Q144 80 111 87M70 104 59 115 80 110 101 115 90 104" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+      else if (["turtle", "genbu", "beetle", "crab", "scorpion", "hedgehog"].includes(kind))
+        traits = `<path d="m49 55-14-9 4 21-12 9 18 8-5 18 19-7m52-40 14-9-4 21 12 9-18 8 5 18-19-7" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+      else
+        traits = `<path d="M54 37Q32 10 49 12Q67 13 68 29M92 29Q93 13 111 12Q128 10 106 37" fill="${fill}" stroke="${stroke}" stroke-width="2"/><path d="M109 86Q145 71 127 48Q155 91 107 101" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+      const portrait = assets[p.id]?.[1];
+      shape = `${traits}<ellipse cx="80" cy="67" rx="33" ry="43" fill="${fill}" stroke="${tier.color}" stroke-width="2"/><path d="M51 79Q80 98 109 79M57 91Q80 106 103 91" fill="none" stroke="${tier.color}" stroke-width="2" opacity=".65"/><ellipse cx="63" cy="43" rx="5" ry="12" fill="white" opacity=".5" transform="rotate(25 63 43)"/><circle cx="80" cy="64" r="23" fill="#172a35" fill-opacity=".28" stroke="${stroke}"/>${portrait ? `<image href="${portrait}" x="54" y="38" width="52" height="52" preserveAspectRatio="xMidYMid meet"/>` : star(80, 64, 13)}`;
     } else
       switch (p.art) {
         case "fox":
@@ -351,7 +371,7 @@
       !egg && stage >= 4
         ? `<path d="M62 16L64 3L78 11L93 1L98 16Z" fill="#ffdf93" stroke="#fff1bb"/>`
         : "";
-    return `<svg class="g-pet-svg ${egg ? "g-egg" : ""}" data-art-rarity="${p.rarity}" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">${defs}${orb}${aura}${shape}${crown}${star(24, 23, 5)}${star(138, 91, 4)}${rainbow ? star(126, 17, 7) + star(17, 83, 5) : ""}</svg>`;
+    return `<svg class="g-pet-svg ${egg ? "g-egg" : ""}" data-species="${p.id}" data-art-rarity="${p.rarity}" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">${defs}${orb}${aura}${shape}${crown}${star(24, 23, 5)}${star(138, 91, 4)}${rainbow ? star(126, 17, 7) + star(17, 83, 5) : ""}</svg>`;
   }
   globalThis.GuardianArt = { draw, assets, progress };
 })();

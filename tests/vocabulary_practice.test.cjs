@@ -58,3 +58,31 @@ assert.equal(already.filter((i) => i === 0).length, 2);
 console.log(
   "PASS: unique due-first rounds, fragile-memory timing, capped pace, gear time bonus, three-distinct-word spacing, bounded retries and small pools.",
 );
+// Corrected mistakes affect practice frequency without changing reward eligibility.
+const fast = {}, slow = {}, typo = {};
+P.observe(fast, 'recall', 1200, 0, false);
+P.observe(slow, 'recall', 15000, 0, false);
+P.observe(typo, 'recall', 1200, 3, false);
+assert(fast.arcade.difficulty < typo.arcade.difficulty);
+assert(slow.arcade.difficulty > .7);
+assert(P.validMemory(slow.arcade));
+assert(!P.validMemory({...slow.arcade, difficulty: NaN}));
+assert(!P.validMemory({...slow.arcade, samples: -1}));
+const adaptiveRecords = Object.fromEntries(words.map(w=>[w.word,{stage:1,due:2000,arcade:{...fast.arcade}}]));
+adaptiveRecords.word0.arcade = {...slow.arcade};
+let adaptive = P.queue(words.map((_,i)=>i), words, adaptiveRecords,1000,()=>.5);
+assert.equal(adaptive.filter(i=>i===0).length,3);
+assert.equal(adaptive.filter(i=>i===1).length,1);
+assert.equal(new Set(adaptive).size,8);
+for (let i=0;i<adaptive.length;i++) {
+ const next=adaptive.indexOf(adaptive[i],i+1);
+ if(next!==-1)assert(new Set(adaptive.slice(i+1,next)).size>=3);
+}
+for(let i=0;i<8;i++)P.observe(adaptiveRecords.word0,'recall',1000,0,false);
+assert(adaptiveRecords.word0.arcade.difficulty < .1);
+adaptive=P.queue(words.map((_,i)=>i),words,adaptiveRecords,1000,()=>.5);
+assert.equal(adaptive.filter(i=>i===0).length,1,'mastered words lose their extra repeats');
+P.observe(typo,'recall',1000,0,true);
+assert(typo.arcade.difficulty > .65);
+assert.equal(P.queue([0,1,2],words,adaptiveRecords,1000,()=>.5).length,3);
+console.log('PASS: length-normalized speed, corrected-error difficulty, spaced weighted repetitions, no starvation, mastery decay, small pools and memory validation.');

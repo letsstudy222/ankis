@@ -156,3 +156,10 @@ Trạm Sao → **Bộ sưu tập** displays all 60 species. Unowned portraits ar
 **Triệu hồi x10** costs 100 tickets and requires the full amount before drawing. All ten pulls apply the existing rates and pity sequentially; duplicates still award species XP. The result panel names each received egg and shows duplicate XP. Acknowledge results before drawing again. Existing collection, incubation and backup formats remain compatible.
 
 Checks: `node tests/guardian_multisummon.test.cjs` and `BASE_URL=http://127.0.0.1:8000 python3 tests/guardian_collection_browser.py`.
+
+
+## Adaptive Guardian practice
+
+Guardian quietly tracks active response time and distinct typing-error episodes per word, normalized for phrase length. Timeouts, ship hints and relearning count as difficulty; paused time and copying during relearning do not create extra observations. A smoothed score prioritizes difficult words and adds up to two spaced repetitions per round, while fast accurate words return to the normal frequency as familiarity improves. Every familiarized word remains in the pool; small pools avoid forced extra repeats. Corrected typing still earns the existing clean rewards, combo and ticket chances.
+
+The optional `records[word].arcade` memory persists with existing browser progress and JSON backups; old saves need no migration. Check with `node tests/vocabulary_practice.test.cjs` and `BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_adaptive_browser.py`.

@@ -38,6 +38,7 @@
           Number.isFinite(r.due) &&
           Number.isInteger(r.attempts) &&
           r.attempts >= 0 &&
+          VocabularyPractice.validMemory(r.arcade) &&
           (r.learned === undefined || typeof r.learned === "boolean") &&
           (r.learningStep === undefined ||
             (Number.isInteger(r.learningStep) &&
@@ -385,6 +386,9 @@
       coaching: false,
       failureRecorded: false,
       clockSecond: -1,
+      errorEpisodes: 0,
+      invalidPrefix: false,
+      memoryRecorded: false,
     });
     const w = current();
     $("flight-coach").hidden = true;
@@ -426,6 +430,12 @@
       frame = requestAnimationFrame(tick);
     }
   }
+  function rememberArcade(failed) {
+    if (session.mode !== "game" || session.memoryRecorded) return 0;
+    session.memoryRecorded = true;
+    return VocabularyPractice.observe(store.records[current().word], current().word,
+      session.elapsed, session.errorEpisodes, failed);
+  }
   function record(success) {
     const w = current(),
       old = store.records[w.word] || { stage: 0, attempts: 0, due: 0 };
@@ -454,11 +464,12 @@
     session.completed++;
     if (clean) session.correct++;
     const wasDue = store.records[current().word]?.due <= Date.now();
+    const difficulty = rememberArcade(!clean);
     if (!session.failureRecorded) record(clean);
     if (!clean) session.weak.add(session.queue[session.cursor]);
     if (session.mode === "game") {
       session.streak = clean ? session.streak + 1 : 0;
-      if (!clean)
+      if (!clean || difficulty >= .35)
         VocabularyPractice.retry(
           session.queue,
           session.cursor,
@@ -538,6 +549,7 @@
     session.streak = 0;
     session.weak.add(session.queue[session.cursor]);
     if (!session.failureRecorded) {
+      rememberArcade(true);
       record(false);
       session.failureRecorded = true;
     }
@@ -612,6 +624,7 @@
         Guardian.mistake();
         if (!session.shields) {
           session.weak.add(session.queue[session.cursor]);
+          rememberArcade(true);
           record(false);
           return finish(true);
         }
@@ -699,11 +712,14 @@
       const value = $("answer").value.toLowerCase(),
         target = current().word.toLowerCase();
       if (!target.startsWith(value)) {
+        if (!session.invalidPrefix && !session.coaching) session.errorEpisodes++;
+        session.invalidPrefix = true;
         session.mistake = true;
         $("answer").setAttribute("aria-invalid", "true");
         $("feedback").textContent =
           "Cứ sửa chữ màu đỏ. Hoàn thành đúng trước khi hết giờ vẫn tính lượt vé.";
       } else {
+        session.invalidPrefix = false;
         $("answer").removeAttribute("aria-invalid");
         if (!session.coaching) $("feedback").textContent = "";
         flightEffect("shot");

@@ -4,7 +4,7 @@ Static flashcards and Vietnamese-to-English vocabulary practice, published with 
 
 - `index.html`: existing bundled flashcards (existing browser storage preserved).
 - `vocabulary.html`, `vocabulary.css`, `vocabulary.js`: dedicated typing and falling-word arcade modes.
-- `vocabulary-data.js`: 142 entries supplied by the owner, with Vietnamese meanings and context sentences.
+- `vocabulary-data.js`: 192 entries supplied by the owner, with Vietnamese meanings and context sentences.
 
 ## Development
 
@@ -163,3 +163,5 @@ Checks: `node tests/guardian_multisummon.test.cjs` and `BASE_URL=http://127.0.0.
 Guardian quietly tracks active response time and distinct typing-error episodes per word, normalized for phrase length. Timeouts, ship hints and relearning count as difficulty; paused time and copying during relearning do not create extra observations. A smoothed score prioritizes difficult words and adds up to two spaced repetitions per round, while fast accurate words return to the normal frequency as familiarity improves. Every familiarized word remains in the pool; small pools avoid forced extra repeats. Corrected typing still earns the existing clean rewards, combo and ticket chances.
 
 The optional `records[word].arcade` memory persists with existing browser progress and JSON backups; old saves need no migration. Check with `node tests/vocabulary_practice.test.cjs` and `BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_adaptive_browser.py`.
+
+The 2026-11-04 vocabulary import adds 50 new words/phrases, bringing the total to 192. Four existing entries (`cue`, `friction`, `apparently`, `vulnerable`) receive additional context; `friction` includes both physical friction and figurative obstacles. New entries are appended; existing word keys and indices stay unchanged so saved records, daily word IDs, wallet and collection remain valid. New words enter the familiarization flow before review or arcade.

@@ -126,8 +126,8 @@ window.VOCABULARY = [
   },
   {
     "word": "apparently",
-    "meaning": "có vẻ, dường như",
-    "context": "Apparently similar people can make very different purchasing decisions."
+    "meaning": "có vẻ / dường như / nhìn bề ngoài",
+    "context": "Apparently similar people can make very different purchasing decisions. A slope may remain apparently stable for years."
   },
   {
     "word": "underestimate",
@@ -176,8 +176,8 @@ window.VOCABULARY = [
   },
   {
     "word": "friction",
-    "meaning": "những trở ngại nhỏ làm hành vi khó thực hiện hơn",
-    "context": "Improving the environment can reduce friction."
+    "meaning": "ma sát; những trở ngại nhỏ làm hành vi khó thực hiện hơn",
+    "context": "Improving the environment can reduce friction. Friction may decrease, making a slope less stable."
   },
   {
     "word": "intend to",
@@ -222,7 +222,7 @@ window.VOCABULARY = [
   {
     "word": "vulnerable",
     "meaning": "dễ bị tổn thương / dễ bị ảnh hưởng",
-    "context": "Such change could make communities more vulnerable to other problems."
+    "context": "Such change could make communities more vulnerable to other problems. Human activity may make an already vulnerable slope more unstable."
   },
   {
     "word": "deliberate",
@@ -266,8 +266,8 @@ window.VOCABULARY = [
   },
   {
     "word": "cue",
-    "meaning": "tín hiệu / gợi ý",
-    "context": "Recognition is easier because the information provides cues."
+    "meaning": "tín hiệu / gợi ý / dấu hiệu giúp định hướng",
+    "context": "Recognition is easier because the information provides cues. Some birds use the sun as a directional cue."
   },
   {
     "word": "isolated",
@@ -708,5 +708,255 @@ window.VOCABULARY = [
     "word": "specialised",
     "meaning": "chuyên biệt / có mức chuyên môn hóa cao",
     "context": "Those with highly specialised habits can decline rapidly."
+  },
+  {
+    "word": "adoption",
+    "meaning": "sự áp dụng / tiếp nhận",
+    "context": "New technologies are often described as if their adoption were automatic."
+  },
+  {
+    "word": "infrastructure",
+    "meaning": "cơ sở hạ tầng",
+    "context": "Infrastructure also matters."
+  },
+  {
+    "word": "obsolete",
+    "meaning": "lỗi thời / không còn phù hợp để sử dụng",
+    "context": "Eventually, older technologies may become obsolete."
+  },
+  {
+    "word": "transition",
+    "meaning": "quá trình chuyển đổi / giai đoạn chuyển tiếp",
+    "context": "The possibility of mistakes during the transition can create additional costs."
+  },
+  {
+    "word": "spread",
+    "meaning": "lan rộng / trở nên phổ biến",
+    "context": "Even clearly useful innovations can spread slowly."
+  },
+  {
+    "word": "obstacle",
+    "meaning": "trở ngại",
+    "context": "Another obstacle is compatibility."
+  },
+  {
+    "word": "compatibility",
+    "meaning": "tính tương thích",
+    "context": "Another obstacle is compatibility."
+  },
+  {
+    "word": "procedure",
+    "meaning": "quy trình / thủ tục",
+    "context": "Businesses often rely on equipment, software or procedures designed around older technologies."
+  },
+  {
+    "word": "irrational",
+    "meaning": "phi lý / không hợp lý",
+    "context": "This does not necessarily mean that users are irrational."
+  },
+  {
+    "word": "subsidy",
+    "meaning": "khoản trợ cấp",
+    "context": "Governments sometimes try to accelerate adoption through subsidies."
+  },
+  {
+    "word": "switching cost",
+    "meaning": "chi phí phát sinh khi chuyển từ hệ thống này sang hệ thống khác",
+    "context": "Learning a new system and making mistakes during the transition can create switching costs."
+  },
+  {
+    "word": "navigate",
+    "meaning": "tìm đường / định hướng đến đích",
+    "context": "Animals may travel vast distances and still navigate to precise destinations."
+  },
+  {
+    "word": "orientation",
+    "meaning": "sự định hướng / khả năng duy trì một hướng",
+    "context": "Altering an animal’s internal clock can cause predictable errors in orientation."
+  },
+  {
+    "word": "magnetic field",
+    "meaning": "từ trường",
+    "context": "The Earth’s magnetic field also appears to play a role."
+  },
+  {
+    "word": "displacement",
+    "meaning": "sự di chuyển khỏi vị trí hoặc tuyến đường bình thường",
+    "context": "Navigation becomes revealing when animals are deliberately displaced."
+  },
+  {
+    "word": "innate",
+    "meaning": "bẩm sinh",
+    "context": "Celestial navigation may depend partly on experience rather than being fully innate."
+  },
+  {
+    "word": "vast",
+    "meaning": "rộng lớn",
+    "context": "Migratory animals travel across vast distances."
+  },
+  {
+    "word": "internal",
+    "meaning": "bên trong / nội tại",
+    "context": "Altering an animal’s internal clock can affect orientation."
+  },
+  {
+    "word": "celestial",
+    "meaning": "thuộc bầu trời / thiên thể",
+    "context": "Part of celestial navigation depends on experience."
+  },
+  {
+    "word": "light-sensitive",
+    "meaning": "nhạy với ánh sáng",
+    "context": "Specialised light-sensitive molecules in the eye may be involved."
+  },
+  {
+    "word": "molecule",
+    "meaning": "phân tử",
+    "context": "Light-sensitive molecules in the eye may contribute to magnetic sensing."
+  },
+  {
+    "word": "odour",
+    "meaning": "mùi",
+    "context": "Pigeons may use odours to construct a local map."
+  },
+  {
+    "word": "overlapping",
+    "meaning": "chồng lấn / cùng tồn tại và phối hợp",
+    "context": "Animals may use several overlapping mechanisms."
+  },
+  {
+    "word": "exclusively",
+    "meaning": "chỉ duy nhất / hoàn toàn chỉ dựa vào",
+    "context": "The passage does not say salmon rely exclusively on smell."
+  },
+  {
+    "word": "landmark",
+    "meaning": "cột mốc / dấu hiệu địa hình quen thuộc",
+    "context": "Animals may travel without following visible landmarks."
+  },
+  {
+    "word": "stellar",
+    "meaning": "thuộc về các vì sao",
+    "context": "Species may rely on solar, stellar and magnetic information."
+  },
+  {
+    "word": "rotational",
+    "meaning": "có tính quay / xoay vòng",
+    "context": "Young birds can learn the rotational pattern of the night sky."
+  },
+  {
+    "word": "course",
+    "meaning": "hướng / lộ trình di chuyển",
+    "context": "A displaced animal may still correct its course."
+  },
+  {
+    "word": "landslide",
+    "meaning": "sạt lở đất",
+    "context": "Landslides occur when soil, rock or debris moves down a slope."
+  },
+  {
+    "word": "debris",
+    "meaning": "đất đá vụn / mảnh vụn",
+    "context": "Soil, rock or debris may move down a slope."
+  },
+  {
+    "word": "interact",
+    "meaning": "tương tác / tác động qua lại",
+    "context": "Many different factors interact below the surface."
+  },
+  {
+    "word": "penetrate",
+    "meaning": "thấm / xuyên vào",
+    "context": "Rain can penetrate the ground."
+  },
+  {
+    "word": "particle",
+    "meaning": "hạt nhỏ",
+    "context": "Water can increase the pressure between soil particles."
+  },
+  {
+    "word": "modest",
+    "meaning": "vừa phải / không quá lớn",
+    "context": "Some slopes collapse after relatively modest rainfall."
+  },
+  {
+    "word": "permeability",
+    "meaning": "tính thấm / khả năng cho nước đi qua",
+    "context": "Layers differ in strength, permeability and orientation."
+  },
+  {
+    "word": "buried",
+    "meaning": "bị chôn / nằm phía dưới",
+    "context": "A weak layer may be buried beneath stronger material."
+  },
+  {
+    "word": "erosion",
+    "meaning": "sự xói mòn",
+    "context": "Erosion at the base of a slope can gradually remove support."
+  },
+  {
+    "word": "likelihood",
+    "meaning": "khả năng / xác suất xảy ra",
+    "context": "Erosion may increase the likelihood of failure."
+  },
+  {
+    "word": "excavation",
+    "meaning": "sự đào bới / khai đào",
+    "context": "Road construction or excavation may alter the shape of a slope."
+  },
+  {
+    "word": "monitor",
+    "meaning": "theo dõi / giám sát",
+    "context": "Scientists monitor slopes using instruments."
+  },
+  {
+    "word": "satellite",
+    "meaning": "vệ tinh",
+    "context": "Satellite data can reveal slow deformation."
+  },
+  {
+    "word": "deformation",
+    "meaning": "sự biến dạng / thay đổi hình dạng",
+    "context": "Satellite data can reveal slow deformation over large areas."
+  },
+  {
+    "word": "accumulate",
+    "meaning": "tích tụ / tích lũy",
+    "context": "Stress may accumulate over a long period."
+  },
+  {
+    "word": "accumulated",
+    "meaning": "đã được tích tụ",
+    "context": "Landslides often result from accumulated stress."
+  },
+  {
+    "word": "trigger",
+    "meaning": "tác nhân kích hoạt",
+    "context": "Intense rainfall may act as a trigger."
+  },
+  {
+    "word": "underlying cause",
+    "meaning": "nguyên nhân nền tảng / sâu xa",
+    "context": "The underlying causes may have developed over a much longer period."
+  },
+  {
+    "word": "probability",
+    "meaning": "xác suất / khả năng xảy ra",
+    "context": "Researchers increasingly focus on probability rather than certainty."
+  },
+  {
+    "word": "certainty",
+    "meaning": "sự chắc chắn",
+    "context": "Researchers focus on probability rather than certainty."
+  },
+  {
+    "word": "unstable",
+    "meaning": "không ổn định",
+    "context": "Human activity may make a vulnerable slope more unstable."
+  },
+  {
+    "word": "slope",
+    "meaning": "sườn dốc / mặt dốc",
+    "context": "Landslides occur when material moves down a slope."
   }
 ];

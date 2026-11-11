@@ -1,0 +1,553 @@
+/* Small decks share the existing vocabulary and browser backup. */
+.lib-entry {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0 0 25px;
+  padding: 25px 28px;
+  border: 1px solid #b6d4ce48;
+  border-radius: 21px;
+  background: linear-gradient(130deg, #243c49, #162d38);
+}
+.lib-entry-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 58px;
+  height: 67px;
+  font-size: 43px;
+  color: #d7e7bd;
+  background: #91bba51a;
+  border: 1px solid #bbd6c236;
+  border-radius: 9px;
+  transform: rotate(-7deg);
+  box-shadow: 6px 5px 0 #91bba512;
+}
+.lib-entry h2 {
+  font-size: 21px;
+  margin: 5px 0 7px;
+  letter-spacing: -0.4px;
+}
+.lib-entry p {
+  margin: 0;
+  color: #adbfca;
+  font-size: 13px;
+}
+.lib-entry .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #b8d5bd;
+}
+.lib-entry button {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 13px;
+  background: #c7dfbc;
+  color: #19382f;
+  font-weight: 650;
+}
+.lib-nav {
+  margin: 24px 0 30px;
+  font-size: 11px;
+}
+.lib-nav button {
+  font-size: 12px;
+}
+.lib-nav span {
+  letter-spacing: 1.5px;
+  color: #a3bdc5;
+  font-size: 9px;
+}
+#lib-title {
+  font-size: clamp(44px, 6vw, 68px);
+  margin: 16px 0 20px;
+}
+.lib-summary {
+  color: #aec4cd;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.lib-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 185px 155px;
+  gap: 14px;
+  padding: 20px;
+  background: #152c39;
+  border: 1px solid #9cb8be2e;
+  border-radius: 16px;
+  margin: 26px 0 17px;
+}
+.lib-toolbar label,
+.lib-options label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 11px;
+  color: #b5ccd1;
+  min-width: 0;
+}
+.lib-toolbar input,
+.lib-toolbar select,
+.lib-options select {
+  font: inherit;
+  color: #e3edee;
+  background: #0e2330;
+  border: 1px solid #9ebdbb3d;
+  border-radius: 8px;
+  padding: 11px 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.lib-toolbar input {
+  font-size: 14px;
+}
+.lib-views {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 20px;
+}
+.lib-views button {
+  font-size: 12px;
+  padding: 9px 13px;
+}
+.lib-views [aria-pressed="true"] {
+  background: #c6dfc1;
+  color: #203b34;
+  border-color: #c6dfc1;
+}
+.lib-decks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.lib-deck {
+  min-width: 0;
+  padding: 22px;
+  background: linear-gradient(140deg, #1c3444, #142936);
+  border: 1px solid #adc9c631;
+  border-radius: 18px;
+}
+.lib-deck .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #b4c9cc;
+}
+.lib-deck h3 {
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 54px;
+  margin: 13px 0 19px;
+  overflow-wrap: anywhere;
+}
+.lib-deck progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #c2dfb7;
+}
+.lib-deck-count {
+  font-size: 11px !important;
+  line-height: 1.7;
+  color: #c8ddcc !important;
+  flex: 0;
+}
+.lib-last-test {
+  font-size: 11px !important;
+  line-height: 1.7;
+  color: #a4bdca;
+  flex: 1;
+}
+.lib-deck button {
+  font-size: 12px;
+  text-align: left;
+  margin-top: 10px;
+}
+#lib-deck-title,
+#lib-result-title {
+  font-size: clamp(27px, 4vw, 40px);
+  line-height: 1.3;
+  letter-spacing: -1px;
+  margin: 25px 0 12px;
+}
+.lib-deck-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 25px 0 20px;
+}
+.lib-deck-actions button:first-child {
+  background: #bce0cb;
+  color: #193c32;
+}
+.lib-deck-actions button {
+  font-size: 13px;
+}
+.lib-options {
+  display: flex;
+  gap: 24px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.lib-options .lib-checkbox {
+  flex-direction: row;
+  align-items: center;
+  padding-bottom: 10px;
+}
+.lib-checkbox input {
+  accent-color: #b6d9c3;
+  width: 16px;
+  height: 16px;
+}
+.lib-note {
+  font-size: 12px;
+  color: #9fb9c5;
+  line-height: 1.8;
+  max-width: 760px;
+  margin: 18px 0;
+}
+.lib-deck-last {
+  border-left: 2px solid #b8d3ac;
+  padding: 10px 15px;
+  background: #a7c0b80c;
+  font-size: 12px;
+  color: #d2e0d0;
+}
+.lib-word {
+  border: 1px solid #a5c6c324;
+  border-radius: 12px;
+  margin: 9px 0;
+  background: #142b39;
+  padding: 0;
+}
+.lib-word summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  padding: 14px 17px;
+  list-style: none;
+}
+.lib-word summary:after {
+  content: "＋";
+  color: #a5bdc3;
+  flex-shrink: 0;
+}
+.lib-word[open] summary:after {
+  content: "−";
+}
+.lib-word-copy {
+  display: grid;
+  grid-template-columns: minmax(140px, 190px) 1fr;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+}
+.lib-word-copy strong {
+  color: #d0e8c4;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.lib-word-copy span {
+  color: #c0d0d5;
+  font-size: 13px;
+}
+.lib-word-state {
+  font-size: 10px;
+  color: #a7c4cc;
+  max-width: 170px;
+  text-align: right;
+}
+.lib-example {
+  padding: 0 17px;
+  color: #bcced4;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0 0 12px;
+}
+.lib-listen {
+  margin: 0 17px 15px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+#lib-list-count,
+#lib-empty {
+  font-size: 13px;
+  color: #b9cdd1;
+}
+.lib-practice-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 26px;
+}
+.lib-practice-nav button {
+  font-size: 12px;
+}
+#lib-practice-progress {
+  font-size: 13px;
+  color: #c3dad2;
+}
+#lib-practice {
+  max-width: 780px;
+  margin: 0 auto;
+}
+#lib-practice-type {
+  margin: 20px 0 12px;
+}
+.lib-card {
+  border: 1px solid #adc8c448;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 80% 0, #2b4d514d, transparent 70%), #172e3d;
+  padding: 38px 34px;
+  min-height: 250px;
+  text-align: center;
+  box-shadow: 0 18px 35px #030c151c;
+}
+.lib-card .eyebrow {
+  font-size: 9px;
+  color: #a8c3c3;
+  letter-spacing: 1.6px;
+}
+#lib-card-front {
+  font-size: clamp(25px, 4vw, 36px);
+  line-height: 1.5;
+  margin: 20px 0;
+  overflow-wrap: anywhere;
+}
+.lib-card.is-revealed {
+  border-color: #b6d5aa72;
+}
+#lib-card-back {
+  border-top: 1px solid #c5d9cc29;
+  padding-top: 23px;
+  margin-top: 25px;
+}
+#lib-card-answer {
+  font-size: 28px;
+  color: #c9eabf;
+  overflow-wrap: anywhere;
+}
+#lib-card-context {
+  color: #bbced5;
+  font-size: 14px;
+  line-height: 1.8;
+}
+#lib-speak {
+  font-size: 11px;
+  padding: 7px 12px;
+}
+#lib-card-controls {
+  margin: 20px 0;
+}
+#lib-flip {
+  width: 100%;
+  background: #b8dfca;
+  color: #193c34;
+  font-weight: 650;
+}
+#lib-rating > p {
+  font-size: 12px;
+  color: #b4cdd1;
+}
+.lib-rating-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.lib-rating-buttons button {
+  font-size: 13px;
+  padding: 14px 8px;
+}
+#lib-rate-1 {
+  border-color: #dbad9f66;
+  color: #ebc5b7;
+}
+#lib-rate-2 {
+  border-color: #dfcb9366;
+  color: #e9dbad;
+}
+#lib-rate-3 {
+  border-color: #acd5b966;
+  color: #c2e2cb;
+}
+#lib-quiz-form {
+  display: block;
+  max-width: 100%;
+  margin: 22px 0 14px;
+}
+#lib-quiz-form label {
+  display: block;
+  font-size: 12px;
+  color: #adc3cd;
+  margin-bottom: 9px;
+}
+#lib-quiz-answer {
+  width: 100%;
+  font: 20px system-ui;
+  color: #eff5ee;
+  background: #112634;
+  border: 1px solid #9ec7be55;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.lib-quiz-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.lib-quiz-buttons button {
+  font-size: 12px;
+}
+#lib-quiz-feedback {
+  font-size: 13px;
+  color: #c4d9c9;
+  min-height: 23px;
+}
+#lib-quiz-next {
+  font-size: 13px;
+}
+#lib-result {
+  max-width: 850px;
+  margin: 40px auto;
+}
+#lib-result-copy {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #c4d6d9;
+}
+#lib-result-weak {
+  margin: 25px 0;
+  padding: 20px;
+  border: 1px solid #b7d0c437;
+  border-radius: 16px;
+  background: #18313e;
+}
+#lib-result-weak h3 {
+  margin: 0 0 18px;
+  font-size: 20px;
+}
+#lib-result-retry {
+  font-size: 12px;
+  margin-top: 13px;
+}
+#lib-result-back {
+  margin-top: 15px;
+  font-size: 13px;
+}
+#library [tabindex="-1"]:focus {
+  outline: none;
+}
+@media (max-width: 900px) {
+  .lib-entry {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .lib-entry > div:nth-child(2) {
+    flex: 1;
+  }
+  .lib-entry button {
+    margin-left: 74px;
+  }
+  .lib-decks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .lib-entry {
+    padding: 22px;
+  }
+  .lib-entry h2 {
+    font-size: 20px;
+  }
+  .lib-entry-icon {
+    width: 40px;
+    height: 50px;
+    font-size: 30px;
+  }
+  .lib-entry button {
+    width: 100%;
+    margin: 0;
+  }
+  .lib-entry .eyebrow {
+    font-size: 8px;
+  }
+  .lib-entry p {
+    font-size: 12px;
+  }
+  .lib-nav span {
+    display: none;
+  }
+  .lib-toolbar {
+    grid-template-columns: 1fr 1fr;
+    padding: 16px;
+    gap: 12px;
+  }
+  .lib-toolbar > label:first-child {
+    grid-column: 1/-1;
+  }
+  .lib-decks {
+    grid-template-columns: 1fr;
+  }
+  .lib-deck h3 {
+    min-height: 0;
+    font-size: 19px;
+  }
+  .lib-deck {
+    padding: 20px;
+  }
+  .lib-word summary {
+    gap: 9px;
+    padding: 13px;
+  }
+  .lib-word-copy {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .lib-word-state {
+    max-width: 95px;
+    font-size: 9px;
+  }
+  .lib-word-copy span {
+    font-size: 12px;
+  }
+  .lib-word-copy strong {
+    font-size: 14px;
+  }
+  .lib-card {
+    padding: 28px 20px;
+    min-height: 230px;
+  }
+  #lib-card-front {
+    font-size: 25px;
+  }
+  #lib-card-answer {
+    font-size: 25px;
+  }
+  .lib-rating-buttons {
+    gap: 6px;
+  }
+  .lib-rating-buttons button {
+    font-size: 11px;
+    padding: 12px 5px;
+  }
+  .lib-deck-actions {
+    gap: 8px;
+  }
+  .lib-deck-actions button {
+    font-size: 12px;
+  }
+  .lib-practice-nav {
+    gap: 8px;
+  }
+  .lib-practice-nav button {
+    font-size: 11px;
+  }
+  .lib-options {
+    gap: 15px;
+  }
+}

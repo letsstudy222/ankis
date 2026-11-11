@@ -165,3 +165,19 @@ Guardian quietly tracks active response time and distinct typing-error episodes 
 The optional `records[word].arcade` memory persists with existing browser progress and JSON backups; old saves need no migration. Check with `node tests/vocabulary_practice.test.cjs` and `BASE_URL=http://127.0.0.1:8000 python3 tests/vocabulary_adaptive_browser.py`.
 
 The 2026-11-04 vocabulary import adds 50 new words/phrases, bringing the total to 192. Four existing entries (`cue`, `friction`, `apparently`, `vulnerable`) receive additional context; `friction` includes both physical friction and figurative obstacles. New entries are appended; existing word keys and indices stay unchanged so saved records, daily word IDs, wallet and collection remain valid. New words enter the familiarization flow before review or arcade.
+
+## Vocabulary library and deck assessment
+
+Open **Bộ từ & flashcard** on the vocabulary home, or use `vocabulary.html?view=library`. All current vocabulary is grouped in stable source order: 12 words per deck by default (16 decks for 192 words), with a 24-word option. Browse the full list or search English, Vietnamese meanings and contexts without accent sensitivity. Filters identify words not yet introduced, due words, and words with weak self-ratings or revealed test answers. Each expandable row includes its context and pronunciation.
+
+Decks offer two-way flashcards (Vietnamese → English or English → Vietnamese), optional shuffle, and untimed Vietnamese-to-English typing assessments. Space/Enter flips a focused card; 1/2/3 rates it and advances. Escape ends a practice round with its partial result, then returns through deck/library navigation. Typing corrections remain eligible; revealing an answer counts as requiring review. Each result lists words to reinforce and offers a targeted retest. Partial sessions only score answered words, not untouched words. Latest assessment results are shown on their matching deck, while per-word data survives changing deck size.
+
+Self-ratings and typing evidence are recorded separately in optional `library` data inside the existing `letsstudy-vocabulary-v1` JSON backup. The last 20 typing-session summaries are retained. Library use does not alter existing familiarization/SRS records, game difficulty observations, wallet, nursery or purchases, and self-rating alone does not unlock new words in arcade. Legacy backups remain valid; malformed library data is rejected on import. Original bundled flashcards at `index.html` remain available.
+
+Implementation: `vocabulary-library-model.js`, `vocabulary-library.js`, `vocabulary-library.css`, mounted using the vocabulary app’s current store/save callbacks. No new dependency, server or separate browser-storage key.
+
+```sh
+node tests/vocabulary_library.test.cjs
+BASE_URL=http://127.0.0.1:8008 python3 tests/vocabulary_library_browser.py
+BASE_URL=http://127.0.0.1:8008 python3 tests/vocabulary_smoke.py
+```

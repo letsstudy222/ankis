@@ -10,14 +10,12 @@
       href="./pet-art-tone.css?v=20261027-typo-tickets-7"
     />
     <link rel="stylesheet" href="./pet-roaming.css?v=20261027-typo-tickets-7" />
-    <link
-      rel="stylesheet"
-      href="vocabulary-flight.css?v=20261028-arena-8"
-    />
+    <link rel="stylesheet" href="vocabulary-flight.css?v=20261028-arena-8" />
     <link
       rel="stylesheet"
       href="guardian-gear-art.css?v=20261027-typo-tickets-7"
     />
+    <link rel="stylesheet" href="vocabulary-library.css?v=20261111-library-1" />
   </head>
   <body>
     <main>
@@ -56,6 +54,18 @@
           <button id="route-start">Bắt đầu →</button>
         </section>
         <div id="stats" class="stats"></div>
+        <section class="lib-entry" aria-label="Bộ từ và flashcard">
+          <div class="lib-entry-icon" aria-hidden="true">▤</div>
+          <div>
+            <p class="eyebrow">THƯ VIỆN / HỌC THEO BỘ NHỎ</p>
+            <h2>Toàn bộ từ vựng, trong từng bộ vừa sức.</h2>
+            <p>
+              Lật flashcard, kiểm tra gõ từ và xem lại những từ còn phân vân.
+              Mỗi bộ 12 hoặc 24 từ.
+            </p>
+          </div>
+          <button id="library-open">Bộ từ & flashcard →</button>
+        </section>
         <section id="guardian-home" class="g-station" aria-label="Trạm Sao">
           <div id="g-home-art" class="g-home-art"></div>
           <div class="g-home-copy">
@@ -193,6 +203,145 @@
           /></label>
         </details>
         <p id="notice" role="status"></p>
+      </section>
+      <section id="library" hidden aria-labelledby="lib-title">
+        <nav class="lib-nav">
+          <button id="lib-home">← Về khu học</button
+          ><span>WORD LIBRARY / TỪNG BỘ NHỎ</span>
+        </nav>
+        <p id="lib-message" role="status"></p>
+        <div id="lib-browse">
+          <p class="eyebrow">MỘT BỘ NHỎ. MỘT LẦN NHỚ RÕ HƠN.</p>
+          <h1 id="lib-title" tabindex="-1">Bộ từ &<br /><em>flashcard.</em></h1>
+          <p id="lib-summary" class="lib-summary"></p>
+          <div class="lib-toolbar">
+            <label
+              >Tìm từ, nghĩa hoặc câu ví dụ<input
+                id="lib-search"
+                type="search"
+                placeholder="Ví dụ: adoption, ma sat…"
+                autocomplete="off" /></label
+            ><label
+              >Trạng thái<select id="lib-filter">
+                <option value="all">Tất cả từ</option>
+                <option value="weak">Cần ôn lại</option>
+                <option value="new">Chưa làm quen</option>
+                <option value="due">Đến hạn ôn</option>
+              </select></label
+            ><label
+              >Cỡ bộ<select id="lib-size">
+                <option value="12">12 từ / bộ</option>
+                <option value="24">24 từ / bộ</option>
+              </select></label
+            >
+          </div>
+          <div class="lib-views" role="group" aria-label="Cách xem từ">
+            <button id="lib-view-decks" aria-pressed="true">Theo bộ nhỏ</button
+            ><button id="lib-view-all" aria-pressed="false">
+              Danh sách toàn bộ
+            </button>
+          </div>
+          <div id="lib-decks" class="lib-decks"></div>
+          <div id="lib-list-wrap" hidden>
+            <p id="lib-list-count"></p>
+            <p id="lib-empty" hidden>
+              Chưa có từ phù hợp. Thử đổi từ khóa hoặc trạng thái.
+            </p>
+            <div id="lib-word-list"></div>
+          </div>
+        </div>
+        <div id="lib-detail" hidden>
+          <button id="lib-all-decks">← Tất cả bộ từ</button>
+          <h2 id="lib-deck-title" tabindex="-1"></h2>
+          <p id="lib-deck-description" class="lib-summary"></p>
+          <div class="lib-deck-actions">
+            <button id="lib-cards-start">Lật flashcard →</button
+            ><button id="lib-quiz-start">Kiểm tra gõ từ →</button
+            ><button id="lib-weak-start">Ôn thẻ còn yếu</button>
+          </div>
+          <div class="lib-options">
+            <label
+              >Chiều flashcard<select id="lib-direction">
+                <option value="vi">Nghĩa Việt → Từ Anh</option>
+                <option value="en">Từ Anh → Nghĩa Việt</option>
+              </select></label
+            ><label class="lib-checkbox"
+              ><input id="lib-shuffle" type="checkbox" checked /> Trộn thứ tự
+              khi học</label
+            >
+          </div>
+          <p class="lib-note">
+            Flashcard là tự đánh giá; kiểm tra gõ từ mới cho biết bạn tự nhớ
+            đúng bao nhiêu. Kết quả ở đây không tự nâng bậc thuộc từ trong lịch
+            ôn.
+          </p>
+          <p id="lib-deck-last" class="lib-deck-last"></p>
+          <div id="lib-deck-words"></div>
+        </div>
+        <div id="lib-practice" hidden>
+          <div class="lib-practice-nav">
+            <button id="lib-stop">← Dừng & xem kết quả</button
+            ><span id="lib-practice-progress"></span>
+          </div>
+          <p id="lib-practice-type" class="eyebrow"></p>
+          <div id="lib-card" class="lib-card">
+            <p id="lib-card-label" class="eyebrow"></p>
+            <h2 id="lib-card-front"></h2>
+            <div id="lib-card-back" hidden>
+              <strong id="lib-card-answer"></strong>
+              <p id="lib-card-context"></p>
+              <button id="lib-speak" type="button">Nghe phát âm</button>
+            </div>
+          </div>
+          <div id="lib-card-controls">
+            <button id="lib-flip">Lật thẻ · Space / Enter</button>
+            <div id="lib-rating" hidden>
+              <p>Bạn tự nhớ được đến đâu trước khi lật?</p>
+              <div class="lib-rating-buttons">
+                <button id="lib-rate-1" aria-keyshortcuts="1">
+                  1 · Chưa nhớ</button
+                ><button id="lib-rate-2" aria-keyshortcuts="2">
+                  2 · Còn phân vân</button
+                ><button id="lib-rate-3" aria-keyshortcuts="3">
+                  3 · Đã nhớ
+                </button>
+              </div>
+            </div>
+          </div>
+          <p id="lib-flash-help" class="lib-note">
+            Đọc nghĩa và thử tự nhớ trước khi lật. Chọn 1 / 2 / 3 để đánh giá và
+            tự sang thẻ tiếp theo.
+          </p>
+          <form id="lib-quiz-form" hidden>
+            <label for="lib-quiz-answer"
+              >Gõ từ tiếng Anh — không giới hạn thời gian</label
+            ><input
+              id="lib-quiz-answer"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+            />
+            <div class="lib-quiz-buttons">
+              <button id="lib-quiz-check" type="submit">Kiểm tra · Enter</button
+              ><button id="lib-quiz-reveal" type="button">
+                Chưa nhớ / Xem đáp án
+              </button>
+            </div>
+          </form>
+          <p id="lib-quiz-feedback" role="status"></p>
+          <button id="lib-quiz-next" hidden>Tiếp theo · Enter</button>
+        </div>
+        <div id="lib-result" hidden>
+          <p class="eyebrow">THÊM MỘT BƯỚC TIẾN</p>
+          <h2 id="lib-result-title" tabindex="-1"></h2>
+          <p id="lib-result-copy"></p>
+          <section id="lib-result-weak" hidden>
+            <h3>Những từ còn cần củng cố</h3>
+            <div id="lib-result-words"></div>
+            <button id="lib-result-retry">Kiểm tra lại các từ này →</button>
+          </section>
+          <button id="lib-result-back">Về bộ từ →</button>
+        </div>
       </section>
       <section id="learning" hidden>
         <nav>
@@ -407,6 +556,8 @@
     <script src="pet-roaming.js?v=20261027-typo-tickets-7"></script>
     <script src="flight-clock.js?v=20261027-typo-tickets-7"></script>
     <script src="vocabulary-practice.js?v=20261028-adaptive-10"></script>
-    <script src="vocabulary.js?v=20261028-adaptive-10"></script>
+    <script src="vocabulary-library-model.js?v=20261111-library-1"></script>
+    <script src="vocabulary-library.js?v=20261111-library-1"></script>
+    <script src="vocabulary.js?v=20261111-library-1"></script>
   </body>
 </html>

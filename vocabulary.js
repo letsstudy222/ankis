@@ -24,6 +24,7 @@
           x.guardian,
           words.map((w) => w.word),
         )) &&
+      (!x.library || VocabularyLibraryModel.valid(x.library, words)) &&
       x.version === 1 &&
       x.records &&
       typeof x.records === "object" &&
@@ -223,6 +224,7 @@
     Guardian.clear();
     session = null;
     $("learning").hidden = true;
+    $("library").hidden = true;
     plan();
     $("home").hidden = false;
     $("session").hidden = true;
@@ -433,8 +435,13 @@
   function rememberArcade(failed) {
     if (session.mode !== "game" || session.memoryRecorded) return 0;
     session.memoryRecorded = true;
-    return VocabularyPractice.observe(store.records[current().word], current().word,
-      session.elapsed, session.errorEpisodes, failed);
+    return VocabularyPractice.observe(
+      store.records[current().word],
+      current().word,
+      session.elapsed,
+      session.errorEpisodes,
+      failed,
+    );
   }
   function record(success) {
     const w = current(),
@@ -469,7 +476,7 @@
     if (!clean) session.weak.add(session.queue[session.cursor]);
     if (session.mode === "game") {
       session.streak = clean ? session.streak + 1 : 0;
-      if (!clean || difficulty >= .35)
+      if (!clean || difficulty >= 0.35)
         VocabularyPractice.retry(
           session.queue,
           session.cursor,
@@ -712,7 +719,8 @@
       const value = $("answer").value.toLowerCase(),
         target = current().word.toLowerCase();
       if (!target.startsWith(value)) {
-        if (!session.invalidPrefix && !session.coaching) session.errorEpisodes++;
+        if (!session.invalidPrefix && !session.coaching)
+          session.errorEpisodes++;
         session.invalidPrefix = true;
         session.mistake = true;
         $("answer").setAttribute("aria-invalid", "true");
@@ -840,6 +848,10 @@
       e.metaKey
     )
       return;
+    if (VocabularyLibrary.isOpen()) {
+      VocabularyLibrary.handleKey(e);
+      return;
+    }
     // Let native Enter activate the button reached with Tab.
     if (e.key === "Enter" && e.target.closest("button")) return;
     const shortcut = e.altKey ? "Alt+" + e.key : e.key;
@@ -908,8 +920,16 @@
     }
   });
   Guardian.mount({ getStore: () => store, save });
+  VocabularyLibrary.mount({
+    words,
+    getStore: () => store,
+    save,
+    onClose: home,
+  });
   setInterval(() => {
     if (!$("home").hidden) home();
   }, 30000);
   home();
+  if (new URLSearchParams(location.search).get("view") === "library")
+    VocabularyLibrary.open();
 })();

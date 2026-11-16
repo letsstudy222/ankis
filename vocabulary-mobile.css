@@ -1,0 +1,123 @@
+/* Phone layout: touch targets, compact decks and a keyboard-aware flight. */
+@media (max-width: 720px) {
+  button, .import, select, summary, header a {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  button, .import { min-width: 44px; }
+  input:not([type="checkbox"]):not([type="file"]), select { font-size: 16px; }
+  header a { display: inline-flex; align-items: center; }
+  main { padding: 16px; }
+  header { gap: 8px; padding-bottom: 16px; }
+  header span { display: none; }
+  .lib-nav { margin: 16px 0; }
+  #lib-title { font-size: 36px; margin: 12px 0; letter-spacing: -1px; }
+  #lib-title br { display: none; }
+  .lib-toolbar { padding: 12px; gap: 10px; margin: 16px 0 12px; }
+  .lib-views { gap: 8px; margin-bottom: 12px; }
+  .lib-views button { flex: 1; }
+  .lib-decks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .lib-deck { padding: 12px; border-radius: 14px; }
+  .lib-deck h3 { font-size: 15px; margin: 8px 0; min-height: 0; }
+  .lib-deck p { margin: 5px 0; }
+  .lib-deck button { padding: 8px; width: 100%; margin-top: 8px; }
+  .lib-deck-actions { display: grid; grid-template-columns: 1fr 1fr; margin: 16px 0; }
+  .lib-deck-actions button { padding: 10px; }
+  .lib-options { gap: 10px; }
+  .lib-checkbox { min-height: 44px; }
+  .lib-note { margin: 12px 0; line-height: 1.6; }
+  .lib-practice-nav { flex-wrap: wrap; gap: 8px; }
+  #lib-practice-type { margin: 12px 0 8px; }
+  .lib-card { padding: 18px 14px; min-height: 170px; border-radius: 18px; }
+  #lib-card-front { font-size: 24px; line-height: 1.35; margin: 12px 0; }
+  #lib-card-back { margin-top: 12px; padding-top: 12px; }
+  #lib-card-answer { font-size: 24px; }
+  #lib-card-context { margin: 8px 0; line-height: 1.5; }
+  #lib-card-controls { margin: 12px 0; }
+  .lib-rating-buttons { gap: 8px; }
+  .lib-rating-buttons button { font-size: 12px; padding: 10px 5px; }
+  #lib-quiz-form { margin: 12px 0; }
+  .lib-quiz-buttons { flex-wrap: wrap; gap: 8px; }
+  .lib-quiz-buttons button { flex: 1; }
+
+  .g-playing { overflow: hidden; }
+  .g-playing #session {
+    position: fixed;
+    top: var(--visible-top, 0px);
+    left: 0;
+    width: 100%;
+    height: var(--visible-height, 100dvh);
+    padding: 6px 12px max(6px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    background: var(--bg);
+    z-index: 10;
+  }
+  .g-playing #session[hidden] { display: none; }
+  .g-playing #session > * { flex-shrink: 0; }
+  .g-playing #session nav { margin: 0; min-height: 44px; gap: 6px; }
+  .g-playing #session nav button { font-size: 12px; padding: 8px; }
+  .g-playing #progress { font-size: 11px; text-align: center; }
+  .g-playing .g-hud { margin: 0; padding: 6px 8px; }
+  .g-playing .g-hud strong { font-size: 13px; }
+  .g-playing #guardian-reward:empty { display: none; }
+  .g-playing #flight-status { padding: 0 2px 5px; gap: 5px; }
+  .g-playing #arena {
+    flex: 1 0 170px;
+    min-height: 170px;
+    height: auto;
+    max-height: 440px;
+  }
+  .g-playing .question { width: 100%; max-width: none; margin: 0; }
+  .g-playing #length { margin: 0 0 4px; font-size: 10px; }
+  .g-playing #answer { min-height: 44px; padding: 9px 12px; font-size: 18px; }
+  .g-playing #feedback { margin: 3px 0; min-height: 0; }
+  .g-playing #feedback:empty, .g-playing #context:empty,
+  .g-playing .actions:has(> :only-child[hidden]) { display: none; }
+  .g-playing #g-ship-hint, .g-playing #game-study {
+    width: calc(50% - 4px); margin: 4px 0 0; padding: 6px; font-size: 11px;
+  }
+  .g-playing #flight-coach { margin: 0 0 6px; padding: 8px 10px; max-height: 150px; overflow-y: auto; }
+  .g-playing #coach-context { margin: 5px 0; }
+  .g-playing #arena.is-coaching { flex-basis: 95px; min-height: 95px; max-height: 180px; }
+  .g-playing footer { display: none; }
+
+  /* Keep the word, clock and input visible above a software keyboard. */
+  .compact-viewport .g-playing #session { gap: 4px; padding-top: 4px; }
+  .compact-viewport .g-playing .g-hud { padding: 4px 8px; }
+  .compact-viewport .g-playing .g-hud > div { padding: 0 4px; }
+  .compact-viewport .g-playing #g-ticket-rate,
+  .compact-viewport .g-playing #guardian-reward { display: none; }
+  .compact-viewport .g-playing #flight-goal { display: none; }
+  .compact-viewport .g-playing #arena { flex-basis: 100px; min-height: 100px; }
+  .compact-viewport .g-playing #enemy { top: 40px; padding: 0 4px; }
+  .compact-viewport .g-playing #enemy-art { display: none; }
+  .compact-viewport .g-playing #enemy-meaning { font-size: 14px; line-height: 1.3; }
+  .compact-viewport .g-playing #enemy-letters { gap: 2px; margin-top: 3px; }
+  .compact-viewport .g-playing #enemy-letters .letter { font-size: 11px; width: 13px; min-height: 17px; }
+  .compact-viewport .g-playing #arena .flight-clock { width: 100px; top: 3px; padding: 3px 8px; }
+  .compact-viewport .g-playing #flight-time svg { height: 22px; }
+  .compact-viewport .g-playing #clock-state,
+  .compact-viewport .g-playing .clock-units { display: none; }
+  .compact-viewport .g-playing .danger { bottom: 20px; }
+  .compact-viewport .g-playing #arena .ship { height: 28px; width: 40px; left: calc(50% - 20px); }
+  .compact-viewport .g-playing #arena #laser { bottom: 22px; }
+  .compact-viewport .g-playing #arena-companion { display: none; }
+  .compact-viewport .g-playing #arena.is-coaching { flex-basis: 34px; min-height: 34px; max-height: 34px; }
+  .compact-viewport .g-playing #flight-coach { max-height: 90px; }
+  .compact-viewport .g-playing #length { display: none; }
+  .compact-viewport .g-playing .g-hud {
+    grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+  }
+  .compact-viewport .g-playing .g-hud small {
+    font-size: 6px; line-height: 1.3; letter-spacing: 0; white-space: nowrap;
+  }
+  .compact-viewport .g-playing .g-hud strong,
+  .compact-viewport .g-playing #g-run-wallet {
+    display: block; font-size: 10px; line-height: 1.3; overflow-wrap: anywhere;
+  }
+  .compact-viewport .g-playing #g-ship-hint,
+  .compact-viewport .g-playing #game-study { line-height: 1.3; font-size: 10px; }
+}

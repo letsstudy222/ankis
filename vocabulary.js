@@ -929,7 +929,11 @@
   setInterval(() => {
     if (!$("home").hidden) home();
   }, 30000);
-  home();
-  if (new URLSearchParams(location.search).get("view") === "library")
-    VocabularyLibrary.open();
+  const params = new URLSearchParams(location.search);
+  if (params.get("view") === "sentences") {
+    VocabularySentences.open(params.get("exercise"));
+  } else {
+    home();
+    if (params.get("view") === "library") VocabularyLibrary.open();
+  }
 })();

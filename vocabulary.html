@@ -17,6 +17,7 @@
     />
     <link rel="stylesheet" href="vocabulary-library.css?v=20261111-library-1" />
     <link rel="stylesheet" href="vocabulary-mobile.css?v=20261116-mobile-1" />
+    <link rel="stylesheet" href="vocabulary-sentences.css?v=1" />
   </head>
   <body>
     <main>
@@ -67,6 +68,11 @@
           </div>
           <button id="library-open">Bộ từ & flashcard →</button>
         </section>
+        <form class="sentence-entry" action="./vocabulary.html" method="get">
+          <button id="sentence-open" name="view" value="sentences">
+            Luyện câu Việt → Anh
+          </button>
+        </form>
         <section id="guardian-home" class="g-station" aria-label="Trạm Sao">
           <div id="g-home-art" class="g-home-art"></div>
           <div class="g-home-copy">
@@ -204,6 +210,59 @@
           /></label>
         </details>
         <p id="notice" role="status"></p>
+      </section>
+      <section id="sentences" hidden aria-labelledby="sentence-title">
+        <nav aria-label="Luyện câu">
+          <a class="sentence-back" href="./vocabulary.html">← Về khu học</a>
+        </nav>
+        <h1 id="sentence-title" tabindex="-1">Luyện câu Việt → Anh</h1>
+        <p class="sentence-topic">
+          <span id="sentence-topic"></span>
+          <span id="sentence-style"></span>
+        </p>
+        <div class="sentence-panel">
+          <h2>Câu tiếng Việt</h2>
+          <p id="sentence-source"></p>
+        </div>
+        <div class="sentence-panel">
+          <fieldset class="sentence-levels">
+            <legend>Mức độ luyện</legend>
+            <label><input type="radio" name="sentence-level" value="easy" checked /> Dễ</label>
+            <label><input type="radio" name="sentence-level" value="hard" /> Khó</label>
+          </fieldset>
+          <div id="sentence-hint">
+            <p id="sentence-count"></p>
+            <p id="sentence-blanks" aria-hidden="true"></p>
+          </div>
+          <label class="sentence-label" for="sentence-draft">Bài viết tiếng Anh của bạn</label>
+          <textarea id="sentence-draft" lang="en" rows="5" autocomplete="off"></textarea>
+          <p id="sentence-save" role="status"></p>
+          <div class="sentence-actions">
+            <button id="sentence-compare" type="button" aria-controls="sentence-reference" disabled>
+              Đối chiếu với câu mẫu
+            </button>
+            <button id="sentence-reveal" type="button" aria-controls="sentence-reference" aria-expanded="false">
+              Xem câu mẫu
+            </button>
+          </div>
+        </div>
+        <div id="sentence-reference" class="sentence-panel" hidden>
+          <h2 id="sentence-reference-title" tabindex="-1">Câu tiếng Anh mẫu</h2>
+          <p id="sentence-reference-copy" lang="en"></p>
+          <div id="sentence-comparison" hidden>
+            <h3>Bài viết của bạn</h3>
+            <p id="sentence-comparison-copy" lang="en"></p>
+            <p class="sentence-note">So sánh cách diễn đạt, ý nghĩa và cấu trúc. Cùng một ý có thể được viết đúng theo nhiều cách.</p>
+          </div>
+        </div>
+        <details class="sentence-notes">
+          <summary>Cấu trúc cần ghi nhớ</summary>
+          <dl id="sentence-structures"></dl>
+        </details>
+        <details class="sentence-notes">
+          <summary>Từ vựng và collocation</summary>
+          <dl id="sentence-vocabulary"></dl>
+        </details>
       </section>
       <section id="library" hidden aria-labelledby="lib-title">
         <nav class="lib-nav">
@@ -559,7 +618,8 @@
     <script src="vocabulary-practice.js?v=20261028-adaptive-10"></script>
     <script src="vocabulary-library-model.js?v=20261111-library-1"></script>
     <script src="vocabulary-library.js?v=20261111-library-1"></script>
-    <script src="vocabulary.js?v=20261111-library-1"></script>
+    <script src="vocabulary-sentences.js?v=1"></script>
+    <script src="vocabulary.js?v=20261119-sentences-1"></script>
     <script src="vocabulary-mobile.js?v=20261116-mobile-1"></script>
   </body>
 </html>

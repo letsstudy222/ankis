@@ -96,20 +96,45 @@
   overflow-wrap: normal;
 }
 
+.sentence-editor {
+  position: relative;
+  margin: 6px 0;
+}
+
+#sentence-draft,
+#sentence-annotation {
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
 #sentence-draft {
   display: block;
   width: 100%;
   min-height: 112px;
-  margin: 6px 0;
-  padding: 10px 12px;
+  margin: 0;
   resize: vertical;
   scroll-margin-block: 12px;
   border: 1px solid #ffffff44;
   border-radius: 10px;
   background: var(--bg);
   color: var(--ink);
-  font: inherit;
-  font-size: 16px;
+}
+
+#sentence-annotation {
+  position: absolute;
+  inset: 1px auto 1px 1px;
+  overflow: hidden;
+  pointer-events: none;
+  color: transparent;
+  forced-color-adjust: none;
+}
+
+.sentence-underline {
+  text-decoration: underline 3px #ffbc57;
+  text-underline-offset: 0.25em;
 }
 
 #sentence-draft:focus-visible {
@@ -136,18 +161,21 @@
   background: var(--bg);
 }
 
-.sentence-match {
-  color: var(--green);
+.sentence-feedback-status {
+  font-weight: 650;
 }
 
-.sentence-mismatch {
-  color: #ffb3ba;
-  text-decoration: underline;
+.sentence-feedback-line {
+  font-size: 1.125rem;
 }
 
 .sentence-expected {
-  color: var(--purple);
+  color: var(--green);
   font-weight: 650;
+}
+
+.sentence-masked-tail {
+  color: var(--muted);
 }
 
 .sentence-actions {

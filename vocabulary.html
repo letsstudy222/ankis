@@ -17,7 +17,7 @@
     />
     <link rel="stylesheet" href="vocabulary-library.css?v=20261111-library-1" />
     <link rel="stylesheet" href="vocabulary-mobile.css?v=20261116-mobile-1" />
-    <link rel="stylesheet" href="vocabulary-sentences.css?v=1" />
+    <link rel="stylesheet" href="vocabulary-sentences.css?v=2" />
   </head>
   <body>
     <main>
@@ -235,9 +235,14 @@
             <p id="sentence-blanks" aria-hidden="true"></p>
           </div>
           <label class="sentence-label" for="sentence-draft">Bài viết tiếng Anh của bạn</label>
-          <textarea id="sentence-draft" lang="en" rows="5" autocomplete="off"></textarea>
+          <textarea id="sentence-draft" lang="en" rows="5" autocomplete="off" aria-describedby="sentence-shortcuts"></textarea>
+          <p id="sentence-shortcuts">Enter để kiểm tra từng từ · Shift+Enter để xuống dòng</p>
           <p id="sentence-save" role="status"></p>
+          <div id="sentence-feedback" role="status" aria-atomic="true"></div>
           <div class="sentence-actions">
+            <button id="sentence-check" type="button" aria-controls="sentence-feedback" disabled>
+              Kiểm tra từng từ
+            </button>
             <button id="sentence-compare" type="button" aria-controls="sentence-reference" disabled>
               Đối chiếu với câu mẫu
             </button>
@@ -618,7 +623,7 @@
     <script src="vocabulary-practice.js?v=20261028-adaptive-10"></script>
     <script src="vocabulary-library-model.js?v=20261111-library-1"></script>
     <script src="vocabulary-library.js?v=20261111-library-1"></script>
-    <script src="vocabulary-sentences.js?v=1"></script>
+    <script src="vocabulary-sentences.js?v=2"></script>
     <script src="vocabulary.js?v=20261119-sentences-1"></script>
     <script src="vocabulary-mobile.js?v=20261116-mobile-1"></script>
   </body>

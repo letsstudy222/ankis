@@ -117,8 +117,37 @@
   outline-offset: 2px;
 }
 
-#sentence-save {
+#sentence-save,
+#sentence-shortcuts {
   font-size: 0.85rem;
+}
+
+#sentence-shortcuts {
+  color: var(--muted);
+}
+
+#sentence-feedback:not(:empty) {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ffffff24;
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.sentence-match {
+  color: var(--green);
+}
+
+.sentence-mismatch {
+  color: #ffb3ba;
+  text-decoration: underline;
+}
+
+.sentence-expected {
+  color: var(--purple);
+  font-weight: 650;
 }
 
 .sentence-actions {
@@ -128,7 +157,7 @@
   margin-top: 10px;
 }
 
-#sentence-compare {
+#sentence-check {
   background: var(--purple);
   color: #1b1730;
   font-weight: 650;

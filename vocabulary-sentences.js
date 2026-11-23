@@ -4,40 +4,55 @@ const VocabularySentences = (() => {
     {
       id: "family-education-essential-needs",
       topic: "IELTS Writing Task 2 — Family & Education",
+      title: "Giải thích luận điểm",
       style: "Phù hợp văn phong Band 7.5+",
-      source: "Trẻ em lớn lên trong những gia đình có thu nhập hạn chế thường phải cân nhắc kỹ hơn khi sử dụng tiền, từ đó học cách phân biệt nhu cầu thiết yếu và những khoản chi không cần thiết.",
-      reference: "Children growing up in low-income families often have to think carefully about how they spend money, thereby learning to distinguish between essential needs and unnecessary expenses.",
+      source: "Trẻ em lớn lên trong những gia đình có thu nhập hạn chế thường phải cân nhắc kỹ hơn khi sử dụng tiền, điều này giúp các em học cách phân biệt nhu cầu thiết yếu và những khoản chi không cần thiết.",
+      reference: "Children growing up in low-income families often have to think carefully about how they spend money, which helps them distinguish between essential needs and unnecessary expenses.",
       structures: [
         ["grow up in + N", "lớn lên trong một môi trường/gia đình."],
         ["think carefully about + N/V-ing", "cân nhắc kỹ về điều gì."],
-        ["distinguish between A and B", "phân biệt giữa A và B."],
-        ["thereby + V-ing", "qua đó, từ đó (diễn đạt kết quả của hành động trước)."],
+        ["which helps + O + V", "điều này giúp ai làm gì."],
+        ["distinguish between A and B", "phân biệt A và B."],
       ],
       vocabulary: [
         ["low-income families", "gia đình thu nhập thấp."],
-        ["spend money", "tiêu tiền, chi tiêu."],
         ["essential needs", "nhu cầu thiết yếu."],
-        ["unnecessary expenses", "các khoản chi không cần thiết."],
+        ["unnecessary expenses", "khoản chi không cần thiết."],
       ],
     },
     {
       id: "family-education-textbooks",
       topic: "IELTS Writing Task 2 — Family & Education",
-      source: "Chẳng hạn, để tiết kiệm chi phí học tập, những đứa trẻ này có thể lựa chọn mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới.",
-      reference: "For instance, these children may choose to buy second-hand textbooks or borrow them from a library rather than purchase new ones, thereby reducing their educational expenses.",
+      title: "Đưa ra ví dụ",
+      source: "Chẳng hạn, những đứa trẻ này có thể lựa chọn mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới để giảm chi phí học tập.",
+      reference: "For instance, these children may choose to buy second-hand textbooks or borrow them from a library rather than purchase new ones to reduce their educational expenses.",
       structures: [
         ["For instance, + clause", "chẳng hạn, ví dụ."],
         ["choose + to V", "lựa chọn làm gì."],
         ["borrow something from somewhere", "mượn thứ gì từ đâu."],
-        ["rather than + V", "thay vì làm gì (khi song song với buy/purchase)."],
-        ["thereby + V-ing", "qua đó, từ đó."],
+        ["rather than + V", "thay vì làm gì (trong cấu trúc song song này)."],
+        ["to + V", "diễn đạt mục đích."],
       ],
       vocabulary: [
         ["second-hand textbooks", "sách giáo khoa cũ."],
-        ["educational expenses", "chi phí giáo dục/học tập."],
+        ["educational expenses", "chi phí học tập."],
         ["purchase new ones", "mua những cuốn mới."],
         ["reduce expenses", "giảm chi phí."],
       ],
+    },
+    {
+      id: "family-education-budgeting",
+      topic: "IELTS Writing Task 2 — Family & Education",
+      title: "Kết quả và liên hệ đề bài",
+      source: "Kết quả là, các em có thể phát triển kỹ năng quản lý ngân sách hiệu quả, giúp chuẩn bị tốt hơn để đối phó với những khó khăn tài chính khi trưởng thành.",
+      reference: "As a result, they may develop effective budgeting skills, which can better prepare them to cope with financial difficulties in adulthood.",
+      structures: [
+        ["As a result, + clause", "kết quả là."],
+        ["develop + skills", "phát triển kỹ năng."],
+        ["which can + V", "điều này có thể..."],
+        ["prepare somebody to + V", "chuẩn bị cho ai làm gì."],
+      ],
+      vocabulary: [],
     },
   ];
   const $ = (id) => document.getElementById(id);
@@ -99,9 +114,11 @@ const VocabularySentences = (() => {
     $("sentence-topic").textContent = exercise.topic;
     $("sentence-style").textContent = exercise.style ?? "";
     $("sentence-style").hidden = !exercise.style;
+    $("sentence-purpose").textContent = exercise.title;
     $("sentence-source").textContent = exercise.source;
     fillNotes("sentence-structures", exercise.structures);
     fillNotes("sentence-vocabulary", exercise.vocabulary);
+    $("sentence-vocabulary").closest("details").hidden = !exercise.vocabulary.length;
 
     // Count hyphenated compounds as one word and show only their letter count.
     const words = tokenize(exercise.reference);

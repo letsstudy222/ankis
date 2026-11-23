@@ -7,7 +7,7 @@ from playwright.sync_api import expect, sync_playwright
 BASE = os.environ.get("BASE_URL", "http://127.0.0.1:8000")
 REFERENCE = (
     "Children growing up in low-income families often have to think carefully about "
-    "how they spend money, thereby learning to distinguish between essential needs "
+    "how they spend money, which helps them distinguish between essential needs "
     "and unnecessary expenses."
 )
 DRAFT = "Children in families with limited incomes often budget more carefully.\nThey learn to prioritise essentials."
@@ -60,7 +60,7 @@ with sync_playwright() as playwright:
         expect(page.locator("#sentence-structures")).to_be_hidden()
         expect(page.locator("#sentence-vocabulary")).to_be_hidden()
         structures.tap()
-        expect(page.locator("#sentence-structures")).to_contain_text("thereby + V-ing")
+        expect(page.locator("#sentence-structures")).to_contain_text("which helps + O + V")
         expect(page.locator("#sentence-vocabulary")).to_be_hidden()
         vocabulary.tap()
         structures.tap()
@@ -183,8 +183,8 @@ with sync_playwright() as playwright:
     picker.get_by_role("link", name="Câu 02").click()
     expect(picker.get_by_role("link", name="Câu 02")).to_have_attribute("aria-current", "page")
     expect(page.locator("#sentence-source")).to_have_text(
-        "Chẳng hạn, để tiết kiệm chi phí học tập, những đứa trẻ này có thể lựa chọn "
-        "mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới."
+        "Chẳng hạn, những đứa trẻ này có thể lựa chọn "
+        "mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới để giảm chi phí học tập."
     )
     expect(draft).to_have_value("")
     expect(page.get_by_role("radio", name="Dễ")).to_be_checked()
@@ -196,7 +196,7 @@ with sync_playwright() as playwright:
     page.get_by_role("button", name="Xem câu mẫu").click()
     expect(page.locator("#sentence-reference-copy")).to_have_text(
         "For instance, these children may choose to buy second-hand textbooks or borrow "
-        "them from a library rather than purchase new ones, thereby reducing their educational expenses."
+        "them from a library rather than purchase new ones to reduce their educational expenses."
     )
     page.get_by_text("Cấu trúc cần ghi nhớ", exact=True).click()
     expect(page.locator("#sentence-structures dt")).to_have_count(5)
@@ -211,6 +211,19 @@ with sync_playwright() as playwright:
     page.reload()
     expect(draft).to_have_value("For instanc")
     expect(page.locator("#sentence-reference")).to_be_hidden()
+
+    picker.get_by_role("link", name="Câu 03").click()
+    expect(picker.get_by_role("link", name="Câu 03")).to_have_attribute("aria-current", "page")
+    expect(page.locator("#sentence-purpose")).to_have_text("Kết quả và liên hệ đề bài")
+    expect(page.locator("#sentence-source")).to_contain_text("kỹ năng quản lý ngân sách hiệu quả")
+    expect(draft).to_have_value("")
+    expect(page.locator("#sentence-reference")).to_be_hidden()
+    draft.fill("As a result, they may develop effective budgeting skills, which can better prepare them to cope with financial difficulties in adulthood.")
+    draft.press("Enter")
+    expect(feedback).to_contain_text("Tất cả các từ đều khớp với câu mẫu.")
+    page.get_by_text("Cấu trúc cần ghi nhớ", exact=True).click()
+    expect(page.locator("#sentence-structures")).to_contain_text("prepare somebody to + V")
+    expect(page.get_by_text("Từ vựng và collocation", exact=True)).to_be_hidden()
 
     browser.close()
 print("PASS: sentence selection, individual drafts, first-mismatch feedback, and 360–430px keyboard layouts.")

@@ -20,6 +20,25 @@ const VocabularySentences = (() => {
         ["unnecessary expenses", "các khoản chi không cần thiết."],
       ],
     },
+    {
+      id: "family-education-textbooks",
+      topic: "IELTS Writing Task 2 — Family & Education",
+      source: "Chẳng hạn, để tiết kiệm chi phí học tập, những đứa trẻ này có thể lựa chọn mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới.",
+      reference: "For instance, these children may choose to buy second-hand textbooks or borrow them from a library rather than purchase new ones, thereby reducing their educational expenses.",
+      structures: [
+        ["For instance, + clause", "chẳng hạn, ví dụ."],
+        ["choose + to V", "lựa chọn làm gì."],
+        ["borrow something from somewhere", "mượn thứ gì từ đâu."],
+        ["rather than + V", "thay vì làm gì (khi song song với buy/purchase)."],
+        ["thereby + V-ing", "qua đó, từ đó."],
+      ],
+      vocabulary: [
+        ["second-hand textbooks", "sách giáo khoa cũ."],
+        ["educational expenses", "chi phí giáo dục/học tập."],
+        ["purchase new ones", "mua những cuốn mới."],
+        ["reduce expenses", "giảm chi phí."],
+      ],
+    },
   ];
   const $ = (id) => document.getElementById(id);
 
@@ -69,8 +88,17 @@ const VocabularySentences = (() => {
     const levels = document.querySelectorAll('input[name="sentence-level"]');
     let level = "easy";
 
+    $("sentence-picker").replaceChildren(...exercises.map((item, index) => {
+      const link = document.createElement("a");
+      const query = new URLSearchParams({ view: "sentences", exercise: item.id });
+      link.href = `?${query}`;
+      link.textContent = `Câu ${String(index + 1).padStart(2, "0")}`;
+      if (item === exercise) link.setAttribute("aria-current", "page");
+      return link;
+    }));
     $("sentence-topic").textContent = exercise.topic;
-    $("sentence-style").textContent = exercise.style;
+    $("sentence-style").textContent = exercise.style ?? "";
+    $("sentence-style").hidden = !exercise.style;
     $("sentence-source").textContent = exercise.source;
     fillNotes("sentence-structures", exercise.structures);
     fillNotes("sentence-vocabulary", exercise.vocabulary);

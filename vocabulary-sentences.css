@@ -37,6 +37,27 @@
   display: block;
 }
 
+#sentence-picker {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#sentence-picker a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #ffffff24;
+  border-radius: 10px;
+}
+
+#sentence-picker [aria-current="page"] {
+  background: var(--purple);
+  color: #1b1730;
+  font-weight: 650;
+}
+
 .sentence-panel,
 .sentence-notes {
   margin: 14px 0;

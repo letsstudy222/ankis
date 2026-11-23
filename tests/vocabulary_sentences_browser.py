@@ -176,5 +176,41 @@ with sync_playwright() as playwright:
     draft.fill("")
     expect(feedback).to_be_empty()
 
+    draft.fill("Draft for sentence one.")
+    page.get_by_text("Khó", exact=True).click()
+    picker = page.get_by_role("navigation", name="Chọn câu luyện")
+    expect(picker.get_by_role("link", name="Câu 01")).to_have_attribute("aria-current", "page")
+    picker.get_by_role("link", name="Câu 02").click()
+    expect(picker.get_by_role("link", name="Câu 02")).to_have_attribute("aria-current", "page")
+    expect(page.locator("#sentence-source")).to_have_text(
+        "Chẳng hạn, để tiết kiệm chi phí học tập, những đứa trẻ này có thể lựa chọn "
+        "mua sách giáo khoa cũ hoặc mượn sách từ thư viện thay vì mua sách mới."
+    )
+    expect(draft).to_have_value("")
+    expect(page.get_by_role("radio", name="Dễ")).to_be_checked()
+    expect(page.locator("#sentence-count")).to_have_text("Số từ trong câu mẫu: 26")
+    draft.fill("For instanc")
+    draft.press("Enter")
+    expect(feedback.locator(".sentence-expected")).to_have_text("instance")
+    expect(page.locator("#sentence-reference")).to_be_hidden()
+    page.get_by_role("button", name="Xem câu mẫu").click()
+    expect(page.locator("#sentence-reference-copy")).to_have_text(
+        "For instance, these children may choose to buy second-hand textbooks or borrow "
+        "them from a library rather than purchase new ones, thereby reducing their educational expenses."
+    )
+    page.get_by_text("Cấu trúc cần ghi nhớ", exact=True).click()
+    expect(page.locator("#sentence-structures dt")).to_have_count(5)
+    expect(page.locator("#sentence-structures")).to_contain_text("borrow something from somewhere")
+    page.get_by_text("Từ vựng và collocation", exact=True).click()
+    expect(page.locator("#sentence-vocabulary dt")).to_have_count(4)
+    expect(page.locator("#sentence-vocabulary")).to_contain_text("reduce expenses")
+    picker.get_by_role("link", name="Câu 01").click()
+    expect(draft).to_have_value("Draft for sentence one.")
+    expect(page.get_by_role("radio", name="Khó")).to_be_checked()
+    picker.get_by_role("link", name="Câu 02").click()
+    page.reload()
+    expect(draft).to_have_value("For instanc")
+    expect(page.locator("#sentence-reference")).to_be_hidden()
+
     browser.close()
-print("PASS: sentence navigation, first-mismatch feedback and correction, draft isolation, and 360–430px keyboard layouts.")
+print("PASS: sentence selection, individual drafts, first-mismatch feedback, and 360–430px keyboard layouts.")

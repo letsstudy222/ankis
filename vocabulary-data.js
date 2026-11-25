@@ -958,5 +958,90 @@ window.VOCABULARY = [
     "word": "slope",
     "meaning": "sườn dốc / mặt dốc",
     "context": "Landslides occur when material moves down a slope."
+  },
+  {
+    "word": "toil",
+    "meaning": "làm việc vất vả, lao động cực nhọc",
+    "context": "Many farmers toil in the fields from dawn until dusk."
+  },
+  {
+    "word": "steal",
+    "meaning": "ăn cắp, đánh cắp",
+    "context": "Poverty may drive some individuals to steal in order to survive."
+  },
+  {
+    "word": "fray",
+    "meaning": "sờn, tưa; trở nên căng thẳng hoặc suy yếu",
+    "context": "After weeks of intense pressure, his nerves began to fray."
+  },
+  {
+    "word": "glimmer",
+    "meaning": "le lói, lấp lánh; tia sáng yếu ớt",
+    "context": "A faint light glimmered in the distance."
+  },
+  {
+    "word": "tragic",
+    "meaning": "bi thảm, đầy đau thương",
+    "context": "The tragic accident left the entire community in shock."
+  },
+  {
+    "word": "weep",
+    "meaning": "khóc, rơi nước mắt",
+    "context": "She began to weep when she heard the devastating news."
+  },
+  {
+    "word": "seep into",
+    "meaning": "thấm vào, rỉ vào một cách từ từ",
+    "context": "Rainwater gradually seeped into the cracks of the wall."
+  },
+  {
+    "word": "soak",
+    "meaning": "làm ướt đẫm, ngâm, thấm đẫm",
+    "context": "Heavy rain soaked the stone walls of the ancient building."
+  },
+  {
+    "word": "crumble",
+    "meaning": "vỡ vụn, sụp đổ, tan rã",
+    "context": "The ancient fortress began to crumble after centuries of neglect."
+  },
+  {
+    "word": "grief",
+    "meaning": "nỗi đau buồn sâu sắc, sự đau thương",
+    "context": "It can take years to overcome the grief of losing a loved one."
+  },
+  {
+    "word": "sabotage",
+    "meaning": "phá hoại, cố tình cản trở",
+    "context": "A lack of self-confidence can sabotage personal and professional growth."
+  },
+  {
+    "word": "otherworldly",
+    "meaning": "kỳ ảo, siêu thực, như thuộc về một thế giới khác",
+    "context": "The mist-covered mountains possessed an otherworldly beauty."
+  },
+  {
+    "word": "radiate",
+    "meaning": "tỏa ra, phát ra, toát lên",
+    "context": "Her calm expression seemed to radiate confidence and inner strength."
+  },
+  {
+    "word": "leer",
+    "meaning": "nhìn với ánh mắt nham hiểm, khiếm nhã hoặc dâm đãng",
+    "context": "The stranger leered at her, making her feel uncomfortable."
+  },
+  {
+    "word": "devastated",
+    "meaning": "vô cùng đau khổ, suy sụp, tan nát",
+    "context": "She was devastated by the sudden loss of her family."
+  },
+  {
+    "word": "devastate",
+    "meaning": "tàn phá nghiêm trọng, khiến ai đó suy sụp",
+    "context": "Natural disasters can devastate local economies and destroy livelihoods."
+  },
+  {
+    "word": "imperial concubine",
+    "meaning": "phi tần của hoàng đế",
+    "context": "Imperial concubines often lived under strict rules within the royal palace."
   }
 ];

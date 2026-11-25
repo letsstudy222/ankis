@@ -7,9 +7,9 @@ with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=b.new_page(viewport={'width':1200,'height':1000});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto(BASE+'/vocabulary.html');page.evaluate("""()=>{const s=JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'));s.records.recall={learned:true,stage:2,attempts:3,due:Date.now()+86400000};s.guardian.coins=12345;s.guardian.nursery.ticketMisses=7;localStorage.setItem('letsstudy-vocabulary-v1',JSON.stringify(s))}""");page.reload()
  original=page.evaluate("JSON.parse(localStorage.getItem('letsstudy-vocabulary-v1'))")
- words=page.evaluate('VOCABULARY');page.locator('#library-open').click();assert page.locator('[data-deck]').count()==16
- page.locator('#lib-size').select_option('24');assert page.locator('[data-deck]').count()==8;page.locator('#lib-size').select_option('12')
- page.locator('#lib-view-all').click();assert page.locator('#lib-word-list .lib-word').count()==192
+ words=page.evaluate('VOCABULARY');page.locator('#library-open').click();assert page.locator('[data-deck]').count()==(len(words)+11)//12
+ page.locator('#lib-size').select_option('24');assert page.locator('[data-deck]').count()==(len(words)+23)//24;page.locator('#lib-size').select_option('12')
+ page.locator('#lib-view-all').click();assert page.locator('#lib-word-list .lib-word').count()==page.evaluate('VOCABULARY.length')
  page.locator('#lib-search').fill('ma sat');assert page.locator('#lib-word-list .lib-word').count()==1;assert 'friction' in page.locator('#lib-word-list').inner_text()
  page.locator('#lib-search').fill('zzzznoresult');assert page.locator('#lib-empty').is_visible();page.locator('#lib-view-decks').click()
  page.locator('[data-deck="0"]').click();assert page.locator('#lib-deck-words .lib-word').count()==12
@@ -42,4 +42,4 @@ with sync_playwright() as p:
  page.locator('[data-deck="0"]').click();page.locator('#lib-cards-start').click();page.keyboard.press('Space');assert page.locator('#lib-rate-3').bounding_box()['y']+page.locator('#lib-rate-3').bounding_box()['height']<=844
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');page.keyboard.press('Escape');page.keyboard.press('Escape');page.keyboard.press('Escape');page.keyboard.press('Escape');assert page.locator('#home').is_visible()
  assert not errors,errors;b.close()
-print('PASS: 192-word library, 12/24-word decks, accent search, keyboard two-way flashcards, ratings separate from quiz, typo correction, assisted and partial scoring, persisted history, untouched learning/economy, JSON/legacy roundtrip and invalid backup rejection, deep link and mobile.')
+print('PASS: Complete vocabulary library, 12/24-word decks, accent search, keyboard two-way flashcards, ratings separate from quiz, typo correction, assisted and partial scoring, persisted history, untouched learning/economy, JSON/legacy roundtrip and invalid backup rejection, deep link and mobile.')

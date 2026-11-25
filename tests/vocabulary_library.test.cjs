@@ -14,8 +14,8 @@ for (const size of [12, 24]) {
   );
   assert(decks.every((d) => d.words.length <= size));
 }
-assert.equal(M.decks(words).length, 16);
-assert.equal(M.decks(words, 24).length, 8);
+assert.equal(M.decks(words).length, Math.ceil(words.length / 12));
+assert.equal(M.decks(words, 24).length, Math.ceil(words.length / 24));
 M.rate(s, "mitigate", 1);
 assert(M.weak(s, "mitigate"));
 assert.equal(s.words.mitigate.tests, 0);

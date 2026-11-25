@@ -1043,5 +1043,90 @@ window.VOCABULARY = [
     "word": "imperial concubine",
     "meaning": "phi tần của hoàng đế",
     "context": "Imperial concubines often lived under strict rules within the royal palace."
+  },
+  {
+    "word": "wretched",
+    "meaning": "khốn khổ, tồi tệ, đáng khinh",
+    "context": "He refused to accept such a wretched proposal."
+  },
+  {
+    "word": "proposal",
+    "meaning": "đề xuất, kiến nghị, lời cầu hôn",
+    "context": "The government rejected the proposal due to financial concerns."
+  },
+  {
+    "word": "humiliate",
+    "meaning": "làm nhục, khiến ai đó cảm thấy xấu hổ",
+    "context": "Criticising employees in public can humiliate them and undermine their confidence."
+  },
+  {
+    "word": "deceased",
+    "meaning": "đã qua đời, đã mất",
+    "context": "The family gathered to honour their deceased relatives."
+  },
+  {
+    "word": "mourning attire",
+    "meaning": "trang phục để tang, tang phục",
+    "context": "Members of the royal family wore traditional mourning attire during the funeral."
+  },
+  {
+    "word": "begrudgingly",
+    "meaning": "một cách miễn cưỡng, không tình nguyện, có phần ấm ức",
+    "context": "He begrudgingly accepted the decision despite his personal objections."
+  },
+  {
+    "word": "farewell",
+    "meaning": "lời từ biệt, sự chia tay",
+    "context": "She bid farewell to her family before embarking on a long journey."
+  },
+  {
+    "word": "carry out",
+    "meaning": "thực hiện, tiến hành, thi hành",
+    "context": "Researchers carried out a series of experiments to test their hypothesis."
+  },
+  {
+    "word": "await",
+    "meaning": "chờ đợi, đón chờ",
+    "context": "Thousands of applicants eagerly await the results of their interviews."
+  },
+  {
+    "word": "all-enveloping",
+    "meaning": "bao trùm tất cả, bao phủ toàn bộ",
+    "context": "An all-enveloping darkness descended upon the deserted village."
+  },
+  {
+    "word": "emerge",
+    "meaning": "xuất hiện, nổi lên, dần lộ diện",
+    "context": "New challenges have emerged as a result of rapid technological development."
+  },
+  {
+    "word": "unjust",
+    "meaning": "bất công, không công bằng, phi lý",
+    "context": "Citizens protested against unjust laws that restricted their fundamental rights."
+  },
+  {
+    "word": "flow on",
+    "meaning": "tiếp tục chảy, tiếp tục trôi đi",
+    "context": "The river flowed on peacefully despite the chaos surrounding it."
+  },
+  {
+    "word": "defiance",
+    "meaning": "sự thách thức, sự chống đối, thái độ bất tuân",
+    "context": "The workers refused to obey the orders in an act of defiance."
+  },
+  {
+    "word": "declare",
+    "meaning": "tuyên bố, công bố, khai báo",
+    "context": "The government declared a state of emergency following the natural disaster."
+  },
+  {
+    "word": "span",
+    "meaning": "kéo dài, trải dài, bao quát một khoảng thời gian hoặc không gian",
+    "context": "The research project spans several decades and involves multiple generations."
+  },
+  {
+    "word": "gruelling labour",
+    "meaning": "công việc lao động cực nhọc, khắc nghiệt và gây kiệt sức",
+    "context": "Generations of workers endured gruelling labour under harsh working conditions."
   }
 ];

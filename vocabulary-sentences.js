@@ -107,7 +107,11 @@ const VocabularySentences = (() => {
       const link = document.createElement("a");
       const query = new URLSearchParams({ view: "sentences", exercise: item.id });
       link.href = `?${query}`;
-      link.textContent = `Câu ${String(index + 1).padStart(2, "0")}`;
+      link.textContent = `Câu ${String(index + 1).padStart(2, "0")} · ${item.title}`;
+      try {
+        const saved = JSON.parse(localStorage.getItem(`letsstudy-sentence-draft-v1:${item.id}`));
+        if (saved?.draft?.trim()) link.dataset.hasDraft = "true";
+      } catch {}
       if (item === exercise) link.setAttribute("aria-current", "page");
       return link;
     }));
@@ -141,6 +145,9 @@ const VocabularySentences = (() => {
       try {
         localStorage.setItem(storageKey, JSON.stringify({ draft: draft.value, level }));
         status.textContent = draft.value ? "Đã lưu bản nháp trên thiết bị này." : "";
+        const active = $("sentence-picker").querySelector('[aria-current="page"]');
+        if (draft.value.trim()) active.dataset.hasDraft = "true";
+        else delete active.dataset.hasDraft;
       } catch {
         status.textContent = "Không thể lưu bản nháp trên thiết bị này.";
       }
@@ -288,5 +295,24 @@ const VocabularySentences = (() => {
     $("sentence-title").focus({ preventScroll: true });
   }
 
-  return { open };
+  function exportDrafts() {
+    const result = {};
+    for (const {id} of exercises) {
+      const raw = localStorage.getItem(`letsstudy-sentence-draft-v1:${id}`);
+      if (raw !== null) result[id] = JSON.parse(raw);
+    }
+    return result;
+  }
+  function validDrafts(data) {
+    return data && typeof data === "object" && !Array.isArray(data) &&
+      Object.entries(data).every(([id, value]) => exercises.some(item => item.id === id) &&
+        value && typeof value.draft === "string" && value.draft.length <= 200000 &&
+        ["easy", "hard"].includes(value.level));
+  }
+  function importDrafts(data) {
+    if (!validDrafts(data)) throw Error("Bản nháp không hợp lệ");
+    for (const [id, value] of Object.entries(data))
+      localStorage.setItem(`letsstudy-sentence-draft-v1:${id}`, JSON.stringify(value));
+  }
+  return { open, exportDrafts, validDrafts, importDrafts };
 })();

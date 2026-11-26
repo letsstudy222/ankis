@@ -10,6 +10,8 @@
     previewGear = "",
     toastTimer,
     collectionFilter = "all",
+    collectionQuery = "",
+    renderedTab = null,
     lastSummonResults = null,
     summonBusy = false;
   const localDate = () => new Date().toLocaleDateString("sv-SE");
@@ -197,8 +199,16 @@
     );
     artLink.href = "./pet-art-preview.html";
     artStatus.append(artLink);
-    body.append(artStatus);
-    collectionPage(body);
+    const album = node("section", "wl-station-album");
+    const albumCopy = node("div");
+    albumCopy.append(node("h3", "", "Bộ sưu tập linh thú"), meter(Object.keys(n.pets).length, M.pets.length, `${Object.keys(n.pets).length} / ${M.pets.length} loài đã sở hữu`));
+    const albumButton = node("button", "", "Mở bộ sưu tập →");
+    albumButton.onclick = () => { tab = "collection"; renderDialog(); $("g-tabs").querySelector('[data-tab="collection"]').focus(); };
+    album.append(albumCopy, albumButton);
+    body.append(album);
+    const artDetails = node("details", "wl-art-details");
+    artDetails.append(node("summary", "", "Thông tin bộ ảnh linh thú"), artStatus);
+    body.append(artDetails);
   }
   function collectionPage(body) {
     const s = state(), n = N.ensure(s);
@@ -225,6 +235,12 @@
       ),
       filters,
     );
+    const searchWrap = node("div", "wl-pet-search");
+    const label = node("label", "", "Tìm linh thú");
+    const search = node("input");
+    search.id = "g-pet-search"; search.type = "search"; search.placeholder = "Tên hoặc độ hiếm…"; search.value = collectionQuery; label.htmlFor = search.id;
+    const count = node("p", "g-muted"); count.setAttribute("role", "status");
+    searchWrap.append(label, search, count); body.append(searchWrap);
     const grid = node("div", "g-pet-grid");
     const list = M.pets.filter(
       (p) =>
@@ -300,7 +316,22 @@
       }
       grid.append(card);
     }
-    body.append(grid);
+    const empty = node("p", "wl-empty", "Không tìm thấy linh thú phù hợp. Thử đổi từ khóa hoặc bộ lọc.");
+    const normalize = text => text.toLocaleLowerCase("vi").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+    const applySearch = () => {
+      collectionQuery = search.value;
+      const query = normalize(collectionQuery.trim());
+      let visible = 0;
+      for (const card of grid.children) {
+        const pet = M.pets.find(p => p.id === card.dataset.species);
+        card.hidden = !normalize(`${pet.name} ${N.tiers[pet.rarity].name}`).includes(query);
+        if (!card.hidden) visible++;
+      }
+      count.textContent = `${visible} / ${list.length} loài trong bộ lọc`;
+      empty.hidden = visible !== 0;
+    };
+    search.addEventListener("input", applySearch);
+    body.append(grid, empty); applySearch();
   }
   function eggsPage(body) {
     const s = state(),
@@ -838,12 +869,20 @@
     const focusId = focused?.id;
     const focusItem = focused?.dataset?.item;
     const focusFilter = focused?.dataset?.filter;
+    const focusCollection = focused?.dataset?.collectionFilter;
+    const focusPet = focused?.dataset?.pet;
+    const focusEgg = focused?.dataset?.egg;
+    const focusBuyEgg = focused?.dataset?.buyegg;
+    const changedTab = renderedTab !== tab;
+    renderedTab = tab;
     const s = state();
     $("g-wallet").textContent =
       `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     for (const b of $("g-tabs").children)
       b.setAttribute("aria-pressed", String(b.dataset.tab === tab));
     const body = $("g-dialog-body");
+    const oldScroll = body.scrollTop;
+    body.dataset.tab = tab;
     body.replaceChildren();
     (
       ({
@@ -856,6 +895,7 @@
         rules: rulesPage,
       })[tab] || petPage
     )(body);
+    body.scrollTop = changedTab ? 0 : oldScroll;
     if ($("guardian-dialog").open) {
       let next = focusId
         ? $(focusId)
@@ -863,9 +903,12 @@
           ? body.querySelector(`[data-item="${focusItem}"]`)
           : focusFilter
             ? body.querySelector(`[data-filter="${focusFilter}"]`)
-            : null;
-      if (next?.disabled)
-        next = body.querySelector(`[data-filter="${filter}"]`);
+            : focusCollection ? body.querySelector(`[data-collection-filter="${focusCollection}"]`)
+            : focusPet ? body.querySelector(`[data-pet="${focusPet}"]`)
+            : focusEgg ? body.querySelector(`[data-egg="${focusEgg}"]`)
+            : focusBuyEgg ? body.querySelector(`[data-buyegg="${focusBuyEgg}"]`) : null;
+      if (next?.disabled || (!next && (focusPet || focusEgg || focusBuyEgg)))
+        next = $("g-tabs").querySelector(`[data-tab="${tab}"]`);
       next?.focus({ preventScroll: true });
     }
   }
@@ -873,6 +916,8 @@
     M.today(state(), localDate());
     renderDialog();
     $("guardian-dialog").showModal();
+    $("g-dialog-body").scrollTop = 0;
+    $("g-tabs").querySelector(`[data-tab="${tab}"]`).focus({preventScroll:true});
   }
   function start() {
     document.body.classList.add("g-playing");
@@ -889,6 +934,7 @@
     $("g-combo").textContent = run.combo
       ? `×${M.comboMultiplier(run.combo)} · ${run.combo} đúng`
       : "×1";
+    $("g-ticket-chance").value = Math.round(M.ticketChance(s) * 100);
     $("g-ticket-rate").textContent =
       `Vé lượt tới ${Math.round(M.ticketChance(s) * 100)}% · lần ${N.ensure(s).ticketMisses + 1}/20 · bảo đảm sau ${20 - N.ensure(s).ticketMisses} từ đúng nữa`;
     $("g-run-wallet").textContent =
@@ -964,13 +1010,12 @@
     document.body.classList.remove("g-playing");
     if (!run) return;
     const summary = node("div", "g-run-summary");
+    const stats = node("div", "wl-flight-results");
+    for (const [value, label] of [[number(run.score), "Điểm trận"], [run.bestCombo, "Combo tốt nhất"], [`+${run.xp}`, "XP nhận được"], [`+${run.coins}`, "Xu nhận được"]]) {
+      const cell = node("div"); cell.append(node("strong", "", String(value)), node("small", "", label)); stats.append(cell);
+    }
     summary.append(
-      node("h3", "", "Nhật ký chuyến bay"),
-      node(
-        "p",
-        "",
-        `${number(run.score)} điểm · combo tốt nhất ${run.bestCombo} · +${run.xp} XP · +${run.coins} xu`,
-      ),
+      node("h3", "", "Nhật ký chuyến bay"), stats,
       node(
         "p",
         "g-muted",

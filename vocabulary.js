@@ -6,10 +6,20 @@
     DAY = 86400000;
   const date = () => new Date().toLocaleDateString("sv-SE");
   const empty = () => ({ version: 1, records: {}, daily: null });
-  let store;
+  let store, recoveryRaw = null, storageBlocked = false, storageError = "";
   try {
-    store = JSON.parse(localStorage.getItem(KEY));
-  } catch {}
+    const raw = localStorage.getItem(KEY);
+    if (raw !== null) {
+      try { store = JSON.parse(raw); } catch {}
+      if (!valid(store)) {
+        recoveryRaw = raw;
+        storageBlocked = true;
+        storageError = "Không đọc được dữ liệu cũ. Bản gốc được giữ nguyên; phiên này chỉ lưu tạm trong bộ nhớ. Hãy vào Cài đặt để tải dữ liệu gốc hoặc nhập bản sao hợp lệ.";
+      }
+    }
+  } catch {
+    storageError = "Không truy cập được bộ nhớ trình duyệt. Hãy xuất bản sao trước khi đóng trang.";
+  }
   if (!valid(store)) store = empty();
   let session = null,
     frame = 0,
@@ -56,13 +66,23 @@
           x.daily.done.every((i) => x.daily.ids.includes(i))))
     );
   }
+  function renderStorageWarning() {
+    const warning = $("wl-storage-warning");
+    warning.hidden = !storageError;
+    warning.textContent = storageError;
+    $("wl-recovery-export").hidden = recoveryRaw === null;
+  }
   function save() {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(store));
-    } catch {
-      $("notice").textContent =
-        "Không lưu được tiến độ. Hãy xuất bản sao trước khi đóng trang.";
+    if (!storageBlocked) {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(store));
+        storageError = "";
+      } catch {
+        storageError = "Không lưu được tiến độ vào trình duyệt. Hãy xuất bản sao trước khi đóng trang.";
+      }
     }
+    renderStorageWarning();
+    return !storageError;
   }
   function shuffle(a) {
     const b = a.slice();
@@ -124,6 +144,13 @@
       w = words[task.id];
     $("learning-progress").textContent =
       `Nhóm ${lesson.ids.length} từ · bước ${lesson.cursor + 1} / ${lesson.queue.length}`;
+    $("wl-learning-progress").max = lesson.queue.length;
+    $("wl-learning-progress").value = lesson.cursor;
+    document.querySelectorAll(".wl-lesson-stages span").forEach((node, i) => {
+      node.classList.toggle("is-done", i < task.step);
+      if (i === task.step) node.setAttribute("aria-current", "step");
+      else node.removeAttribute("aria-current");
+    });
     $("learning-label").textContent = [
       "1 / KHÁM PHÁ: ĐỌC TỪ, NGHĨA VÀ CÂU",
       "2 / NHẬN DIỆN: CHỌN NGHĨA CỦA TỪ",
@@ -157,9 +184,11 @@
           if (id !== task.id) {
             $("learning-feedback").textContent =
               "Chưa khớp — không sao, thử chọn lại nhé.";
+            button.classList.add("wl-choice-wrong");
             button.disabled = true;
             return;
           }
+          button.classList.add("wl-choice-correct");
           $("learning-feedback").textContent =
             "Đúng rồi! " + w.word + " = " + w.meaning;
           $("learning-context").textContent = w.context;
@@ -219,12 +248,47 @@
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   };
+  function progressStats() {
+    const now = Date.now(), counts = Array(7).fill(0);
+    let due = 0, partial = 0, attempts = 0, undated = 0;
+    const familiar = words.filter(introduced);
+    const recent = Array.from({length:7}, (_, i) => {
+      const d = new Date(now); d.setDate(d.getDate() - (6 - i));
+      return {key:d.toLocaleDateString("sv-SE"), label:`${d.getDate()}/${d.getMonth()+1}`, count:0};
+    });
+    for (const w of words) {
+      const r = store.records[w.word];
+      if (!r) continue;
+      attempts += r.attempts;
+      if (!introduced(w)) { if (r.learningStep > 0) partial++; continue; }
+      counts[r.stage]++;
+      if (r.due <= now) due++;
+      if (typeof r.introducedOn !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(r.introducedOn)) undated++;
+      const day = recent.find(d => d.key === r.introducedOn);
+      if (day) day.count++;
+    }
+    const n = words.length, seen = familiar.length, stable = counts.slice(3).reduce((a,b)=>a+b,0);
+    const fmt = n => n.toLocaleString("vi-VN");
+    const metric = (value,label) => `<div><strong>${value}</strong><small>${label}</small></div>`;
+    $("wl-stage-bar").innerHTML = [n-seen, seen-stable, stable].map((v,i)=>`<span class="wl-segment-${i}" style="width:${100*v/n}%"></span>`).join("");
+    $("wl-progress-metrics").innerHTML = metric(due,"Từ đến hạn (tất cả)") + metric(partial,"Đang làm quen dở") + metric(fmt(attempts),"Lượt tự nhớ đã ghi nhận");
+    const labels = ["Cần củng cố · 10 phút", "1 ngày", "3 ngày", "7 ngày", "14 ngày", "30 ngày", "60 ngày"];
+    $("wl-stage-detail").innerHTML = counts.map((v,i)=>`<div class="wl-stage-row"><span>${labels[i]}</span><progress aria-label="${labels[i]}" max="${Math.max(1,seen)}" value="${v}"></progress><strong>${v}</strong></div>`).join("");
+    const max = Math.max(1,...recent.map(d=>d.count));
+    $("wl-week-chart").innerHTML = recent.map(d=>`<div class="wl-day"><strong>${d.count}</strong><div class="wl-day-track"><span style="height:${100*d.count/max}%"></span></div><small>${d.label}</small></div>`).join("");
+    $("wl-week-note").textContent = `${recent.reduce((a,d)=>a+d.count,0)} từ có ngày làm quen trong 7 ngày. ${undated ? `${undated} từ cũ thiếu ngày, không đưa vào biểu đồ.` : "Không suy ra lịch sử ôn tập từ biểu đồ này."}`;
+    const lib = Object.values(store.library?.words || {});
+    const tests = lib.reduce((a,w)=>a+w.tests,0), correct = lib.reduce((a,w)=>a+w.correct,0);
+    $("wl-library-metrics").innerHTML = metric(lib.filter(w=>w.reviews>0).length,"Từ đã tự đánh giá") + metric(fmt(tests),"Lượt kiểm tra gõ từ") + metric(tests ? `${Math.round(100*correct/tests)}%` : "—","Tỷ lệ gõ đúng");
+    return due;
+  }
   function home() {
     cancelAnimationFrame(frame);
     Guardian.clear();
     session = null;
     $("learning").hidden = true;
     $("library").hidden = true;
+    Guardian.renderHome();
     plan();
     $("home").hidden = false;
     $("session").hidden = true;
@@ -233,13 +297,17 @@
       (i) => !store.daily.done.includes(i),
     );
     const seen = words.filter(introduced).length;
-    const learned = Object.values(store.records).filter(
-      (r) => r.stage >= 3,
-    ).length;
+    const learned = words.filter(w => introduced(w) && store.records[w.word].stage >= 3).length;
     $("stats").innerHTML =
-      `<div><strong>${words.length}</strong><small>từ & cụm từ</small></div><div><strong>${seen}</strong><small>đã làm quen</small></div><div><strong>${learned}</strong><small>đã nhớ ≥ 7 ngày</small></div>`;
+      `<div><strong>${words.length}</strong><small>Tổng số từ</small></div><div><strong>${seen}</strong><small>Đã làm quen</small></div><div><strong>${remaining.length}</strong><small>Ôn trong lượt</small></div>`;
+    $("wl-vocab-progress").max = words.length;
+    $("wl-vocab-progress").value = seen;
+    $("wl-progress-percent").textContent = `${Math.round(100 * seen / words.length)}%`;
+    $("wl-progress-copy").textContent = `${seen}/${words.length} từ đã làm quen. ${learned} từ ở mốc ôn ≥ 7 ngày.`;
+    $("wl-progress-breakdown").textContent = `${words.length - seen} từ chưa làm quen · ${seen - learned} từ đang củng cố · ${learned} từ ở mốc ôn ≥ 7 ngày`;
+    const due = progressStats();
     $("daily-description").textContent =
-      `${remaining.length} từ đã học đến hạn. Chỉ ôn tự nhớ sau khi làm quen; không đưa từ mới vào bài điền.`;
+      `${due} từ đến hạn; ${remaining.length} từ trong lượt này (tối đa 20). Chỉ ôn tự nhớ sau khi làm quen.`;
     $("daily").disabled = !remaining.length;
     $("daily").textContent = remaining.length
       ? "Bắt đầu hôm nay →"
@@ -250,7 +318,6 @@
     $("learn").disabled = !fresh;
     $("infinite").disabled = !seen;
     $("game").disabled = !seen;
-    Guardian.renderHome();
     const newToday = Object.values(store.records).filter(
       (record) => record.learned && record.introducedOn === date(),
     ).length;
@@ -315,6 +382,7 @@
     $("session").hidden = false;
     window.scrollTo(0, 0);
     $("arena").hidden = mode !== "game";
+    $("wl-review-panel").hidden = mode === "game";
     $("flight-status").hidden = mode !== "game";
     $("game-study").hidden = mode !== "game";
     $("flight-coach").hidden = true;
@@ -362,6 +430,17 @@
       "--target-progress",
       `${(matched / word.length) * 100}%`,
     );
+  }
+  function renderReview() {
+    if (session.mode === "game") return;
+    $("wl-review-count").textContent = session.completed;
+    $("wl-review-correct").textContent = session.correct;
+    $("wl-review-helped").textContent = session.completed - session.correct;
+    $("wl-review-progress").hidden = session.mode !== "daily";
+    if (session.mode === "daily") {
+      $("wl-review-progress").max = session.queue.length;
+      $("wl-review-progress").value = session.completed;
+    }
   }
   function nextQuestion() {
     cancelAnimationFrame(frame);
@@ -413,6 +492,7 @@
       `${w.word.replace(/[^a-z]/gi, "").length} chữ cái${w.word.includes(" ") ? " · khoảng trắng được hiển thị bằng dấu chấm" : ""}${w.word.includes("-") ? " · có dấu gạch nối" : ""}`;
     $("progress").textContent =
       `${session.mode === "daily" ? "Ôn hôm nay" : session.mode === "game" ? "Vệ binh" : "Vô hạn"} · ${session.completed} lượt · ${session.correct} đúng`;
+    renderReview();
     $("enemy").hidden = false;
     $("enemy").style.transform = "translateY(0px)";
     draw();
@@ -470,6 +550,7 @@
     session.resolved = true;
     session.completed++;
     if (clean) session.correct++;
+    renderReview();
     const wasDue = store.records[current().word]?.due <= Date.now();
     const difficulty = rememberArcade(!clean);
     if (!session.failureRecorded) record(clean);
@@ -664,8 +745,10 @@
     $("result-title").textContent = lost
       ? "Về trạm nạp lại nào."
       : s.mode === "daily"
-        ? "Hoàn thành hôm nay."
+        ? (s.completed === s.queue.length ? "Hoàn thành lượt ôn." : "Đã lưu phần ôn vừa học.")
         : "Hẹn gặp lại.";
+    $("wl-result-stats").hidden = s.mode === "game";
+    $("wl-result-stats").innerHTML = `<div><strong>${s.completed}</strong><span>Lượt luyện</span></div><div><strong>${s.correct}</strong><span>Tự nhớ đúng</span></div><div><strong>${s.completed - s.correct}</strong><span>Cần hỗ trợ</span></div>`;
     $("result-copy").textContent =
       `${s.completed} lượt luyện · ${s.correct} lượt đúng không gợi ý.\n${lost ? `Từ vừa rơi: ${answer.word} — ${answer.meaning}\n${answer.context}` : "Tiến độ đã lưu. Từ cần hỗ trợ sẽ đến hạn sau 10 phút; từ tự nhớ đúng được hẹn từ ngày mai."}`;
     if (s.mode === "game") Guardian.finish();
@@ -801,35 +884,76 @@
     $("sound").setAttribute("aria-pressed", String(sound));
     tone(600);
   };
-  $("export").onclick = () => {
-    const url = URL.createObjectURL(
-        new Blob([JSON.stringify(store, null, 2)], {
-          type: "application/json",
-        }),
-      ),
-      a = document.createElement("a");
-    a.href = url;
-    a.download = `letsstudy-vocabulary-${date()}.json`;
-    a.click();
+  function downloadBackup(payload, filename, raw = false) {
+    const url = URL.createObjectURL(new Blob([raw ? payload : JSON.stringify(payload, null, 2)], {type:"application/json"}));
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  const backupStatus = message => { $("wl-backup-status").textContent = message; };
+  $("wl-recovery-export").onclick = () => {
+    if (recoveryRaw !== null) downloadBackup(recoveryRaw, `letsstudy-recovery-${date()}.json`, true);
+  };
+  $("export").onclick = () => {
+    try {
+      const drafts = VocabularySentences.exportDrafts();
+      if (!VocabularySentences.validDrafts(drafts)) throw Error("Bản nháp không hợp lệ");
+      downloadBackup({...store, sentenceDrafts: drafts}, `letsstudy-vocabulary-${date()}.json`);
+      backupStatus("Đã tạo bản sao gồm tiến độ, Trạm Sao, thư viện và bản nháp. Kiểm tra file tải xuống.");
+    } catch {
+      if (!confirm("Không đọc được toàn bộ bản nháp. Vẫn xuất bản sao tiến độ chính, không kèm bản nháp?")) return;
+      try {
+        downloadBackup(store, `letsstudy-vocabulary-${date()}-no-drafts.json`);
+        backupStatus("Đã tạo bản sao chỉ gồm tiến độ chính; không có bản nháp.");
+      } catch { backupStatus("Không tạo được bản sao. Hãy thử lại."); }
+    }
   };
   $("import").onchange = async (e) => {
-    const file = e.target.files[0];
+    const input = e.target, file = input.files[0];
     if (!file) return;
+    input.disabled = true;
     try {
-      if (file.size > 2000000) throw Error();
-      const data = JSON.parse(await file.text());
-      if (!valid(data)) throw Error();
-      if (!confirm("Thay tiến độ từ vựng hiện tại bằng bản sao này?")) return;
+      let data;
+      try {
+        if (file.size > 8 * 1024 * 1024) throw Error();
+        data = JSON.parse(await file.text());
+        if (!valid(data) || (data.sentenceDrafts !== undefined && !VocabularySentences.validDrafts(data.sentenceDrafts))) throw Error();
+      } catch {
+        backupStatus("Bản sao không hợp lệ hoặc vượt 8 MiB. Chưa thay đổi dữ liệu.");
+        return;
+      }
+      const seen = words.filter(w=>VocabularyLibraryModel.introduced(data.records[w.word])).length;
+      const drafts = data.sentenceDrafts;
+      const draftCount = Object.keys(drafts || {}).length;
+      if (!confirm(`Khôi phục bản sao: ${seen}/${words.length} từ đã làm quen, ${data.guardian?.coins ?? 0} xu, ${draftCount} bản nháp. Tiến độ chính hiện tại sẽ bị thay thế; chỉ bản nháp có trong file bị ghi đè. Bạn đã xuất bản sao hiện tại chưa?`)) {
+        backupStatus("Đã hủy. Chưa thay đổi dữ liệu."); return;
+      }
+      delete data.sentenceDrafts;
+      // Capture all affected keys before any write. Main progress is written last.
+      const changes = Object.entries(drafts || {}).map(([id,value])=>[`letsstudy-sentence-draft-v1:${id}`, JSON.stringify(value)]);
+      changes.push([KEY, JSON.stringify(data)]);
+      const written = [], previous = new Map();
+      try {
+        for (const [key] of changes) previous.set(key, localStorage.getItem(key));
+        for (const [key,value] of changes) { localStorage.setItem(key,value); written.push(key); }
+      } catch {
+        let restored = true;
+        for (const key of written.reverse()) {
+          try { const old = previous.get(key); if (old === null) localStorage.removeItem(key); else localStorage.setItem(key,old); }
+          catch { restored = false; }
+        }
+        backupStatus(restored ? "Không thể ghi bản sao vào bộ nhớ. Các thay đổi đã được hoàn tác; tiến độ chính hiện tại được giữ." : "Không thể hoàn tác toàn bộ dữ liệu. Hãy giữ nguyên trang và xuất bản sao tiến độ hiện tại; kiểm tra lại các bản nháp.");
+        return;
+      }
       store = data;
-      save();
+      recoveryRaw = null; storageBlocked = false; storageError = "";
+      renderStorageWarning();
       home();
-      $("notice").textContent = "Đã khôi phục tiến độ.";
-    } catch {
-      $("notice").textContent =
-        "Bản sao không hợp lệ. Tiến độ hiện tại được giữ nguyên.";
+      backupStatus("Đã khôi phục tiến độ chính và các bản nháp có trong file." + (drafts === undefined ? " Bản sao cũ không chứa bản nháp; giữ các bản nháp hiện tại." : ""));
     } finally {
-      e.target.value = "";
+      input.disabled = false;
+      input.value = "";
     }
   };
   function activate(id) {

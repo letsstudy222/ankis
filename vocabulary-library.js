@@ -104,6 +104,7 @@
     const checked = Object.values(s.words).filter((w) => w.tests).length;
     $("lib-summary").textContent =
       `${options.words.length} từ & cụm từ · ${decks.length} bộ · ${rated} từ đã tự đánh giá · ${checked} từ đã kiểm tra`;
+    $("wl-library-stats").innerHTML = `<div><strong>${decks.length}</strong><span>Bộ từ</span></div><div><strong>${rated}</strong><span>Đã tự đánh giá</span></div><div><strong>${checked}</strong><span>Đã kiểm tra gõ từ</span></div>`;
     $("lib-view-decks").setAttribute("aria-pressed", String(!allView));
     $("lib-view-all").setAttribute("aria-pressed", String(allView));
     const results = M.filter(
@@ -189,6 +190,10 @@
       `Bộ ${String(index + 1).padStart(2, "0")} · ${d.words.length} từ`;
     $("lib-deck-description").textContent =
       `Từ ${d.start + 1}–${d.start + d.words.length} trong toàn bộ từ vựng. Lật thẻ để làm quen, rồi gõ từ để thử trí nhớ.`;
+    const remembered = d.words.filter(w => s.words[w.word]?.rating === 3).length;
+    $("wl-deck-progress").max = d.words.length;
+    $("wl-deck-progress").value = remembered;
+    $("wl-deck-progress-label").textContent = `${remembered}/${d.words.length} từ tự đánh giá đã nhớ`;
     $("lib-deck-last").textContent = last
       ? `Lần kiểm tra gần nhất: ${last.answers.filter((a) => a.correct).length}/${last.answers.length} đúng · ${last.answers.length === last.words.length ? "hoàn tất bộ" : "dừng sớm"} · ${new Date(last.at).toLocaleDateString("vi-VN")}`
       : "Chưa có kết quả kiểm tra cho bộ này.";
@@ -230,6 +235,8 @@
     p.revealed = false;
     $("lib-practice-progress").textContent =
       `${p.cursor + 1} / ${p.queue.length} từ`;
+    $("wl-lib-progress").max = p.queue.length;
+    $("wl-lib-progress").value = p.cursor;
     $("lib-card-front").textContent =
       p.type === "cards" && state().direction === "en" ? w.word : w.meaning;
     $("lib-card-label").textContent =
@@ -277,6 +284,7 @@
     const w = p.queue[p.cursor];
     M.answer(state(), w.word, correct);
     p.answers.push({ word: w.word, correct });
+    $("wl-lib-progress").value = p.answers.length;
     save();
     $("lib-card-answer").textContent = w.word;
     $("lib-card-back").hidden = false;
@@ -308,6 +316,10 @@
       count === p.queue.length
         ? "Một bộ nhỏ, thêm một bước tiến."
         : "Đã lưu phần bạn vừa học.";
+    const ratings = Object.values(p.ratings);
+    const correct = p.answers.filter(a => a.correct).length;
+    const metrics = p.type === "quiz" ? [[count,"Đã kiểm tra"],[correct,"Tự nhớ đúng"],[count-correct,"Cần hỗ trợ"]] : [[ratings.filter(r=>r===3).length,"Đã nhớ"],[ratings.filter(r=>r===2).length,"Phân vân"],[ratings.filter(r=>r===1).length,"Chưa nhớ"]];
+    $("wl-lib-result-stats").innerHTML = metrics.map(([value,label]) => `<div><strong>${value}</strong><span>${label}</span></div>`).join("");
     $("lib-result-copy").textContent =
       p.type === "quiz"
         ? `${p.answers.filter((a) => a.correct).length}/${count} từ tự nhớ đúng · đã kiểm tra ${count}/${p.queue.length} từ. Từ chưa làm không bị tính sai.`

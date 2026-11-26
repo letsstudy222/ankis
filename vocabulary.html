@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content" />
-    <title>Quỹ đạo từ vựng · LetsStudy</title>
+    <title>Word Lab 2.3 · LetsStudy</title>
+    <meta name="description" content="Học từ vựng, ôn tập, flashcard và luyện câu cùng LetsStudy Word Lab." />
     <link rel="stylesheet" href="vocabulary.css?v=20261028-collection-9" />
     <link
       rel="stylesheet"
@@ -18,30 +19,18 @@
     <link rel="stylesheet" href="vocabulary-library.css?v=20261111-library-1" />
     <link rel="stylesheet" href="vocabulary-mobile.css?v=20261116-mobile-1" />
     <link rel="stylesheet" href="vocabulary-sentences.css?v=4" />
+      <link rel="stylesheet" href="wordlab.css?v=2.3.0" />
   </head>
   <body>
     <main>
       <header>
-        <a href="./">← Thẻ nhớ</a><span>LETSSTUDY / WORD LAB</span
-        ><button id="sound" aria-pressed="false">Âm thanh: tắt</button>
+        <a href="./">← Thẻ nhớ</a><span>✦ WORD LAB <small>2.3</small></span
+        ><button id="sound" aria-pressed="false">Âm thanh: tắt</button><button id="wl-header-settings" type="button" aria-label="Cài đặt và sao lưu" title="Cài đặt và sao lưu">⚙</button>
       </header>
       <section id="home">
-        <div class="welcome">
-          <div>
-            <p class="eyebrow">WORD LAB / MỖI NGÀY MỘT CHÚT</p>
-            <h1>Học một từ.<br /><em>Mở một quỹ đạo.</em></h1>
-            <p class="intro">
-              Bắt đầu bằng 5 từ: xem từ và câu ví dụ, chọn nghĩa, rồi gõ theo
-              mẫu. Khi đã làm quen, lái tàu bằng những từ bạn tự nhớ được.
-            </p>
-          </div>
-          <div class="welcome-art" aria-hidden="true">
-            <span class="orbit-tag">YOUR NEXT SMALL ADVENTURE</span>
-            <div class="orbit-planet"></div>
-            <span class="orbit-satellite">✦</span
-            ><span class="orbit-coordinate">LEARN · RECALL · EXPLORE</span>
-          </div>
-        </div>
+<nav class="wl-nav" aria-label="Điều hướng Word Lab"><div class="wl-nav-brand"><span class="wl-logo">✦</span><div><strong>Word Lab</strong><small>LET'S STUDY · 2.3</small></div></div><div class="wl-nav-links"><button type="button" data-wl-target="home" data-wl-nav="home" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Tổng quan</span></button><button type="button" data-wl-target="study-modes" data-wl-nav="learn"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6C9 3 5 3 2 5v15c3-2 7-2 10 1 3-3 7-3 10-1V5c-3-2-7-2-10 1v15"/></svg><span>Học tập</span></button><button type="button" data-wl-target="library-open" data-wl-nav="library"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="15" height="15" rx="2"/><path d="M3 7v14h14M9 8h7m-7 4h5"/></svg><span>Thư viện</span></button><button type="button" data-wl-target="sentence-open" data-wl-nav="sentence"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14 5 5 5M4 20l5-1L21 7l-5-5L4 14zM4 20h16"/></svg><span>Luyện câu</span></button><button type="button" data-wl-target="game-card" data-wl-nav="game"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12c3 0 5 6 4 9s-4 3-7-1H9c-3 4-6 4-7 1S3 8 6 8zM7 10v5m-2-2h4m8-2h.01m3 3h.01"/></svg><span>Trò chơi</span></button><button type="button" data-wl-target="g-open" data-wl-nav="pet"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15c-3-5-8-2-8 2s5 4 8 2c3 2 8 2 8-2s-5-7-8-2z"/><circle cx="5" cy="8" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="20" cy="8" r="2"/></svg><span>Trạm Sao</span></button><button type="button" data-wl-target="wl-progress" data-wl-nav="progress"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11m5 9V7m5 13v-5m5 5V3"/></svg><span>Tiến độ</span></button><button type="button" data-wl-target="wl-settings" data-wl-nav="settings"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></svg><span>Cài đặt</span></button></div><a class="wl-original" href="./">← Về thẻ nhớ</a></nav><div class="wl-dashboard">
+          <div class="wl-heading"><div><p class="eyebrow">QUỸ ĐẠO HỌC TẬP</p><h1>Hành trình hôm nay<span>.</span></h1><p>Học từng chút, nhớ lâu hơn.</p></div><time id="wl-date"></time></div>
+        <div id="stats" class="stats"></div><div class="wl-quick-progress"><button id="wl-progress-shortcut" type="button">Xem tiến độ chi tiết →</button></div><div id="wl-storage-warning" role="alert" hidden></div>
         <section
           id="study-route"
           class="study-route"
@@ -55,44 +44,8 @@
           </div>
           <button id="route-start">Bắt đầu →</button>
         </section>
-        <div id="stats" class="stats"></div>
-        <section class="lib-entry" aria-label="Bộ từ và flashcard">
-          <div class="lib-entry-icon" aria-hidden="true">▤</div>
-          <div>
-            <p class="eyebrow">THƯ VIỆN / HỌC THEO BỘ NHỎ</p>
-            <h2>Toàn bộ từ vựng, trong từng bộ vừa sức.</h2>
-            <p>
-              Lật flashcard, kiểm tra gõ từ và xem lại những từ còn phân vân.
-              Mỗi bộ 12 hoặc 24 từ.
-            </p>
-          </div>
-          <button id="library-open">Bộ từ & flashcard →</button>
-        </section>
-        <form class="sentence-entry" action="./vocabulary.html" method="get">
-          <button id="sentence-open" name="view" value="sentences">
-            Luyện câu Việt → Anh
-          </button>
-        </form>
-        <section id="guardian-home" class="g-station" aria-label="Trạm Sao">
-          <div id="g-home-art" class="g-home-art"></div>
-          <div class="g-home-copy">
-            <p class="eyebrow">TRẠM SAO / MỘT NGƯỜI BẠN CÙNG HỌC</p>
-            <h2 id="g-home-name"></h2>
-            <p id="g-home-status"></p>
-            <progress id="g-home-xp" max="80" value="0"></progress>
-            <p id="g-home-mission"></p>
-          </div>
-          <div class="g-home-action">
-            <span class="g-currency"
-              >✦ <strong id="g-home-coins">0</strong> xu</span
-            ><button id="g-open">Linh thú & cửa hàng →</button
-            ><a href="./pet-art-preview.html" style="font-size: 12px"
-              >🎨 Xem mẫu tiến hóa linh thú</a
-            ><small>Học đều. Nuôi lớn. Đi xa.</small>
-          </div>
-        </section>
-        <div class="mode-heading">
-          <h2>Chọn một chuyến đi</h2>
+        <div class="mode-heading" id="study-modes" tabindex="-1">
+          <h2>Khám phá chế độ học</h2>
           <span>Học trước → tự nhớ → luyện phản xạ</span>
         </div>
         <div class="modes">
@@ -155,7 +108,7 @@
             </p>
             <button id="infinite">Luyện điền chữ →</button>
           </article>
-          <article class="arcade">
+          <article class="arcade" id="game-card" tabindex="-1">
             <svg
               class="mode-icon"
               viewBox="0 0 60 56"
@@ -172,9 +125,7 @@
             ><span>04 / PHẢN XẠ</span>
             <h2>Vệ binh từ vựng</h2>
             <p>
-              Lái tàu bằng trí nhớ: gõ từng chữ để phá mục tiêu. Có 3 lá chắn,
-              tốc độ theo độ quen từ và linh thú đi cùng. Quên từ? Học lại ngay,
-              rồi thử tự nhớ sau vài mục tiêu khác. Đúng là tự sang từ mới.
+              Lái tàu bằng trí nhớ, luyện phản xạ với từ đã học. Có 3 lá chắn và linh thú đồng hành.
             </p>
             <label
               >Tốc độ
@@ -185,9 +136,40 @@
               </select></label
             ><button id="game">Vào trận →</button>
           </article>
+          <article class="wl-library-card"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="15" height="15" rx="2"/><path d="M3 7v14h14M9 8h7m-7 4h5"/></svg><span>05 / THEO BỘ</span><h2>Thư viện & flashcard</h2><p>Học theo bộ 12 hoặc 24 từ, lật thẻ và kiểm tra gõ từ.</p><button id="library-open">Mở thư viện →</button></article>
+          <article class="wl-sentence-card"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14 5 5 5M4 20l5-1L21 7l-5-5L4 14zM4 20h16"/></svg><span>06 / VẬN DỤNG</span><h2>Luyện câu</h2><p>Viết câu Việt → Anh, so sánh với câu mẫu IELTS.</p><form class="sentence-entry" action="./vocabulary.html" method="get"><button id="sentence-open" name="view" value="sentences">Luyện câu →</button></form></article>
         </div>
-        <details>
-          <summary>Cách chọn từ và lưu tiến độ</summary>
+                <section id="guardian-home" class="g-station" aria-label="Trạm Sao">
+          <div id="g-home-art" class="g-home-art"></div>
+          <div class="g-home-copy">
+            <p class="eyebrow">TRẠM SAO / MỘT NGƯỜI BẠN CÙNG HỌC</p>
+            <h2 id="g-home-name"></h2>
+            <p id="g-home-status"></p>
+            <progress id="g-home-xp" max="80" value="0"></progress>
+            <p id="g-home-mission"></p>
+          </div>
+          <div class="g-home-action">
+            <span class="g-currency"
+              >✦ <strong id="g-home-coins">0</strong> xu</span
+            ><button id="g-open">Linh thú & cửa hàng →</button
+            ><a href="./pet-art-preview.html" style="font-size: 12px"
+              >🎨 Xem mẫu tiến hóa linh thú</a
+            ><small>Học đều. Nuôi lớn. Đi xa.</small>
+          </div>
+        </section>
+
+        <section id="wl-progress" class="wl-panel" tabindex="-1" aria-labelledby="wl-progress-title"><div class="wl-section-heading"><h2 id="wl-progress-title">Tiến độ của bạn</h2><span id="wl-progress-percent"></span></div><progress id="wl-vocab-progress" max="1" value="0" aria-label="Tỷ lệ từ đã làm quen"></progress><p id="wl-progress-copy"></p><div class="wl-progress-breakdown" id="wl-progress-breakdown"></div>
+          <div class="wl-stage-bar" id="wl-stage-bar" aria-hidden="true"></div>
+          <div class="wl-progress-metrics" id="wl-progress-metrics"></div>
+          <div class="wl-progress-columns">
+            <div class="wl-progress-block"><h3>Phân bố mức ghi nhớ</h3><div id="wl-stage-detail"></div><p class="wl-stat-note">Mức dựa trên khoảng cách ôn theo thuật toán, không phải chứng nhận đã thuộc.</p></div>
+            <div class="wl-progress-block"><h3>Từ mới trong 7 ngày gần đây</h3><div id="wl-week-chart" class="wl-week-chart"></div><p id="wl-week-note" class="wl-stat-note"></p></div>
+          </div>
+          <div class="wl-progress-block"><h3>Flashcard và kiểm tra gõ từ</h3><div id="wl-library-metrics" class="wl-progress-metrics"></div><p class="wl-stat-note">Tự đánh giá và kiểm tra gõ từ được tính riêng; không cộng vào số từ đã làm quen theo lộ trình.</p></div>
+        </section>
+        <details id="wl-settings">
+          <summary>Cài đặt & sao lưu tiến độ</summary>
+          <p><a href="./">← Về ứng dụng thẻ nhớ gốc</a></p>
           <p>
             Mặc định học 5 từ mỗi lượt, có thể chủ động học thêm. Ba bước: xem
             từ + câu ví dụ → chọn nghĩa → gõ theo mẫu, xen kẽ cả nhóm. Đây là
@@ -199,17 +181,21 @@
             cũng chỉ lấy từ đã học.
           </p>
           <p>
-            Tiến độ, linh thú, xu và đồ đã mua lưu trên trình duyệt này, không
+            Tiến độ, linh thú, xu, đồ đã mua và bản nháp luyện câu lưu trên trình duyệt này, không
             đồng bộ thiết bị. Xuất bản sao để tránh mất khi xóa dữ liệu trình
             duyệt.
           </p>
-          <button id="export">Xuất tiến độ JSON</button
+          <button id="export">Xuất bản sao JSON</button
           ><label class="import"
             >Nhập bản sao
-            <input id="import" type="file" accept="application/json"
+            <input id="import" type="file" accept=".json,application/json"
           /></label>
+          <button id="wl-recovery-export" type="button" hidden>Tải dữ liệu gốc chưa đọc được</button>
+          <p id="wl-backup-status" role="status" aria-live="polite"></p>
+          <p class="wl-stat-note">Bản sao gồm tiến độ, Trạm Sao, thư viện và các bản nháp đọc được. Khi nhập, tiến độ chính được thay thế; chỉ các bản nháp có trong file được ghi đè. Nên xuất bản sao hiện tại trước khi nhập. Không bao gồm dữ liệu ứng dụng thẻ nhớ ở trang gốc.</p>
         </details>
         <p id="notice" role="status"></p>
+        </div>
       </section>
       <section id="sentences" hidden aria-labelledby="sentence-title">
         <nav aria-label="Luyện câu">
@@ -221,11 +207,12 @@
           <span id="sentence-style"></span>
         </p>
         <nav id="sentence-picker" aria-label="Chọn câu luyện"></nav>
+        <div class="wl-sentence-workspace"><div class="wl-sentence-source">
         <div class="sentence-panel">
-          <h2 id="sentence-purpose"></h2>
+          <p class="wl-kicker">01 · ĐỀ BÀI TIẾNG VIỆT</p><h2 id="sentence-purpose"></h2>
           <p id="sentence-source"></p>
-        </div>
-        <div class="sentence-panel">
+        </div><p class="wl-sentence-tip">Viết theo cách của bạn. Kiểm tra từng từ chỉ đối chiếu với câu mẫu, không phải chấm ngữ pháp hay điểm IELTS.</p></div>
+        <div class="sentence-panel wl-sentence-writing"><p class="wl-kicker">02 · BÀI VIẾT CỦA BẠN</p>
           <fieldset class="sentence-levels">
             <legend>Mức độ luyện</legend>
             <label><input type="radio" name="sentence-level" value="easy" checked /> Dễ</label>
@@ -255,7 +242,7 @@
             </button>
           </div>
         </div>
-        <div id="sentence-reference" class="sentence-panel" hidden>
+        </div><div id="sentence-reference" class="sentence-panel" hidden>
           <h2 id="sentence-reference-title" tabindex="-1">Câu tiếng Anh mẫu</h2>
           <p id="sentence-reference-copy" lang="en"></p>
           <div id="sentence-comparison" hidden>
@@ -281,8 +268,9 @@
         <p id="lib-message" role="status"></p>
         <div id="lib-browse">
           <p class="eyebrow">MỘT BỘ NHỎ. MỘT LẦN NHỚ RÕ HƠN.</p>
-          <h1 id="lib-title" tabindex="-1">Bộ từ &<br /><em>flashcard.</em></h1>
+          <h1 id="lib-title" tabindex="-1">Thư viện <em>& flashcard</em></h1>
           <p id="lib-summary" class="lib-summary"></p>
+          <div class="wl-library-stats" id="wl-library-stats" aria-label="Thống kê thư viện"></div>
           <div class="lib-toolbar">
             <label
               >Tìm từ, nghĩa hoặc câu ví dụ<input
@@ -322,7 +310,7 @@
         <div id="lib-detail" hidden>
           <button id="lib-all-decks">← Tất cả bộ từ</button>
           <h2 id="lib-deck-title" tabindex="-1"></h2>
-          <p id="lib-deck-description" class="lib-summary"></p>
+          <p id="lib-deck-description" class="lib-summary"></p><div class="wl-deck-meter"><progress id="wl-deck-progress" aria-label="Số từ tự đánh giá đã nhớ"></progress><span id="wl-deck-progress-label"></span></div>
           <div class="lib-deck-actions">
             <button id="lib-cards-start">Lật flashcard →</button
             ><button id="lib-quiz-start">Kiểm tra gõ từ →</button
@@ -352,7 +340,7 @@
             <button id="lib-stop">← Dừng & xem kết quả</button
             ><span id="lib-practice-progress"></span>
           </div>
-          <p id="lib-practice-type" class="eyebrow"></p>
+          <progress id="wl-lib-progress" class="wl-study-meter" aria-label="Tiến độ hoàn thành thẻ" value="0" max="1"></progress><p id="lib-practice-type" class="eyebrow"></p>
           <div id="lib-card" class="lib-card">
             <p id="lib-card-label" class="eyebrow"></p>
             <h2 id="lib-card-front"></h2>
@@ -403,7 +391,7 @@
         <div id="lib-result" hidden>
           <p class="eyebrow">THÊM MỘT BƯỚC TIẾN</p>
           <h2 id="lib-result-title" tabindex="-1"></h2>
-          <p id="lib-result-copy"></p>
+          <div id="wl-lib-result-stats" class="wl-result-stats"></div><p id="lib-result-copy"></p>
           <section id="lib-result-weak" hidden>
             <h3>Những từ còn cần củng cố</h3>
             <div id="lib-result-words"></div>
@@ -417,6 +405,7 @@
           <button id="leave-learning">← Để sau</button
           ><span id="learning-progress"></span>
         </nav>
+        <div class="wl-lesson-stages" aria-label="Ba giai đoạn làm quen"><span>1 · Khám phá</span><span>2 · Nhận diện</span><span>3 · Gõ mẫu</span></div><progress id="wl-learning-progress" class="wl-study-meter" aria-label="Tiến độ hoàn thành lượt làm quen" value="0" max="1"></progress>
         <div class="question">
           <p id="learning-label" class="eyebrow"></p>
           <h2 id="learning-word"></h2>
@@ -449,18 +438,19 @@
             Tạm dừng · Alt+4
           </button>
         </nav>
+        <div id="wl-review-panel" hidden><div class="wl-review-summary"><span><strong id="wl-review-count">0</strong> lượt hoàn thành</span><span><strong id="wl-review-correct">0</strong> tự nhớ đúng</span><span><strong id="wl-review-helped">0</strong> cần hỗ trợ</span></div><progress id="wl-review-progress" class="wl-study-meter" aria-label="Tiến độ lượt ôn hôm nay" value="0" max="1" hidden></progress></div>
         <div id="guardian-hud" class="g-hud" hidden>
           <div>
-            <small>ĐIỂM CHUYẾN BAY</small><strong id="g-score">0</strong>
+            <small>ĐIỂM TRẬN</small><strong id="g-score">0</strong>
           </div>
           <div><small>COMBO</small><strong id="g-combo">×1</strong></div>
           <div>
             <small>LINH THÚ</small><strong id="g-run-level">Cấp 1</strong>
           </div>
           <div>
-            <small>TÚI XU</small><strong id="g-run-wallet">0 xu</strong>
+            <small>VÍ</small><strong id="g-run-wallet">0 xu</strong>
           </div>
-          <p id="g-ticket-rate" class="g-ticket-rate"></p>
+          <div class="wl-ticket-meter"><progress id="g-ticket-chance" max="100" value="5" aria-label="Tỷ lệ nhận vé ở lượt gõ đúng tiếp theo"></progress><p id="g-ticket-rate" class="g-ticket-rate"></p></div>
           <p id="guardian-reward" role="status"></p>
         </div>
         <div id="flight-status" hidden>
@@ -570,7 +560,7 @@
       <section id="result" hidden>
         <p class="eyebrow">THÊM MỘT BƯỚC TIẾN</p>
         <h1 id="result-title">Làm tốt lắm.</h1>
-        <p id="result-copy"></p>
+        <div id="wl-result-stats" class="wl-result-stats" hidden></div><p id="result-copy"></p>
         <section id="weak-review" hidden aria-label="Từ cần củng cố">
           <h2>Mang những từ này về trạm</h2>
           <p>Thử tự nhớ trong bài điền không có đồng hồ.</p>
@@ -582,7 +572,7 @@
       <dialog id="guardian-dialog" aria-labelledby="g-dialog-title">
         <div class="g-dialog-header">
           <div>
-            <p class="eyebrow">BỘ SƯU TẬP CỦA BẠN</p>
+            <p class="eyebrow">TRẠM ĐIỀU KHIỂN LINH THÚ</p>
             <h2 id="g-dialog-title">Trạm Sao</h2>
           </div>
           <div>
@@ -619,16 +609,16 @@
     <script src="guardian-model.js?v=20261027-typo-tickets-7"></script>
     <script src="guardian-nursery.js?v=20261028-collection-9"></script>
     <script src="guardian-equipment.js?v=20261027-typo-tickets-7"></script>
-    <script src="guardian-art.js?v=20261028-collection-9"></script>
+    <script src="guardian-art.js?v=2.0.0"></script>
     <script src="guardian-gear-art.js?v=20261027-typo-tickets-7"></script>
-    <script src="guardian.js?v=20261028-collection-9"></script>
+    <script src="guardian.js?v=2.2.0"></script>
     <script src="pet-roaming.js?v=20261027-typo-tickets-7"></script>
     <script src="flight-clock.js?v=20261027-typo-tickets-7"></script>
     <script src="vocabulary-practice.js?v=20261028-adaptive-10"></script>
     <script src="vocabulary-library-model.js?v=20261111-library-1"></script>
-    <script src="vocabulary-library.js?v=20261111-library-1"></script>
-    <script src="vocabulary-sentences.js?v=5"></script>
-    <script src="vocabulary.js?v=20261119-sentences-1"></script>
-    <script src="vocabulary-mobile.js?v=20261116-mobile-1"></script>
+    <script src="vocabulary-library.js?v=2.1.0"></script>
+    <script src="vocabulary-sentences.js?v=2.3.0"></script>
+    <script src="vocabulary.js?v=2.3.0"></script>
+    <script src="vocabulary-mobile.js?v=2.3.0"></script>
   </body>
 </html>

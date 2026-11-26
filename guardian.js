@@ -876,6 +876,8 @@
     const changedTab = renderedTab !== tab;
     renderedTab = tab;
     const s = state();
+    const summary = $("wl-station-summary");
+    summary.replaceChildren(...[[number(s.coins),"Xu"],[number(N.ensure(s).tickets),"Vé triệu hồi"],[M.petLevel(s),"Cấp linh thú"],[Object.keys(N.ensure(s).pets).length,"Loài sở hữu"]].map(([v,label])=>{const e=node("div");e.append(node("strong","",String(v)),node("small","",label));return e;}));
     $("g-wallet").textContent =
       `${number(s.coins)} xu · ${N.ensure(s).tickets} vé`;
     for (const b of $("g-tabs").children)
@@ -896,7 +898,7 @@
       })[tab] || petPage
     )(body);
     body.scrollTop = changedTab ? 0 : oldScroll;
-    if ($("guardian-dialog").open) {
+    if (!$("guardian-dialog").hidden && !$("home").hidden) {
       let next = focusId
         ? $(focusId)
         : focusItem
@@ -915,9 +917,7 @@
   function open() {
     M.today(state(), localDate());
     renderDialog();
-    $("guardian-dialog").showModal();
     $("g-dialog-body").scrollTop = 0;
-    $("g-tabs").querySelector(`[data-tab="${tab}"]`).focus({preventScroll:true});
   }
   function start() {
     document.body.classList.add("g-playing");
@@ -1040,19 +1040,7 @@
     options = config;
     state();
     $("g-open").onclick = open;
-    $("g-close").onclick = () => $("guardian-dialog").close();
-    $("guardian-dialog").addEventListener("click", (e) => {
-      if (e.target === $("guardian-dialog")) {
-        const box = e.target.getBoundingClientRect();
-        if (
-          e.clientX < box.left ||
-          e.clientX > box.right ||
-          e.clientY < box.top ||
-          e.clientY > box.bottom
-        )
-          e.target.close();
-      }
-    });
+    $("g-close").onclick = () => { tab = "pet"; notify(""); renderDialog(); $("g-tabs").querySelector('[data-tab="pet"]').focus({preventScroll:true}); };
     for (const b of $("g-tabs").children)
       b.onclick = () => {
         tab = b.dataset.tab;
@@ -1072,6 +1060,7 @@
     timeBonus: () => GuardianEquipment.effects(state()).timeBonus || 0,
     mount,
     renderHome,
+    open,
     start,
     mistake,
     onWord,

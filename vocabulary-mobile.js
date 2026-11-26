@@ -6,7 +6,6 @@
   function update() {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(() => {
-      // Preserve browser pinch zoom rather than resizing the game around it.
       if (viewport && Math.abs(viewport.scale - 1) > 0.05) return;
       const height = viewport ? viewport.height : window.innerHeight;
       root.style.setProperty('--visible-height', `${height}px`);
@@ -28,13 +27,13 @@
   date.textContent = new Intl.DateTimeFormat('vi-VN',{weekday:'short',day:'numeric',month:'numeric'}).format(now);
   const nav = [...document.querySelectorAll('[data-wl-nav]')];
   const labels = {
-    home:['Tổng quan','Theo dõi hành trình học từ vựng.'],
-    learn:['Học tập','Làm quen, ôn theo lịch và luyện tự nhớ.'],
-    game:['Trò chơi','Vệ binh từ vựng — luyện phản xạ.'],
-    pet:['Trạm Sao','Linh thú đồng hành, bộ sưu tập và cửa hàng.'],
-    progress:['Tiến độ','Thống kê từ dữ liệu học tập đã lưu.'],
-    settings:['Cài đặt','Quản lý dữ liệu và sao lưu Word Lab.'],
-    ankis:['Ankis','Ứng dụng thẻ nhớ độc lập trong cùng không gian.']
+    home:['Tổng quan','Bảng điều phối chung: trạng thái hiện tại, việc nên làm tiếp và lộ trình học từ vựng.'],
+    learn:['Học tập','Làm quen từ mới, ôn đúng lịch và luyện tự nhớ theo luồng học chính.'],
+    game:['Trò chơi','Phòng tuyến thiên thạch — luyện phản xạ gõ từ tiếng Anh dưới áp lực thời gian.'],
+    pet:['Trạm Sao','Linh thú đồng hành, bộ sưu tập và phần thưởng giúp tăng động lực học.'],
+    progress:['Tiến độ','Thống kê từ dữ liệu học tập đã lưu để theo dõi độ bền trí nhớ.'],
+    settings:['Cài đặt','Quản lý dữ liệu, sao lưu và phục hồi Word Lab.'],
+    ankis:['Ankis','Ôn tập, quản lý bộ thẻ và theo dõi lịch ghi nhớ.']
   };
   let current = 'home';
   const params = new URLSearchParams(location.search);
@@ -51,10 +50,7 @@
       $('wl-date').hidden=key!=='home';
     }
     if(key==='settings') $('wl-settings').open=true;
-    if(key==='ankis') {
-      const frame=$('wl-ankis-frame');
-      if(!frame.hasAttribute('src')) frame.src=frame.dataset.src;
-    }
+    if(key==='ankis') WordLabAnkis.open();
   }
   function navigate(key, focus=true) {
     if (!nav.some(b=>b.dataset.wlNav===key)) key='home';
@@ -70,18 +66,19 @@
     if(key==='library') VocabularyLibrary.open();
     else if(key==='sentence') VocabularySentences.open();
     else {
-      if($('home').hidden) WordLabHome();
+      if($('home').hidden || key==='home') WordLabHome();
       panels(key);
       if(focus) $('wl-section-title').focus({preventScroll:true});
     }
+    if(key==='pet') Guardian.open();
     window.scrollTo(0,0);
   }
   nav.forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.wlNav)));
+  $('wl-activity-link').addEventListener('click',()=>navigate('progress'));
   $('wl-progress-shortcut').addEventListener('click',()=>navigate('progress'));
   $('wl-header-settings').addEventListener('click',()=>navigate('settings'));
   $('sentence-open').addEventListener('click',e=>{e.preventDefault();navigate('sentence');});
   document.querySelector('[data-wl-back]').addEventListener('click',()=>navigate('home'));
-  // Existing library close / practice finish returns to the correct owning section.
   const screenObserver=new MutationObserver(()=>{
     if (!$('home').hidden) {
       if(current==='library'||current==='sentence') mark('home');

@@ -4,7 +4,10 @@
     $ = (id) => document.getElementById(id),
     KEY = "letsstudy-vocabulary-v1",
     DAY = 86400000;
+  const fmt = (n) => Number(n || 0).toLocaleString("vi-VN");
   const date = () => new Date().toLocaleDateString("sv-SE");
+  const activityKinds = {newWord:"Từ mới",review:"Lượt ôn từ",meteor:"Lượt Vệ binh",flash:"Lượt đánh giá thẻ",quiz:"Lượt kiểm tra gõ",sentence:"Lượt kiểm tra câu",match:"Ván ghép cặp",scramble:"Ván giải mã"};
+  const goalOptions=[15,25,35,50];
   const empty = () => ({ version: 1, records: {}, daily: null });
   let store, recoveryRaw = null, storageBlocked = false, storageError = "";
   try {
@@ -36,6 +39,8 @@
         )) &&
       (!x.library || VocabularyLibraryModel.valid(x.library, words)) &&
       x.version === 1 &&
+      (x.weekGoal===undefined || goalOptions.includes(x.weekGoal)) &&
+      (x.activity===undefined || (x.activity && typeof x.activity==="object" && !Array.isArray(x.activity) && Object.keys(x.activity).length<=90 && Object.entries(x.activity).every(([day,v])=>/^\d{4}-\d{2}-\d{2}$/.test(day)&&v&&typeof v==="object"&&!Array.isArray(v)&&Object.entries(v).every(([k,n])=>Object.hasOwn(activityKinds,k)&&Number.isSafeInteger(n)&&n>=0)))) &&
       x.records &&
       typeof x.records === "object" &&
       !Array.isArray(x.records) &&
@@ -83,6 +88,39 @@
     }
     renderStorageWarning();
     return !storageError;
+  }
+  function logActivity(kind, persist=true) {
+    if (!Object.hasOwn(activityKinds,kind)) return;
+    const today=date(), days=store.activity ||= {};
+    const row=days[today] ||= {};
+    row[kind]=Math.min(Number.MAX_SAFE_INTEGER,(row[kind]||0)+1);
+    const cutoff=new Date();cutoff.setDate(cutoff.getDate()-89);
+    const key=cutoff.toLocaleDateString("sv-SE");
+    Object.keys(days).sort().forEach(d=>{if(d<key || d>today)delete days[d]});
+    while(Object.keys(days).length>90)delete days[Object.keys(days).sort()[0]];
+    if(persist){save();renderActivity();}
+  }
+  globalThis.WordLabActivity = logActivity;
+  function renderActivity() {
+    const days=store.activity||{}, today=date();
+    const total=row=>Object.values(row||{}).reduce((a,b)=>a+b,0);
+    const make=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e};
+    const recent=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);const key=d.toLocaleDateString("sv-SE");return {key,label:`${d.getDate()}/${d.getMonth()+1}`,n:total(days[key])}});
+    const root=$("wl-activity-home"), chart=make("div","wl-activity-week"), max=Math.max(1,...recent.map(d=>d.n));
+    for(const d of recent){const item=make("div","wl-activity-day");item.append(make("strong","",fmt(d.n)));const track=make("div","wl-activity-track"),bar=make("span");bar.style.height=`${100*d.n/max}%`;track.append(bar);item.append(track,make("small","",d.label));chart.append(item);}
+    root.replaceChildren(make("p","wl-stat-note",Object.keys(days).length?`${recent.filter(d=>d.n>0).length}/7 ngày có hoạt động Word Lab · ${fmt(total(days[today]))} thao tác được ghi nhận hôm nay.`:"Nhật ký bắt đầu từ phiên bản 2.7. Hoàn thành một lượt học để thấy hoạt động tại đây."),chart);
+    const range=Number($("wl-activity-range").value)||7, since=new Date();since.setDate(since.getDate()-range+1);const first=since.toLocaleDateString("sv-SE");
+    const entries=Object.entries(days).filter(([k])=>k>=first&&k<=today).sort(([a],[b])=>b.localeCompare(a));
+    const detail=$("wl-activity-detail"); detail.replaceChildren(make("p","wl-stat-note","Chỉ ghi nhận thao tác từ bản 2.7; số lượt ở các chế độ không tương đương số từ thuộc. Ankis có nhật ký riêng trong mục Thống kê."));
+    if(!entries.length)detail.append(make("p","wl-empty","Chưa có hoạt động trong khoảng thời gian này."));
+    for(const [day,row] of entries){const line=make("div","wl-activity-row"),body=make("div","wl-activity-tags");for(const [k,n] of Object.entries(row))if(n)body.append(make("span","",`${activityKinds[k]}: ${fmt(n)}`));line.append(make("strong","",day.split("-").reverse().join("/")),body);detail.append(line);}
+  }
+  $("wl-activity-range").onchange=renderActivity;
+  $("wl-week-target").onchange=()=>{store.weekGoal=Number($("wl-week-target").value);save();home();};
+  function renderUpcoming() {
+    const now=Date.now(), start=new Date();start.setHours(0,0,0,0);const edges=Array.from({length:8},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i+1);return +d});
+    const counts=[0,0,0,0,0];for(const w of words){if(!introduced(w))continue;const d=store.records[w.word].due;const i=d<=now?0:d<edges[0]?1:d<edges[1]?2:d<edges[7]?3:4;counts[i]++;}
+    $("wl-upcoming").innerHTML=["Đã đến hạn","Còn lại hôm nay","Ngày mai","6 ngày tiếp theo","Sau đó"].map((label,i)=>`<div><strong>${counts[i]||0}</strong><small>${label}</small></div>`).join("");
   }
   function shuffle(a) {
     const b = a.slice();
@@ -215,6 +253,7 @@
       introducedOn: step === 2 ? date() : old.introducedOn,
       due: step === 2 ? Date.now() + 10 * 60000 : old.due,
     };
+    if(step===2)logActivity("newWord",false);
     save();
     lesson.cursor++;
     showLearning();
@@ -282,6 +321,241 @@
     $("wl-library-metrics").innerHTML = metric(lib.filter(w=>w.reviews>0).length,"Từ đã tự đánh giá") + metric(fmt(tests),"Lượt kiểm tra gõ từ") + metric(tests ? `${Math.round(100*correct/tests)}%` : "—","Tỷ lệ gõ đúng");
     return due;
   }
+  function streakDays() {
+    const logs = new Set();
+    for (const record of Object.values(store.records || {})) {
+      if (record?.introducedOn) logs.add(record.introducedOn);
+    }
+    if (store.daily?.done?.length) logs.add(date());
+    let streak = 0;
+    while (true) {
+      const d = new Date();
+      d.setDate(d.getDate() - streak);
+      const key = d.toLocaleDateString("sv-SE");
+      if (!logs.has(key)) break;
+      streak++;
+    }
+    return streak;
+  }
+  function phaseInfo(seen, stable) {
+    if (seen < 24)
+      return {
+        title: "Giai đoạn 1 · Khởi động nền từ vựng",
+        copy: "Ưu tiên đều đặn làm quen từng nhóm nhỏ 5 từ để hình thành nền ban đầu.",
+        focus:
+          "Tích lũy đủ từ đã gặp để các khu luyện và trò chơi bắt đầu thực sự hữu ích.",
+      };
+    if (seen < 80)
+      return {
+        title: "Giai đoạn 2 · Xây nền ổn định",
+        copy: "Bạn đã có lõi từ đầu tiên. Trọng tâm lúc này là ôn đúng lịch và tránh học dồn.",
+        focus:
+          "Giữ nhịp học ngắn nhưng đều, để từ chuyển dần từ quen mặt sang tự nhớ được.",
+      };
+    if (seen < 160)
+      return {
+        title: "Giai đoạn 3 · Củng cố trí nhớ",
+        copy: "Nền từ đã đủ rộng. Hãy đưa nhiều từ hơn sang các mốc ôn 7–14 ngày.",
+        focus: "Ưu tiên chất lượng ghi nhớ: ít quên hơn, phản xạ nhanh hơn.",
+      };
+    return {
+      title: "Giai đoạn 4 · Phản xạ và vận dụng",
+      copy: "Bạn đã có nền đủ tốt để đẩy mạnh phản xạ, viết câu và tự quản lý bằng thẻ nhớ.",
+      focus:
+        "Luân phiên game, luyện câu, thư viện và Ankis để biến vốn từ thành kỹ năng dùng thật.",
+    };
+  }
+  function renderHomeDashboard({ seen, stable, remaining, due, fresh, newToday, attempts }) {
+    if (!$("wl-focus-title")) return;
+    const weekStart=new Date();weekStart.setDate(weekStart.getDate()-6);const weekKey=weekStart.toLocaleDateString("sv-SE");
+    const weekly=Object.values(store.records).filter(r=>r.learned&&typeof r.introducedOn==="string"&&r.introducedOn>=weekKey&&r.introducedOn<=date()).length;
+    const phase = phaseInfo(seen, stable);
+    $("wl-focus-title").textContent = phase.title;
+    $("wl-focus-copy").textContent = remaining.length
+      ? `${remaining.length} từ đang chờ ôn trong lượt hôm nay. ${phase.focus}`
+      : due
+        ? `${due} từ đã đến hạn ôn. ${phase.focus}`
+        : fresh
+          ? `${fresh} từ vẫn chưa làm quen. ${phase.focus}`
+          : phase.copy;
+    $("wl-focus-metrics").innerHTML = [
+      [fmt(seen), "Đã làm quen"],
+      [fmt(stable), "Mốc ôn ≥ 7 ngày"],
+      [fmt(remaining.length), "Ôn trong lượt"],
+      [fmt(weekly), "Từ mới trong 7 ngày"],
+    ]
+      .map(
+        ([v, l]) =>
+          `<div><strong>${v}</strong><small>${l}</small></div>`,
+      )
+      .join("");
+    const goal=store.weekGoal||25;
+    $("wl-week-goal").textContent=`${weekly}/${goal} từ mới trong 7 ngày · mục tiêu cá nhân`;
+    $("wl-week-goal-bar").max=goal;$("wl-week-goal-bar").value=Math.min(weekly,goal);$("wl-week-goal-bar").setAttribute("aria-label",`Mục tiêu ${goal} từ mới trong 7 ngày`);
+    $("wl-week-target").value=String(goal);
+    $("wl-focus-primary").onclick = () => {document.querySelector('[data-wl-nav="learn"]').click();$("route-start").click();};
+    $("wl-focus-secondary").onclick = () =>
+      document.querySelector('[data-wl-nav="ankis"]')?.click();
+
+    const checklist = [
+      {
+        done: newToday >= 5 || fresh === 0,
+        title: "Làm quen một nhóm nhỏ",
+        copy:
+          newToday >= 5
+            ? "Bạn đã chạm mốc 5 từ mới hôm nay."
+            : "Mục tiêu mặc định: 5 từ mới / lượt để tránh quá tải.",
+      },
+      {
+        done: due === 0,
+        title: "Xử lý lượt ôn hôm nay",
+        copy: remaining.length
+          ? `Còn ${remaining.length} từ chờ trong lượt ôn.`
+          : "Không có từ đến hạn trong Word Lab.",
+      },
+    ];
+    $("wl-checklist").innerHTML = checklist
+      .map(
+        (item) =>
+          `<div class="wl-check-item ${item.done ? "is-done" : "is-open"}"><span>${item.done ? "✓" : "•"}</span><div><strong>${item.title}</strong><small>${item.copy}</small></div></div>`,
+      )
+      .join("");
+    $("wl-checklist-badge").textContent = `${checklist.filter((item) => item.done).length}/${checklist.length} gợi ý đã đạt`;
+
+    const priorities = [
+      remaining.length
+        ? ["Ôn trước", `${remaining.length} từ trong lượt hôm nay nên làm trước khi học thêm.`]
+        : due
+          ? [
+              "Dọn hàng chờ",
+              `${due} từ đến hạn trong toàn hệ thống; mở Ôn hôm nay để xử lý theo nhịp.`,
+            ]
+          : [
+              "Giữ nhịp",
+              "Hôm nay chưa có hàng chờ gấp. Bạn có thể học thêm hoặc luyện nhẹ.",
+            ],
+      fresh
+        ? ["Mở rộng vốn từ", `${fresh} từ vẫn chưa làm quen — đủ để tiếp tục nhiều phiên ngắn.`]
+        : [
+            "Chất lượng hơn số lượng",
+            "Bạn đã chạm hết từ hiện có; tập trung ôn và phản xạ.",
+          ],
+      [
+        "Dùng thư viện có chủ đích",
+        "Khi muốn học theo cụm nhỏ 12–24 từ, chuyển sang Thư viện & flashcard.",
+      ],
+      [
+        "Ankis cho tự quản lý",
+        "Dùng Ankis khi muốn tự tạo deck lớn hoặc ôn theo lịch thẻ nhớ riêng.",
+      ],
+    ];
+    $("wl-priority-list").innerHTML = priorities
+      .map(
+        ([t, c]) =>
+          `<div class="wl-priority-item"><strong>${t}</strong><small>${c}</small></div>`,
+      )
+      .join("");
+
+    const guardian = store.guardian || {};
+    const ankis=window.WordLabAnkis?.peek();
+    $("wl-system-grid").innerHTML = [
+      ["Word Lab", `${fmt(seen)}/${fmt(words.length)} từ đã làm quen`],
+      ["Tiến độ", `${fmt(attempts)} lượt tự nhớ đã được lưu`],
+      ["Trạm Sao", `${fmt(guardian.coins || 0)} xu · linh thú học cùng bạn`],
+      ["Ankis", ankis?`${fmt(ankis.cards)} thẻ · ${fmt(ankis.due)} đang học / đến hạn`:"Mở bộ thẻ và lịch ôn riêng"],
+    ]
+      .map(
+        ([t, c]) =>
+          `<div class="wl-system-item"><strong>${t}</strong><small>${c}</small></div>`,
+      )
+      .join("");
+
+    const roadmap = [
+      { limit: 24, title: "Khởi động", copy: "Làm quen đều để mở nền cơ bản." },
+      { limit: 80, title: "Xây nền", copy: "Giữ nhịp ôn mỗi ngày, tránh quên sớm." },
+      { limit: 160, title: "Củng cố", copy: "Đẩy nhiều từ sang các mốc 7–14 ngày." },
+      {
+        limit: words.length,
+        title: "Vận dụng",
+        copy: "Tăng phản xạ, viết câu và dùng thẻ nhớ linh hoạt.",
+      },
+    ];
+    $("wl-roadmap").innerHTML = roadmap
+      .map((item, index) => {
+        const complete = seen >= item.limit;
+        const current = !complete && (index === 0 || seen >= roadmap[index - 1].limit);
+        return `<article class="wl-roadmap-card ${complete ? "is-complete" : current ? "is-current" : ""}"><span>${complete ? "✓" : String(index + 1).padStart(2, "0")}</span><div><h3>${item.title}</h3><p>${item.copy}</p><small>${index === roadmap.length - 1 ? `${fmt(words.length)} từ` : `Tới ${fmt(item.limit)} từ`}</small></div></article>`;
+      })
+      .join("");
+
+    $("wl-module-grid").innerHTML = [
+      ["Học tập", "Làm quen từ mới, ôn đúng lịch và luyện không đồng hồ."],
+      ["Thư viện", "Ôn theo bộ nhỏ, flashcard và gõ từ có chủ đích."],
+      ["Luyện câu", "Đưa từ vào câu Việt → Anh để tăng khả năng dùng thật."],
+      ["Trò chơi", "Phòng tuyến thiên thạch để luyện phản xạ chính tả."],
+      ["Trạm Sao", "Gamification, phần thưởng và linh thú đồng hành."],
+      ["Ankis", "Ôn theo deck độc lập trong cùng giao diện tổng thể."],
+    ]
+      .map(
+        ([t, c],i) =>
+          `<button type="button" class="wl-module-item" data-module-nav="${["learn","library","sentence","game","pet","ankis"][i]}"><strong>${t}</strong><small>${c}</small></button>`,
+      )
+      .join("");
+
+    $("wl-rhythm-list").innerHTML = [
+      "Mở đầu bằng 1 nhóm 5 từ mới hoặc ôn hàng chờ trước.",
+      "Xử lý Ôn hôm nay để giảm quên sớm.",
+      "Nếu còn thời gian, chọn thêm 1 khu: Thư viện, Luyện câu hoặc Trò chơi.",
+      "Cuối ngày, dùng Ankis cho các deck riêng hoặc chủ đề chuyên sâu.",
+    ]
+      .map((text) => `<li>${text}</li>`)
+      .join("");
+  }
+  function renderPanelSnapshots({ seen, stable, remaining, due, fresh }) {
+    if ($("wl-learn-snapshot")) {
+      $("wl-learn-snapshot").innerHTML = [
+        [fmt(fresh), "từ chờ làm quen"],
+        [fmt(remaining.length), "từ trong lượt ôn"],
+        [fmt(stable), "từ đã khá ổn định"],
+      ]
+        .map(
+          ([v, l]) => `<div><strong>${v}</strong><small>${l}</small></div>`,
+        )
+        .join("");
+    }
+    if ($("wl-game-snapshot")) {
+      $("wl-game-snapshot").innerHTML = [
+        [fmt(seen), "từ đủ điều kiện vào game"],
+        [due ? fmt(due) : "0", "từ đến hạn hôm nay"],
+        [stable ? fmt(stable) : "0", "từ đã qua mốc 7 ngày"],
+      ]
+        .map(
+          ([v, l]) => `<div><strong>${v}</strong><small>${l}</small></div>`,
+        )
+        .join("");
+    }
+    if ($("wl-ankis-summary")) {
+      $("wl-ankis-summary").innerHTML = [
+        [
+          "Dùng khi nào?",
+          "Khi bạn muốn tự tạo deck, học theo chủ đề dài hơn hoặc tách hẳn khỏi luồng Word Lab.",
+        ],
+        [
+          "Điểm khác",
+          "Tiến độ Ankis lưu riêng, không trộn với lịch ôn Word Lab — phù hợp cho ôn độc lập.",
+        ],
+        [
+          "Cách dùng hợp lý",
+          "Dùng Word Lab để xây nền và phản xạ; dùng Ankis để tự quản lý các bộ thẻ chuyên sâu.",
+        ],
+      ]
+        .map(
+          ([t, c]) => `<article><strong>${t}</strong><small>${c}</small></article>`,
+        )
+        .join("");
+    }
+  }
+
   function home() {
     cancelAnimationFrame(frame);
     Guardian.clear();
@@ -298,6 +572,7 @@
     );
     const seen = words.filter(introduced).length;
     const learned = words.filter(w => introduced(w) && store.records[w.word].stage >= 3).length;
+    const attempts = Object.values(store.records).reduce((sum, record) => sum + (record?.attempts || 0), 0);
     $("stats").innerHTML =
       `<div><strong>${words.length}</strong><small>Tổng số từ</small></div><div><strong>${seen}</strong><small>Đã làm quen</small></div><div><strong>${remaining.length}</strong><small>Ôn trong lượt</small></div>`;
     $("wl-vocab-progress").max = words.length;
@@ -306,21 +581,29 @@
     $("wl-progress-copy").textContent = `${seen}/${words.length} từ đã làm quen. ${learned} từ ở mốc ôn ≥ 7 ngày.`;
     $("wl-progress-breakdown").textContent = `${words.length - seen} từ chưa làm quen · ${seen - learned} từ đang củng cố · ${learned} từ ở mốc ôn ≥ 7 ngày`;
     const due = progressStats();
+    const fresh = words.filter((w) => !introduced(w)).length;
+    const newToday = Object.values(store.records).filter(
+      (record) => record.learned && record.introducedOn === date(),
+    ).length;
+    renderHomeDashboard({ seen, stable: learned, remaining, due, fresh, newToday, attempts });
+    renderPanelSnapshots({ seen, stable: learned, remaining, due, fresh });
+    renderUpcoming();renderActivity();
     $("daily-description").textContent =
       `${due} từ đến hạn; ${remaining.length} từ trong lượt này (tối đa 20). Chỉ ôn tự nhớ sau khi làm quen.`;
     $("daily").disabled = !remaining.length;
     $("daily").textContent = remaining.length
       ? "Bắt đầu hôm nay →"
       : "Chưa có từ đến hạn";
-    const fresh = words.filter((w) => !introduced(w)).length;
     $("learn-description").textContent =
       `${fresh} từ chờ làm quen. Mỗi lượt chỉ 5 từ: xem → chọn nghĩa → gõ theo mẫu. Không chấm điểm.`;
     $("learn").disabled = !fresh;
     $("infinite").disabled = !seen;
     $("game").disabled = !seen;
-    const newToday = Object.values(store.records).filter(
-      (record) => record.learned && record.introducedOn === date(),
-    ).length;
+    $("wl-match-start").disabled=new Set(words.filter(introduced).map(w=>w.meaning)).size<4;
+    $("wl-scramble-start").disabled=!words.some(w=>introduced(w)&&/^[a-z]{3,}$/i.test(w.word));
+    $("wl-mini-status").textContent=seen<4?"Làm quen ít nhất 4 từ để mở ghép cặp. Giải mã cần từ đơn có ít nhất 3 chữ.":"Chọn thử thách từ những từ bạn đã làm quen.";
+    if ($("game-training")) $("game-training").disabled = !seen;
+    if ($("game-rush")) $("game-rush").disabled = !seen;
     const lightPractice = newToday >= 5;
     const recommendation = remaining.length
       ? "daily"
@@ -426,6 +709,10 @@
     $("enemy-letters").replaceChildren(...slots(word, value));
     let matched = 0;
     while (matched < word.length && value[matched] === word[matched]) matched++;
+    const hp=$("meteor-hp");
+    const lettersCount=word.replace(/[^a-z]/gi, "").length;
+    const matchedCount=word.slice(0,matched).replace(/[^a-z]/gi, "").length;
+    if(hp){hp.max=Math.max(1,lettersCount);hp.value=lettersCount-matchedCount;}
     $("enemy-art").style.setProperty(
       "--target-progress",
       `${(matched / word.length) * 100}%`,
@@ -470,6 +757,7 @@
       errorEpisodes: 0,
       invalidPrefix: false,
       memoryRecorded: false,
+      firedLetters: 0,
     });
     const w = current();
     $("flight-coach").hidden = true;
@@ -493,6 +781,8 @@
     $("progress").textContent =
       `${session.mode === "daily" ? "Ôn hôm nay" : session.mode === "game" ? "Vệ binh" : "Vô hạn"} · ${session.completed} lượt · ${session.correct} đúng`;
     renderReview();
+    $("enemy").classList.remove("meteor-destroyed");
+    $("enemy").style.setProperty("--label-shift","0px");
     $("enemy").hidden = false;
     $("enemy").style.transform = "translateY(0px)";
     draw();
@@ -540,6 +830,7 @@
       attempts: old.attempts + 1,
       due: Date.now() + (success ? intervals[stage] * DAY : 10 * 60000),
     };
+    logActivity(session.mode==="game"?"meteor":"review",false);
     save();
   }
   function resolve() {
@@ -579,12 +870,13 @@
       ? "Chính xác! Bạn đã tự nhớ được từ này."
       : "Đã xem lại. Nghỉ một chút; từ này sẽ đến hạn sau 10 phút.";
     $("context").textContent = current().context;
-    $("next").hidden = false;
+    $("next").hidden = session.mode === "game";
     cancelAnimationFrame(frame);
     if (session.mode === "game") {
       tone(720);
-      session.cursor++;
-      nextQuestion();
+      $("enemy").classList.add("meteor-destroyed");
+      const finished=session;
+      setTimeout(()=>{if(session===finished&&session.resolved){session.cursor++;nextQuestion();}},320);
       return;
     }
     tone(720);
@@ -648,6 +940,7 @@
     $("arena").classList.remove("is-danger");
     $("arena").classList.add("is-coaching");
     $("enemy").style.transform = "translateY(0px)";
+    $("enemy").style.setProperty("--label-shift","0px");
     $("game-study").disabled = true;
     $("g-ship-hint").disabled = true;
     $("feedback").textContent = timedOut
@@ -660,6 +953,10 @@
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const layer = $("flight-effects");
     if (layer.childElementCount > 24) return;
+    if(kind==="shot"){
+      const a=$("arena").getBoundingClientRect(),t=$("enemy-art").getBoundingClientRect(),ship=$("guardian-ship").getBoundingClientRect();
+      const shot=document.createElement("span");shot.className="meteor-projectile";shot.style.left=`${ship.left+ship.width/2-a.left}px`;shot.style.top=`${ship.top-a.top}px`;shot.style.setProperty("--shot-dx",`${t.left+t.width/2-ship.left-ship.width/2}px`);shot.style.setProperty("--shot-dy",`${t.top+t.height/2-ship.top}px`);layer.append(shot);setTimeout(()=>shot.remove(),250);return;
+    }
     const box = $("enemy").getBoundingClientRect(),
       arena = $("arena").getBoundingClientRect();
     const effect = document.createElement("span");
@@ -698,14 +995,15 @@
       if (session.last) session.elapsed += Math.min(now - session.last, 100);
       const ratio = session.elapsed / session.duration;
       const max =
-        $("arena").querySelector(".danger").offsetTop -
+        $("guardian-ship").offsetTop -
         $("enemy").offsetTop -
-        $("enemy").offsetHeight;
+        $("enemy-art").offsetTop - $("enemy-art").offsetHeight;
       $("enemy").style.transform =
         `translateY(${Math.max(0, max) * Math.min(1, ratio)}px)`;
       const second = Math.ceil((session.duration - session.elapsed) / 1000);
       if (second !== session.clockSecond) updateFlight();
       $("arena").classList.toggle("is-danger", ratio >= 0.78);
+      $("enemy").style.setProperty("--label-shift",`${-Math.max(0,Math.min(1,(ratio-.62)/.18))*($("enemy-art").offsetHeight+$("enemy-meaning").offsetHeight+$("enemy-letters").offsetHeight+15)}px`);
       if (ratio >= 1) {
         session.shields--;
         updateFlight();
@@ -813,11 +1111,17 @@
         session.invalidPrefix = false;
         $("answer").removeAttribute("aria-invalid");
         if (!session.coaching) $("feedback").textContent = "";
-        flightEffect("shot");
-        $("laser").classList.remove("fire");
-        void $("laser").offsetWidth;
-        $("laser").classList.add("fire");
-        tone(440 + value.length * 25);
+        const hits=value.replace(/[^a-z]/gi, "").length;
+        if(hits>session.firedLetters&&!session.coaching){
+          session.firedLetters=hits;
+          flightEffect("shot");
+          const ship=$("guardian-ship").getBoundingClientRect(), targetBox=$("enemy-art").getBoundingClientRect();
+          $("laser").style.height=`${Math.max(8,ship.top-targetBox.bottom+targetBox.height/2)}px`;
+          $("laser").classList.remove("fire");
+          void $("laser").offsetWidth;
+          $("laser").classList.add("fire");
+          tone(440 + hits * 25);
+        }
       }
       if (normalized(value) === target) resolve();
     }
@@ -859,12 +1163,31 @@
     $("pause").disabled = false;
     nextQuestion();
   };
+  $("wl-module-grid").addEventListener("click",e=>{const btn=e.target.closest("[data-module-nav]");if(btn)document.querySelector(`[data-wl-nav="${btn.dataset.moduleNav}"]`)?.click()});
+  const mini=$("wl-mini-game");
+  const miniButton=(text,fn)=>{const b=document.createElement("button");b.type="button";b.textContent=text;b.onclick=fn;return b;};
+  function miniHeading(title,copy){mini.hidden=false;mini.replaceChildren();const h=document.createElement("h3");h.textContent=title;const p=document.createElement("p");p.textContent=copy;mini.append(h,p,miniButton("Đóng trò chơi",()=>{mini.hidden=true;mini.replaceChildren();}));}
+  $("wl-match-start").onclick=()=>{
+    const pool=shuffle(words.filter(introduced));const used=new Set();const chosen=pool.filter(w=>{if(used.has(w.meaning))return false;used.add(w.meaning);return true}).slice(0,4);if(chosen.length<4)return;
+    miniHeading("Ghép cặp từ","Chọn một từ tiếng Anh, sau đó chọn nghĩa tương ứng.");
+    const grid=document.createElement("div");grid.className="mini-match";const left=document.createElement("div"),right=document.createElement("div"),status=document.createElement("p");let selected=null,done=0,mistakes=0;status.setAttribute("role","status");
+    chosen.forEach(w=>{const b=miniButton(w.word,()=>{selected={w,b};left.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));});b.setAttribute("aria-pressed","false");left.append(b)});
+    shuffle(chosen).forEach(w=>{const b=miniButton(w.meaning,()=>{if(!selected){status.textContent="Chọn từ tiếng Anh trước.";return;}if(selected.w===w){selected.b.disabled=b.disabled=true;selected.b.setAttribute("aria-pressed","false");selected=null;done++;if(done===4)logActivity("match");status.textContent=done===4?`Hoàn thành 4 cặp · ${mistakes} lượt nhầm.`:`Đúng · ${done}/4 cặp`;}else{mistakes++;status.textContent="Chưa khớp, thử lại.";}});right.append(b)});grid.append(left,right);mini.append(grid,status);
+  };
+  $("wl-scramble-start").onclick=()=>{
+    const pool=shuffle(words.filter(w=>introduced(w)&&/^[a-z]{3,}$/i.test(w.word))).slice(0,5);let index=0,correct=0;
+    function round(){if(index===pool.length){logActivity("scramble");miniHeading("Hoàn thành giải mã",`${correct}/${pool.length} từ giải mã đúng không xem đáp án.`);mini.append(miniButton("Chơi lại",()=>$("wl-scramble-start").click()));return;}const w=pool[index];miniHeading(`Giải mã · ${index+1}/${pool.length}`,w.meaning);const letters=document.createElement("div");letters.className="mini-letters";const answer=document.createElement("p"),status=document.createElement("p");status.setAttribute("role","status");let picked=[],revealed=false,arr=shuffle([...w.word.toLowerCase()]);if(arr.join("")===w.word.toLowerCase())arr.reverse();const render=()=>{answer.textContent=picked.map(x=>x.char).join("")||"Chọn chữ cái bên dưới"};arr.forEach(char=>{const b=miniButton(char,()=>{picked.push({char,b});b.disabled=true;render()});letters.append(b)});mini.append(answer,letters,miniButton("Xóa chữ cuối",()=>{const x=picked.pop();if(x)x.b.disabled=false;render()}),miniButton("Kiểm tra",()=>{if(revealed)return;if(picked.map(x=>x.char).join("")===w.word.toLowerCase()){correct++;index++;round()}else status.textContent="Chưa đúng, hãy đổi thứ tự chữ.";}),miniButton("Xem đáp án / bỏ qua",()=>{if(revealed)return;revealed=true;status.textContent=w.word;letters.querySelectorAll("button").forEach(b=>b.disabled=true);status.append(miniButton("Từ tiếp theo",()=>{index++;round()}));}),status);render();}round();
+  };
   $("daily").onclick = () => start("daily");
   $("infinite").onclick = () => start("infinite");
-  $("game").onclick = () => {
+  const launchGame = (speed) => {
+    if (speed) $("speed").value = speed;
     $("pause").disabled = false;
     start("game");
   };
+  $("game").onclick = () => launchGame();
+  $("game-training")?.addEventListener("click", () => launchGame("slow"));
+  $("game-rush")?.addEventListener("click", () => launchGame("fast"));
   $("pause").onclick = pause;
   $("quit").onclick = () => finish(false);
   $("back").onclick = home;
@@ -900,7 +1223,7 @@
       const drafts = VocabularySentences.exportDrafts();
       if (!VocabularySentences.validDrafts(drafts)) throw Error("Bản nháp không hợp lệ");
       downloadBackup({...store, sentenceDrafts: drafts}, `letsstudy-vocabulary-${date()}.json`);
-      backupStatus("Đã tạo bản sao gồm tiến độ, Trạm Sao, thư viện và bản nháp. Kiểm tra file tải xuống.");
+      backupStatus("Đã tạo bản sao gồm tiến độ, Trạm Sao, thư viện, nhật ký, mục tiêu và bản nháp. Kiểm tra file tải xuống.");
     } catch {
       if (!confirm("Không đọc được toàn bộ bản nháp. Vẫn xuất bản sao tiến độ chính, không kèm bản nháp?")) return;
       try {
@@ -963,7 +1286,7 @@
     return true;
   }
   document.addEventListener("keydown", (e) => {
-    if ($("guardian-dialog").open) return;
+    if (!$("guardian-dialog").hidden && !$("home").hidden) return;
     if (
       e.defaultPrevented ||
       e.isComposing ||
@@ -1032,7 +1355,7 @@
             : () => activate("reveal");
       else if (shortcut === "Alt+3" && session.coaching)
         action = () => activate("coach-listen");
-      else if (e.key === "Enter" && session.resolved)
+      else if (e.key === "Enter" && session.resolved && session.mode !== "game")
         action = () => activate("next");
       else if (e.key === "Enter" && !session.paused)
         action = () => $("answer-form").requestSubmit();
@@ -1043,6 +1366,29 @@
       action();
     }
   });
+  const englishToggle=$("wl-english-keys");
+  try{englishToggle.checked=localStorage.getItem("wl-english-keys")!=="off";}catch{}
+  englishToggle.onchange=()=>{try{localStorage.setItem("wl-english-keys",englishToggle.checked?"on":"off")}catch{}};
+  const wordFields=["answer","copy-answer","lib-quiz-answer"];
+  function englishInsert(field,char){
+    if(field.disabled||field.readOnly)return;
+    const from=field.selectionStart??field.value.length,to=field.selectionEnd??from;
+    if(char==="Backspace")field.setRangeText("",from===to?Math.max(0,from-1):from,to,"end");
+    else field.setRangeText(char,from,to,"end");
+    field.dispatchEvent(new Event("input",{bubbles:true}));
+  }
+  document.addEventListener("keydown",e=>{
+    const field=e.target;if(!englishToggle.checked||!wordFields.includes(field.id)||field.disabled||e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
+    const char=/^Key[A-Z]$/.test(e.code)?e.code.slice(3).toLowerCase():e.code==="Space"?" ":e.code==="Minus"?"-":e.code==="Quote"?"'":null;
+    if(char===null)return;e.preventDefault();englishInsert(field,char);
+  },true);
+  // An optional virtual keyboard works even when an OS input method consumes physical key events.
+  for(const id of wordFields){
+    const field=$(id),form=field.closest("form"),wrap=document.createElement("div"),keys=document.createElement("div"),toggle=document.createElement("button");
+    wrap.className="wl-virtual-english";keys.className="wl-english-pad";keys.hidden=true;toggle.type="button";toggle.textContent="Bàn phím English";toggle.setAttribute("aria-expanded","false");toggle.onclick=()=>{keys.hidden=!keys.hidden;toggle.setAttribute("aria-expanded",String(!keys.hidden));};
+    for(const c of [..."qwertyuiopasdfghjklzxcvbnm","-","'"," ","Backspace"]){const key=document.createElement("button");key.type="button";key.textContent=c===" "?"Space":c==="Backspace"?"⌫":c;key.setAttribute("aria-label",c===" "?"Dấu cách":c==="Backspace"?"Xóa ký tự":c);key.onpointerdown=e=>e.preventDefault();key.onclick=()=>englishInsert(field,c);keys.append(key);}
+    wrap.append(toggle,keys);form.insertAdjacentElement("afterend",wrap);
+  }
   Guardian.mount({ getStore: () => store, save });
   VocabularyLibrary.mount({
     words,

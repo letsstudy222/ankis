@@ -136,6 +136,8 @@ const VocabularySentences = (() => {
       if (item === exercise) link.setAttribute("aria-current", "page");
       return link;
     }));
+    const refreshDraftCount=()=>{$("wl-sentence-draft-count").textContent=`${$("sentence-picker").querySelectorAll('[data-has-draft="true"]').length}/${exercises.length} bài có bản nháp`;};
+    refreshDraftCount();
     $("sentence-topic").textContent = exercise.topic;
     $("sentence-style").textContent = exercise.style ?? "";
     $("sentence-style").hidden = !exercise.style;
@@ -169,6 +171,7 @@ const VocabularySentences = (() => {
         const active = $("sentence-picker").querySelector('[aria-current="page"]');
         if (draft.value.trim()) active.dataset.hasDraft = "true";
         else delete active.dataset.hasDraft;
+        refreshDraftCount();
       } catch {
         status.textContent = "Không thể lưu bản nháp trên thiết bị này.";
       }
@@ -212,6 +215,7 @@ const VocabularySentences = (() => {
     function checkDraft() {
       const typed = tokenize(draft.value);
       if (!typed.length) return;
+      globalThis.WordLabActivity?.("sentence");
       showReference(false);
 
       let index = 0;

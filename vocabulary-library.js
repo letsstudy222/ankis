@@ -102,6 +102,10 @@
       decks = M.decks(options.words, s.size);
     const rated = Object.values(s.words).filter((w) => w.rating).length;
     const checked = Object.values(s.words).filter((w) => w.tests).length;
+    const weakCount=M.filter(options.words,s,root().records,"","weak").length;
+    const dueCount=M.filter(options.words,s,root().records,"","due").length;
+    $("wl-library-recommendation").textContent=`${weakCount} từ cần củng cố · ${dueCount} từ đến hạn. Chọn bộ nhỏ để luyện hoặc lọc danh sách để xem các từ cần chú ý.`;
+    for(const [id,value] of [["wl-lib-weak","weak"],["wl-lib-due","due"],["wl-lib-all","all"]]){$(id).onclick=()=>{$("lib-search").value="";$("lib-filter").value=value;allView=value!=="all";browse();};}
     $("lib-summary").textContent =
       `${options.words.length} từ & cụm từ · ${decks.length} bộ · ${rated} từ đã tự đánh giá · ${checked} từ đã kiểm tra`;
     $("wl-library-stats").innerHTML = `<div><strong>${decks.length}</strong><span>Bộ từ</span></div><div><strong>${rated}</strong><span>Đã tự đánh giá</span></div><div><strong>${checked}</strong><span>Đã kiểm tra gõ từ</span></div>`;
@@ -273,6 +277,7 @@
     const word = practice.queue[practice.cursor].word;
     M.rate(state(), word, value);
     practice.ratings[word] = value;
+    globalThis.WordLabActivity?.("flash",false);
     save();
     practice.cursor++;
     question();
@@ -285,6 +290,7 @@
     M.answer(state(), w.word, correct);
     p.answers.push({ word: w.word, correct });
     $("wl-lib-progress").value = p.answers.length;
+    globalThis.WordLabActivity?.("quiz",false);
     save();
     $("lib-card-answer").textContent = w.word;
     $("lib-card-back").hidden = false;

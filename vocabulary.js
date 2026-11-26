@@ -328,16 +328,16 @@
         ? "infinite"
         : fresh
           ? "learn"
-          : "game";
+          : "infinite";
     $("route-title").textContent = remaining.length
       ? `${remaining.length} từ đang chờ bạn nhớ lại`
       : lightPractice
         ? "Đã làm quen đủ một nhóm hôm nay"
         : fresh
           ? "Một nhóm nhỏ, năm từ mới"
-          : "Sẵn sàng cho một chuyến bay?";
+          : "Củng cố những từ đã học";
     $("route-copy").textContent = remaining.length
-      ? "Ôn từ đến hạn trước, rồi ghé sân chơi. Vài phút cũng là một bước tiến."
+      ? "Ôn từ đến hạn trước. Vài phút cũng là một bước tiến."
       : lightPractice
         ? "Nghỉ một chút để từ lắng lại. Nếu muốn luyện tiếp, thử tự nhớ không có đồng hồ; bạn vẫn có thể chủ động học thêm."
         : fresh
@@ -1054,10 +1054,11 @@
     if (!$("home").hidden) home();
   }, 30000);
   const params = new URLSearchParams(location.search);
+  home();
+  globalThis.WordLabHome = home;
   if (params.get("view") === "sentences") {
     VocabularySentences.open(params.get("exercise"));
   } else {
-    home();
     if (params.get("view") === "library") VocabularyLibrary.open();
   }
 })();

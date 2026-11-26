@@ -423,6 +423,7 @@
   }
   globalThis.VocabularyLibrary = {
     open,
+    close,
     mount,
     isOpen: () => !$("library").hidden,
     handleKey,

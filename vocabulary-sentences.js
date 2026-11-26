@@ -86,7 +86,16 @@ const VocabularySentences = (() => {
     }));
   }
 
+  let handlers, draftObserver;
+  function close() {
+    handlers?.abort();
+    draftObserver?.disconnect();
+    $("sentences").hidden = true;
+  }
   function open(id) {
+    close();
+    handlers = new AbortController();
+    const options = {signal: handlers.signal};
     const exercise = exercises.find((item) => item.id === id) ?? exercises[0];
     const storageKey = `letsstudy-sentence-draft-v1:${exercise.id}`;
     const draft = $("sentence-draft");
@@ -102,11 +111,23 @@ const VocabularySentences = (() => {
     const comparisonCopy = $("sentence-comparison-copy");
     const levels = document.querySelectorAll('input[name="sentence-level"]');
     let level = "easy";
+    draft.value = "";
+    status.textContent = "";
+    feedback.replaceChildren();
+    annotation.hidden = true;
+    reference.hidden = true;
+    comparison.hidden = true;
+    reveal.setAttribute("aria-expanded", "false");
 
     $("sentence-picker").replaceChildren(...exercises.map((item, index) => {
       const link = document.createElement("a");
       const query = new URLSearchParams({ view: "sentences", exercise: item.id });
       link.href = `?${query}`;
+      link.addEventListener("click", (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        open(item.id);
+      }, options);
       link.textContent = `Câu ${String(index + 1).padStart(2, "0")} · ${item.title}`;
       try {
         const saved = JSON.parse(localStorage.getItem(`letsstudy-sentence-draft-v1:${item.id}`));
@@ -260,35 +281,36 @@ const VocabularySentences = (() => {
         const suffix = feedback.querySelector(".sentence-masked-tail");
         if (suffix) suffix.hidden = level === "hard";
         save();
-      });
+      }, options);
     }
     $("sentence-hint").hidden = level === "hard";
     draft.addEventListener("input", () => {
       underline();
       updateDraft();
       save();
-    });
-    draft.addEventListener("scroll", syncAnnotation);
-    new ResizeObserver(syncAnnotation).observe(draft);
+    }, options);
+    draft.addEventListener("scroll", syncAnnotation, options);
+    draftObserver = new ResizeObserver(syncAnnotation);
+    draftObserver.observe(draft);
     draft.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" || event.shiftKey || event.altKey || event.ctrlKey ||
           event.metaKey || event.isComposing || event.keyCode === 229) return;
       event.preventDefault();
       if (!event.repeat) checkDraft();
-    });
-    check.addEventListener("click", checkDraft);
+    }, options);
+    check.addEventListener("click", checkDraft, options);
     const viewport = window.visualViewport;
     viewport?.addEventListener("resize", () => {
       if (document.activeElement !== draft || viewport.scale !== 1) return;
       const bottom = viewport.offsetTop + viewport.height;
       const overlap = draft.getBoundingClientRect().bottom - bottom;
       if (overlap > 0) window.scrollBy(0, overlap + 12);
-    });
-    reveal.addEventListener("click", () => showReference(reference.hidden));
+    }, options);
+    reveal.addEventListener("click", () => showReference(reference.hidden), options);
     compare.addEventListener("click", () => {
       showReference(true, true);
       $("sentence-reference-title").focus();
-    });
+    }, options);
     updateDraft();
     $("home").hidden = true;
     $("sentences").hidden = false;
@@ -314,5 +336,5 @@ const VocabularySentences = (() => {
     for (const [id, value] of Object.entries(data))
       localStorage.setItem(`letsstudy-sentence-draft-v1:${id}`, JSON.stringify(value));
   }
-  return { open, exportDrafts, validDrafts, importDrafts };
+  return { open, close, exportDrafts, validDrafts, importDrafts };
 })();

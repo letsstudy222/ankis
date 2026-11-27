@@ -29,7 +29,7 @@
   const labels = {
     home:['Tổng quan','Bảng điều phối chung: trạng thái hiện tại, việc nên làm tiếp và lộ trình học từ vựng.'],
     learn:['Học tập','Làm quen từ mới, ôn đúng lịch và luyện tự nhớ theo luồng học chính.'],
-    game:['Trò chơi','Phòng tuyến thiên thạch — luyện phản xạ gõ từ tiếng Anh dưới áp lực thời gian.'],
+    game:['Trò chơi','Ba chế độ luyện trí nhớ và chính tả từ những từ đã làm quen.'],
     pet:['Trạm Sao','Linh thú đồng hành, bộ sưu tập và phần thưởng giúp tăng động lực học.'],
     progress:['Tiến độ','Thống kê từ dữ liệu học tập đã lưu để theo dõi độ bền trí nhớ.'],
     settings:['Cài đặt','Quản lý dữ liệu, sao lưu và phục hồi Word Lab.'],
@@ -66,7 +66,8 @@
     if(key==='library') VocabularyLibrary.open();
     else if(key==='sentence') VocabularySentences.open();
     else {
-      if($('home').hidden || key==='home') WordLabHome();
+      if($('home').hidden) WordLabHome();
+      else if(['home','learn','progress','game'].includes(key)) WordLabRefreshHome();
       panels(key);
       if(focus) $('wl-section-title').focus({preventScroll:true});
     }
@@ -77,6 +78,7 @@
   $('wl-activity-link').addEventListener('click',()=>navigate('progress'));
   $('wl-progress-shortcut').addEventListener('click',()=>navigate('progress'));
   $('wl-header-settings').addEventListener('click',()=>navigate('settings'));
+  $('wl-ankis-backup').addEventListener('click',()=>{navigate('ankis');WordLabAnkis.backup();});
   $('sentence-open').addEventListener('click',e=>{e.preventDefault();navigate('sentence');});
   document.querySelector('[data-wl-back]').addEventListener('click',()=>navigate('home'));
   const screenObserver=new MutationObserver(()=>{

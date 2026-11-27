@@ -5,7 +5,7 @@ const VocabularySentences = (() => {
       id: "family-education-essential-needs",
       topic: "IELTS Writing Task 2 — Family & Education",
       title: "Giải thích luận điểm",
-      style: "Phù hợp văn phong Band 7.5+",
+      style: "Mở rộng luận điểm bằng mệnh đề quan hệ",
       source: "Trẻ em lớn lên trong những gia đình có thu nhập hạn chế thường phải cân nhắc kỹ hơn khi sử dụng tiền, điều này giúp các em học cách phân biệt nhu cầu thiết yếu và những khoản chi không cần thiết.",
       reference: "Children growing up in low-income families often have to think carefully about how they spend money, which helps them distinguish between essential needs and unnecessary expenses.",
       structures: [
@@ -54,6 +54,12 @@ const VocabularySentences = (() => {
       ],
       vocabulary: [],
     },
+    {id:"environment-heat",topic:"Môi trường & đô thị",title:"Nêu giải pháp",style:"Mục đích · can help + V",source:"Việc trồng thêm cây ở những khu phố đông đúc có thể giúp giảm nhẹ tác động của nắng nóng cực đoan.",reference:"Planting more trees in densely populated neighbourhoods can help mitigate the effects of extreme heat.",structures:[["V-ing as subject","Dùng danh động từ làm chủ ngữ."],["can help + V","Có thể giúp thực hiện một hành động."]],vocabulary:[["mitigate the effects","giảm nhẹ tác động"],["densely populated neighbourhoods","khu phố đông dân"]]},
+    {id:"environment-water",topic:"Môi trường & đô thị",title:"Giải thích nguyên nhân",style:"Nguyên nhân · because",source:"Cây non dễ bị tổn thương trong thời tiết khô hạn vì rễ của chúng chưa thể hấp thụ đủ nước.",reference:"Young trees are susceptible to damage during dry weather because their roots cannot yet absorb enough water.",structures:[["be susceptible to + N","dễ bị ảnh hưởng bởi"],["because + clause","giải thích nguyên nhân"]],vocabulary:[["absorb enough water","hấp thụ đủ nước"],["dry weather","thời tiết khô hạn"]]},
+    {id:"environment-choice",topic:"Môi trường & đô thị",title:"So sánh ưu tiên",style:"So sánh · rather than",source:"Các thành phố nên ưu tiên những loài cây có khả năng chống chịu tốt thay vì chỉ lựa chọn dựa vào vẻ ngoài.",reference:"Cities should prioritise resilient tree species rather than choose them solely for their appearance.",structures:[["should + V","đưa ra đề xuất"],["rather than + V","đối chiếu hai lựa chọn song song"]],vocabulary:[["resilient tree species","loài cây có khả năng chống chịu"],["solely","chỉ, duy nhất"]]},
+    {id:"work-learning",topic:"Công việc & học tập",title:"Mô tả thói quen",style:"Thói quen · by + V-ing",source:"Người học có thể củng cố trí nhớ bằng cách tự nhớ lại từ vựng trước khi xem đáp án.",reference:"Learners can strengthen their memory by recalling vocabulary before looking at the answers.",structures:[["by + V-ing","chỉ cách thực hiện"],["before + V-ing","trước khi làm gì"]],vocabulary:[["recall vocabulary","tự nhớ lại từ vựng"],["strengthen memory","củng cố trí nhớ"]]},
+    {id:"work-feedback",topic:"Công việc & học tập",title:"Nêu lợi ích",style:"Kết quả · allow + O + to V",source:"Phản hồi cụ thể cho phép nhân viên xác định những kỹ năng mà họ cần cải thiện.",reference:"Specific feedback allows employees to identify the skills they need to improve.",structures:[["allow + O + to V","cho phép ai làm gì"],["the skills (that) they need to improve","mệnh đề quan hệ xác định"]],vocabulary:[["specific feedback","phản hồi cụ thể"],["identify skills","xác định kỹ năng"]]},
+    {id:"work-balance",topic:"Công việc & học tập",title:"Trình bày đánh đổi",style:"Đối lập · although",source:"Mặc dù các công cụ số có thể tiết kiệm thời gian, người dùng vẫn cần kiểm tra độ chính xác của thông tin mà họ nhận được.",reference:"Although digital tools can save time, users still need to check the accuracy of the information they receive.",structures:[["Although + clause, clause","nêu sự nhượng bộ"],["need to + V","cần làm gì"]],vocabulary:[["digital tools","công cụ số"],["accuracy of information","độ chính xác của thông tin"]]},
   ];
   const $ = (id) => document.getElementById(id);
 
@@ -97,6 +103,10 @@ const VocabularySentences = (() => {
     handlers = new AbortController();
     const options = {signal: handlers.signal};
     const exercise = exercises.find((item) => item.id === id) ?? exercises[0];
+    const topicFilter=$("wl-sentence-topic-filter");
+    topicFilter.replaceChildren(...[...new Set(exercises.map(e=>e.topic))].map(topic=>{const opt=document.createElement("option");opt.value=opt.textContent=topic;return opt;}));
+    topicFilter.value=exercise.topic;
+    topicFilter.addEventListener("change",()=>open(exercises.find(e=>e.topic===topicFilter.value).id),options);
     const storageKey = `letsstudy-sentence-draft-v1:${exercise.id}`;
     const draft = $("sentence-draft");
     const annotation = $("sentence-annotation");
@@ -119,7 +129,7 @@ const VocabularySentences = (() => {
     comparison.hidden = true;
     reveal.setAttribute("aria-expanded", "false");
 
-    $("sentence-picker").replaceChildren(...exercises.map((item, index) => {
+    $("sentence-picker").replaceChildren(...exercises.filter(item=>item.topic===exercise.topic).map((item, index) => {
       const link = document.createElement("a");
       const query = new URLSearchParams({ view: "sentences", exercise: item.id });
       link.href = `?${query}`;
@@ -136,12 +146,13 @@ const VocabularySentences = (() => {
       if (item === exercise) link.setAttribute("aria-current", "page");
       return link;
     }));
-    const refreshDraftCount=()=>{$("wl-sentence-draft-count").textContent=`${$("sentence-picker").querySelectorAll('[data-has-draft="true"]').length}/${exercises.length} bài có bản nháp`;};
+    const refreshDraftCount=()=>{const count=exercises.filter(e=>{try{return !!JSON.parse(localStorage.getItem(`letsstudy-sentence-draft-v1:${e.id}`))?.draft?.trim()}catch{return false}}).length;$("wl-sentence-draft-count").textContent=`${count}/${exercises.length} bài có bản nháp`;};
     refreshDraftCount();
     $("sentence-topic").textContent = exercise.topic;
     $("sentence-style").textContent = exercise.style ?? "";
     $("sentence-style").hidden = !exercise.style;
     $("sentence-purpose").textContent = exercise.title;
+    $("wl-sentence-objective").textContent=exercise.style||exercise.structures[0]?.[1]||"Diễn đạt đầy đủ ý tiếng Việt bằng câu tiếng Anh tự nhiên.";
     $("sentence-source").textContent = exercise.source;
     fillNotes("sentence-structures", exercise.structures);
     fillNotes("sentence-vocabulary", exercise.vocabulary);

@@ -9,9 +9,10 @@
   const activityKinds = {newWord:"Từ mới",review:"Lượt ôn từ",meteor:"Lượt Vệ binh",flash:"Lượt đánh giá thẻ",quiz:"Lượt kiểm tra gõ",sentence:"Lượt kiểm tra câu",match:"Ván ghép cặp",scramble:"Ván giải mã"};
   const goalOptions=[15,25,35,50];
   const empty = () => ({ version: 1, records: {}, daily: null });
-  let store, recoveryRaw = null, storageBlocked = false, storageError = "";
+  let store, recoveryRaw = null, storageBlocked = false, storageError = "", savedRaw, storageConflict=false;
   try {
     const raw = localStorage.getItem(KEY);
+    savedRaw=raw;
     if (raw !== null) {
       try { store = JSON.parse(raw); } catch {}
       if (!valid(store)) {
@@ -39,6 +40,7 @@
         )) &&
       (!x.library || VocabularyLibraryModel.valid(x.library, words)) &&
       x.version === 1 &&
+      (x.lessonIds===undefined || (Array.isArray(x.lessonIds) && x.lessonIds.length<=5 && new Set(x.lessonIds).size===x.lessonIds.length && x.lessonIds.every(i=>Number.isInteger(i)&&i>=0&&i<words.length))) &&
       (x.weekGoal===undefined || goalOptions.includes(x.weekGoal)) &&
       (x.activity===undefined || (x.activity && typeof x.activity==="object" && !Array.isArray(x.activity) && Object.keys(x.activity).length<=90 && Object.entries(x.activity).every(([day,v])=>/^\d{4}-\d{2}-\d{2}$/.test(day)&&v&&typeof v==="object"&&!Array.isArray(v)&&Object.entries(v).every(([k,n])=>Object.hasOwn(activityKinds,k)&&Number.isSafeInteger(n)&&n>=0)))) &&
       x.records &&
@@ -51,7 +53,7 @@
           Number.isInteger(r.stage) &&
           r.stage >= 0 &&
           r.stage <= 6 &&
-          Number.isFinite(r.due) &&
+          Number.isFinite(r.due) && Math.abs(r.due) <= 8640000000000000 &&
           Number.isInteger(r.attempts) &&
           r.attempts >= 0 &&
           VocabularyPractice.validMemory(r.arcade) &&
@@ -74,21 +76,33 @@
   function renderStorageWarning() {
     const warning = $("wl-storage-warning");
     warning.hidden = !storageError;
-    warning.textContent = storageError;
+    if (warning.textContent !== storageError) warning.textContent = storageError;
     $("wl-recovery-export").hidden = recoveryRaw === null;
   }
   function save() {
     if (!storageBlocked) {
       try {
-        localStorage.setItem(KEY, JSON.stringify(store));
+        if(storageConflict || (savedRaw!==undefined && localStorage.getItem(KEY)!==savedRaw)){storageConflict=true;throw Error('conflict')}
+        const raw=JSON.stringify(store);localStorage.setItem(KEY,raw);savedRaw=raw;
         storageError = "";
       } catch {
-        storageError = "Không lưu được tiến độ vào trình duyệt. Hãy xuất bản sao trước khi đóng trang.";
+        storageError = storageConflict ? "Word Lab đã thay đổi ở tab khác. Phiên này chỉ lưu tạm; hãy xuất bản sao rồi tải lại trang." : "Không lưu được tiến độ vào trình duyệt. Hãy xuất bản sao trước khi đóng trang.";
       }
     }
     renderStorageWarning();
     return !storageError;
   }
+  // Detect stale tabs even before the next write. Do not auto-merge competing sessions.
+  window.addEventListener("storage", e => {
+    if ((e.key === KEY || e.key === null) && savedRaw !== undefined) {
+      try {
+        if (localStorage.getItem(KEY) === savedRaw) return;
+        storageConflict = true;
+        storageError = "Word Lab đã thay đổi ở tab khác. Phiên này chỉ lưu tạm; hãy xuất bản sao rồi tải lại trang.";
+        renderStorageWarning();
+      } catch { /* the next save reports the storage error */ }
+    }
+  });
   function logActivity(kind, persist=true) {
     if (!Object.hasOwn(activityKinds,kind)) return;
     const today=date(), days=store.activity ||= {};
@@ -120,6 +134,8 @@
   function renderUpcoming() {
     const now=Date.now(), start=new Date();start.setHours(0,0,0,0);const edges=Array.from({length:8},(_,i)=>{const d=new Date(start);d.setDate(d.getDate()+i+1);return +d});
     const counts=[0,0,0,0,0];for(const w of words){if(!introduced(w))continue;const d=store.records[w.word].due;const i=d<=now?0:d<edges[0]?1:d<edges[1]?2:d<edges[7]?3:4;counts[i]++;}
+    const next=words.filter(introduced).map(w=>store.records[w.word].due).filter(t=>t>now).sort((a,b)=>a-b)[0];
+    $("wl-next-due").textContent=next?`Lượt ôn gần nhất tiếp theo: ${new Date(next).toLocaleString("vi-VN",{dateStyle:"short",timeStyle:"short"})}.`:"Chưa có lịch ôn trong tương lai.";
     $("wl-upcoming").innerHTML=["Đã đến hạn","Còn lại hôm nay","Ngày mai","6 ngày tiếp theo","Sau đó"].map((label,i)=>`<div><strong>${counts[i]||0}</strong><small>${label}</small></div>`).join("");
   }
   function shuffle(a) {
@@ -143,26 +159,24 @@
       .sort((a, b) => a.r.due - b.r.due)
       .slice(0, 20)
       .map((x) => x.i);
-    store.daily = { date: date(), ids, done: [] };
+    const today=date(), old=store.daily;
+    if(old?.date===today && !old.done.length && old.ids.length===ids.length && old.ids.every((id,i)=>id===ids[i])) return;
+    store.daily = { date: today, ids, done: [] };
     save();
   }
   let lesson = null;
   function startLearning() {
-    const candidates = words
-      .map((_, i) => i)
-      .filter((i) => !introduced(words[i]));
-    const partial = candidates.filter(
-      (i) => store.records[words[i].word]?.learningStep > 0,
-    );
-    const ids = [
-      ...partial,
-      ...shuffle(candidates.filter((i) => !partial.includes(i))),
-    ].slice(0, 5);
+    const candidates = words.map((_,i)=>i).filter(i=>!introduced(words[i]));
+    const saved = (store.lessonIds || []).filter(i=>candidates.includes(i));
+    const partial = candidates.filter(i=>!saved.includes(i) && store.records[words[i].word]?.learningStep>0);
+    const ids = saved.length ? store.lessonIds.slice() : [...partial,...candidates.filter(i=>!partial.includes(i))].slice(0,5);
+    if (!ids.some(i=>!introduced(words[i]))) return;
+    store.lessonIds=ids.slice();save();
     if (!ids.length) return;
     lesson = { ids, queue: [], cursor: 0 };
     for (let step = 0; step < 3; step++)
       for (const id of shuffle(ids))
-        if ((store.records[words[id].word]?.learningStep || 0) <= step)
+        if (!introduced(words[id]) && (store.records[words[id].word]?.learningStep || 0) <= step)
           lesson.queue.push({ id, step });
     $("home").hidden = true;
     $("learning").hidden = false;
@@ -172,6 +186,7 @@
   function showLearning() {
     if (lesson.cursor >= lesson.queue.length) {
       lesson = null;
+      delete store.lessonIds;save();
       $("learning").hidden = true;
       home();
       $("notice").textContent =
@@ -180,10 +195,11 @@
     }
     const task = lesson.queue[lesson.cursor],
       w = words[task.id];
-    $("learning-progress").textContent =
-      `Nhóm ${lesson.ids.length} từ · bước ${lesson.cursor + 1} / ${lesson.queue.length}`;
-    $("wl-learning-progress").max = lesson.queue.length;
-    $("wl-learning-progress").value = lesson.cursor;
+    const completedSteps=lesson.ids.reduce((sum,id)=>sum+(introduced(words[id])?3:(store.records[words[id].word]?.learningStep||0)),0);
+    const totalSteps=lesson.ids.length*3;
+    $("learning-progress").textContent = `Nhóm ${lesson.ids.length} từ · ${completedSteps}/${totalSteps} bước đã xong`;
+    $("wl-learning-progress").max = totalSteps;
+    $("wl-learning-progress").value = completedSteps;
     document.querySelectorAll(".wl-lesson-stages span").forEach((node, i) => {
       node.classList.toggle("is-done", i < task.step);
       if (i === task.step) node.setAttribute("aria-current", "step");
@@ -310,7 +326,7 @@
     const fmt = n => n.toLocaleString("vi-VN");
     const metric = (value,label) => `<div><strong>${value}</strong><small>${label}</small></div>`;
     $("wl-stage-bar").innerHTML = [n-seen, seen-stable, stable].map((v,i)=>`<span class="wl-segment-${i}" style="width:${100*v/n}%"></span>`).join("");
-    $("wl-progress-metrics").innerHTML = metric(due,"Từ đến hạn (tất cả)") + metric(partial,"Đang làm quen dở") + metric(fmt(attempts),"Lượt tự nhớ đã ghi nhận");
+    $("wl-progress-metrics").innerHTML = metric(due,"Từ đến hạn (tất cả)") + metric(partial,"Đang làm quen dở") + metric(fmt(attempts),"Lượt thử nhớ đã ghi nhận");
     const labels = ["Cần củng cố · 10 phút", "1 ngày", "3 ngày", "7 ngày", "14 ngày", "30 ngày", "60 ngày"];
     $("wl-stage-detail").innerHTML = counts.map((v,i)=>`<div class="wl-stage-row"><span>${labels[i]}</span><progress aria-label="${labels[i]}" max="${Math.max(1,seen)}" value="${v}"></progress><strong>${v}</strong></div>`).join("");
     const max = Math.max(1,...recent.map(d=>d.count));
@@ -318,205 +334,41 @@
     $("wl-week-note").textContent = `${recent.reduce((a,d)=>a+d.count,0)} từ có ngày làm quen trong 7 ngày. ${undated ? `${undated} từ cũ thiếu ngày, không đưa vào biểu đồ.` : "Không suy ra lịch sử ôn tập từ biểu đồ này."}`;
     const lib = Object.values(store.library?.words || {});
     const tests = lib.reduce((a,w)=>a+w.tests,0), correct = lib.reduce((a,w)=>a+w.correct,0);
-    $("wl-library-metrics").innerHTML = metric(lib.filter(w=>w.reviews>0).length,"Từ đã tự đánh giá") + metric(fmt(tests),"Lượt kiểm tra gõ từ") + metric(tests ? `${Math.round(100*correct/tests)}%` : "—","Tỷ lệ gõ đúng");
+    $("wl-library-metrics").innerHTML = metric(lib.filter(w=>w.reviews>0).length,"Từ đã tự đánh giá") + metric(fmt(tests),"Lượt kiểm tra gõ từ") + metric(tests ? `${Math.round(100*correct/tests)}%` : "—","Tỷ lệ đúng đã ghi nhận");
     return due;
   }
-  function streakDays() {
-    const logs = new Set();
-    for (const record of Object.values(store.records || {})) {
-      if (record?.introducedOn) logs.add(record.introducedOn);
-    }
-    if (store.daily?.done?.length) logs.add(date());
-    let streak = 0;
-    while (true) {
-      const d = new Date();
-      d.setDate(d.getDate() - streak);
-      const key = d.toLocaleDateString("sv-SE");
-      if (!logs.has(key)) break;
-      streak++;
-    }
-    return streak;
+  function learningRecommendation({remaining,fresh,newToday}) {
+    const partial=words.filter(w=>!introduced(w)&&store.records[w.word]?.learningStep>0).length;
+    const pending=(store.lessonIds||[]).some(i=>!introduced(words[i]));
+    if(remaining.length)return {id:"daily",title:`Ôn ${remaining.length} từ đến hạn`,copy:"Ưu tiên tự nhớ trước khi học thêm. Tối đa 20 từ mỗi lượt.",button:"Bắt đầu ôn →"};
+    if(pending||partial)return {id:"learn",title:"Tiếp tục nhóm từ đang học",copy:"Các bước đã hoàn thành được lưu; bạn không cần bắt đầu lại.",button:"Tiếp tục học →"};
+    if(fresh&&newToday<5)return {id:"learn",title:`Làm quen ${Math.min(fresh,5)} từ mới`,copy:"Đọc từ và ví dụ, nhận diện nghĩa, rồi gõ theo mẫu. Chưa tính là thuộc.",button:"Học từ mới →"};
+    return {id:"infinite",title:"Đã xử lý hàng ôn hiện tại",copy:"Bạn có thể nghỉ hoặc tự luyện thêm. Không cần học dồn để đạt mục tiêu.",button:"Luyện thêm →"};
   }
-  function phaseInfo(seen, stable) {
-    if (seen < 24)
-      return {
-        title: "Giai đoạn 1 · Khởi động nền từ vựng",
-        copy: "Ưu tiên đều đặn làm quen từng nhóm nhỏ 5 từ để hình thành nền ban đầu.",
-        focus:
-          "Tích lũy đủ từ đã gặp để các khu luyện và trò chơi bắt đầu thực sự hữu ích.",
-      };
-    if (seen < 80)
-      return {
-        title: "Giai đoạn 2 · Xây nền ổn định",
-        copy: "Bạn đã có lõi từ đầu tiên. Trọng tâm lúc này là ôn đúng lịch và tránh học dồn.",
-        focus:
-          "Giữ nhịp học ngắn nhưng đều, để từ chuyển dần từ quen mặt sang tự nhớ được.",
-      };
-    if (seen < 160)
-      return {
-        title: "Giai đoạn 3 · Củng cố trí nhớ",
-        copy: "Nền từ đã đủ rộng. Hãy đưa nhiều từ hơn sang các mốc ôn 7–14 ngày.",
-        focus: "Ưu tiên chất lượng ghi nhớ: ít quên hơn, phản xạ nhanh hơn.",
-      };
-    return {
-      title: "Giai đoạn 4 · Phản xạ và vận dụng",
-      copy: "Bạn đã có nền đủ tốt để đẩy mạnh phản xạ, viết câu và tự quản lý bằng thẻ nhớ.",
-      focus:
-        "Luân phiên game, luyện câu, thư viện và Ankis để biến vốn từ thành kỹ năng dùng thật.",
-    };
-  }
-  function renderHomeDashboard({ seen, stable, remaining, due, fresh, newToday, attempts }) {
-    if (!$("wl-focus-title")) return;
+  function renderHomeDashboard({seen,stable,remaining,due,fresh,newToday}) {
     const weekStart=new Date();weekStart.setDate(weekStart.getDate()-6);const weekKey=weekStart.toLocaleDateString("sv-SE");
-    const weekly=Object.values(store.records).filter(r=>r.learned&&typeof r.introducedOn==="string"&&r.introducedOn>=weekKey&&r.introducedOn<=date()).length;
-    const phase = phaseInfo(seen, stable);
-    $("wl-focus-title").textContent = phase.title;
-    $("wl-focus-copy").textContent = remaining.length
-      ? `${remaining.length} từ đang chờ ôn trong lượt hôm nay. ${phase.focus}`
-      : due
-        ? `${due} từ đã đến hạn ôn. ${phase.focus}`
-        : fresh
-          ? `${fresh} từ vẫn chưa làm quen. ${phase.focus}`
-          : phase.copy;
-    $("wl-focus-metrics").innerHTML = [
-      [fmt(seen), "Đã làm quen"],
-      [fmt(stable), "Mốc ôn ≥ 7 ngày"],
-      [fmt(remaining.length), "Ôn trong lượt"],
-      [fmt(weekly), "Từ mới trong 7 ngày"],
-    ]
-      .map(
-        ([v, l]) =>
-          `<div><strong>${v}</strong><small>${l}</small></div>`,
-      )
-      .join("");
-    const goal=store.weekGoal||25;
-    $("wl-week-goal").textContent=`${weekly}/${goal} từ mới trong 7 ngày · mục tiêu cá nhân`;
+    const weekly=words.filter(w=>introduced(w)&&store.records[w.word].introducedOn>=weekKey&&store.records[w.word].introducedOn<=date()).length;
+    const r=learningRecommendation({remaining,fresh,newToday});
+    $("wl-focus-title").textContent=r.title;$("wl-focus-copy").textContent=r.copy;$("wl-focus-primary").textContent=r.button;
+    $("wl-focus-primary").onclick=()=>{document.querySelector('[data-wl-nav="learn"]').click();$("route-start").click();};
+    $("wl-focus-secondary").onclick=()=>document.querySelector('[data-wl-nav="learn"]').click();
+    const goal=store.weekGoal||25;$("wl-week-target").value=String(goal);$("wl-week-goal").textContent=`${weekly}/${goal} từ mới trong 7 ngày · mục tiêu cá nhân`;
     $("wl-week-goal-bar").max=goal;$("wl-week-goal-bar").value=Math.min(weekly,goal);$("wl-week-goal-bar").setAttribute("aria-label",`Mục tiêu ${goal} từ mới trong 7 ngày`);
-    $("wl-week-target").value=String(goal);
-    $("wl-focus-primary").onclick = () => {document.querySelector('[data-wl-nav="learn"]').click();$("route-start").click();};
-    $("wl-focus-secondary").onclick = () =>
-      document.querySelector('[data-wl-nav="ankis"]')?.click();
-
-    const checklist = [
-      {
-        done: newToday >= 5 || fresh === 0,
-        title: "Làm quen một nhóm nhỏ",
-        copy:
-          newToday >= 5
-            ? "Bạn đã chạm mốc 5 từ mới hôm nay."
-            : "Mục tiêu mặc định: 5 từ mới / lượt để tránh quá tải.",
-      },
-      {
-        done: due === 0,
-        title: "Xử lý lượt ôn hôm nay",
-        copy: remaining.length
-          ? `Còn ${remaining.length} từ chờ trong lượt ôn.`
-          : "Không có từ đến hạn trong Word Lab.",
-      },
-    ];
-    $("wl-checklist").innerHTML = checklist
-      .map(
-        (item) =>
-          `<div class="wl-check-item ${item.done ? "is-done" : "is-open"}"><span>${item.done ? "✓" : "•"}</span><div><strong>${item.title}</strong><small>${item.copy}</small></div></div>`,
-      )
-      .join("");
-    $("wl-checklist-badge").textContent = `${checklist.filter((item) => item.done).length}/${checklist.length} gợi ý đã đạt`;
-
-    const priorities = [
-      remaining.length
-        ? ["Ôn trước", `${remaining.length} từ trong lượt hôm nay nên làm trước khi học thêm.`]
-        : due
-          ? [
-              "Dọn hàng chờ",
-              `${due} từ đến hạn trong toàn hệ thống; mở Ôn hôm nay để xử lý theo nhịp.`,
-            ]
-          : [
-              "Giữ nhịp",
-              "Hôm nay chưa có hàng chờ gấp. Bạn có thể học thêm hoặc luyện nhẹ.",
-            ],
-      fresh
-        ? ["Mở rộng vốn từ", `${fresh} từ vẫn chưa làm quen — đủ để tiếp tục nhiều phiên ngắn.`]
-        : [
-            "Chất lượng hơn số lượng",
-            "Bạn đã chạm hết từ hiện có; tập trung ôn và phản xạ.",
-          ],
-      [
-        "Dùng thư viện có chủ đích",
-        "Khi muốn học theo cụm nhỏ 12–24 từ, chuyển sang Thư viện & flashcard.",
-      ],
-      [
-        "Ankis cho tự quản lý",
-        "Dùng Ankis khi muốn tự tạo deck lớn hoặc ôn theo lịch thẻ nhớ riêng.",
-      ],
-    ];
-    $("wl-priority-list").innerHTML = priorities
-      .map(
-        ([t, c]) =>
-          `<div class="wl-priority-item"><strong>${t}</strong><small>${c}</small></div>`,
-      )
-      .join("");
-
-    const guardian = store.guardian || {};
+    const tasks=[[due===0,"Ôn đến hạn",due?`${due} từ cần ôn` : "Hiện không có từ đến hạn"],[newToday>=5||fresh===0,"Làm quen từ mới",fresh?`${newToday}/5 từ hôm nay`:"Đã làm quen toàn bộ bộ từ"]];
+    $("wl-checklist-badge").textContent=`${tasks.filter(t=>t[0]).length}/2 mục`;
+    $("wl-checklist").innerHTML=tasks.map(([done,t,c])=>`<div class="wl-check-item ${done?"is-done":"is-open"}"><span>${done?"✓":"•"}</span><div><strong>${t}</strong><small>${c}</small></div></div>`).join("");
+    const limits=[24,80,160,words.length], labels=["Khởi động","Xây nền","Mở rộng","Hoàn tất bộ từ"];
+    $("wl-roadmap-status").textContent=`${seen}/${words.length} từ đã làm quen`;
+    $("wl-roadmap").innerHTML=limits.map((limit,i)=>{const start=limits[i-1]||0,n=Math.min(limit-start,Math.max(0,seen-start)),done=seen>=limit,active=!done&&seen>=start;return `<article class="wl-roadmap-card ${done?"is-complete":active?"is-current":""}"><span>${done?"✓":i+1}</span><div><h3>${labels[i]}</h3><small>${done?"Hoàn tất":active?"Đang thực hiện":"Mốc tiếp theo"} · ${n}/${limit-start}</small><progress max="${limit-start}" value="${n}" aria-label="${labels[i]}"></progress></div></article>`}).join("");
     const ankis=window.WordLabAnkis?.peek();
-    $("wl-system-grid").innerHTML = [
-      ["Word Lab", `${fmt(seen)}/${fmt(words.length)} từ đã làm quen`],
-      ["Tiến độ", `${fmt(attempts)} lượt tự nhớ đã được lưu`],
-      ["Trạm Sao", `${fmt(guardian.coins || 0)} xu · linh thú học cùng bạn`],
-      ["Ankis", ankis?`${fmt(ankis.cards)} thẻ · ${fmt(ankis.due)} đang học / đến hạn`:"Mở bộ thẻ và lịch ôn riêng"],
-    ]
-      .map(
-        ([t, c]) =>
-          `<div class="wl-system-item"><strong>${t}</strong><small>${c}</small></div>`,
-      )
-      .join("");
-
-    const roadmap = [
-      { limit: 24, title: "Khởi động", copy: "Làm quen đều để mở nền cơ bản." },
-      { limit: 80, title: "Xây nền", copy: "Giữ nhịp ôn mỗi ngày, tránh quên sớm." },
-      { limit: 160, title: "Củng cố", copy: "Đẩy nhiều từ sang các mốc 7–14 ngày." },
-      {
-        limit: words.length,
-        title: "Vận dụng",
-        copy: "Tăng phản xạ, viết câu và dùng thẻ nhớ linh hoạt.",
-      },
-    ];
-    $("wl-roadmap").innerHTML = roadmap
-      .map((item, index) => {
-        const complete = seen >= item.limit;
-        const current = !complete && (index === 0 || seen >= roadmap[index - 1].limit);
-        return `<article class="wl-roadmap-card ${complete ? "is-complete" : current ? "is-current" : ""}"><span>${complete ? "✓" : String(index + 1).padStart(2, "0")}</span><div><h3>${item.title}</h3><p>${item.copy}</p><small>${index === roadmap.length - 1 ? `${fmt(words.length)} từ` : `Tới ${fmt(item.limit)} từ`}</small></div></article>`;
-      })
-      .join("");
-
-    $("wl-module-grid").innerHTML = [
-      ["Học tập", "Làm quen từ mới, ôn đúng lịch và luyện không đồng hồ."],
-      ["Thư viện", "Ôn theo bộ nhỏ, flashcard và gõ từ có chủ đích."],
-      ["Luyện câu", "Đưa từ vào câu Việt → Anh để tăng khả năng dùng thật."],
-      ["Trò chơi", "Phòng tuyến thiên thạch để luyện phản xạ chính tả."],
-      ["Trạm Sao", "Gamification, phần thưởng và linh thú đồng hành."],
-      ["Ankis", "Ôn theo deck độc lập trong cùng giao diện tổng thể."],
-    ]
-      .map(
-        ([t, c],i) =>
-          `<button type="button" class="wl-module-item" data-module-nav="${["learn","library","sentence","game","pet","ankis"][i]}"><strong>${t}</strong><small>${c}</small></button>`,
-      )
-      .join("");
-
-    $("wl-rhythm-list").innerHTML = [
-      "Mở đầu bằng 1 nhóm 5 từ mới hoặc ôn hàng chờ trước.",
-      "Xử lý Ôn hôm nay để giảm quên sớm.",
-      "Nếu còn thời gian, chọn thêm 1 khu: Thư viện, Luyện câu hoặc Trò chơi.",
-      "Cuối ngày, dùng Ankis cho các deck riêng hoặc chủ đề chuyên sâu.",
-    ]
-      .map((text) => `<li>${text}</li>`)
-      .join("");
+    $("wl-module-grid").innerHTML=[["library","Thư viện","Tìm và luyện nhóm từ cần củng cố"],["sentence","Luyện câu","Vận dụng từ và cấu trúc trong ngữ cảnh"],["game","Trò chơi","Luyện phản xạ không thay thế lượt ôn"],["ankis","Ankis",ankis?`${fmt(ankis.due)} thẻ đang học / đến hạn`:"Lịch ôn riêng theo bộ thẻ"]].map(([k,t,c])=>`<button type="button" class="wl-module-item" data-module-nav="${k}"><strong>${t}</strong><small>${c}</small></button>`).join("");
   }
   function renderPanelSnapshots({ seen, stable, remaining, due, fresh }) {
     if ($("wl-learn-snapshot")) {
       $("wl-learn-snapshot").innerHTML = [
         [fmt(fresh), "từ chờ làm quen"],
-        [fmt(remaining.length), "từ trong lượt ôn"],
-        [fmt(stable), "từ đã khá ổn định"],
+        [fmt(due), "từ đến hạn"],
+        [fmt(words.filter(w=>!introduced(w)&&store.records[w.word]?.learningStep>0).length), "từ học dở"],
       ]
         .map(
           ([v, l]) => `<div><strong>${v}</strong><small>${l}</small></div>`,
@@ -526,7 +378,7 @@
     if ($("wl-game-snapshot")) {
       $("wl-game-snapshot").innerHTML = [
         [fmt(seen), "từ đủ điều kiện vào game"],
-        [due ? fmt(due) : "0", "từ đến hạn hôm nay"],
+        [due ? fmt(due) : "0", "từ đang đến hạn"],
         [stable ? fmt(stable) : "0", "từ đã qua mốc 7 ngày"],
       ]
         .map(
@@ -560,13 +412,20 @@
     cancelAnimationFrame(frame);
     Guardian.clear();
     session = null;
+    lesson=null;
     $("learning").hidden = true;
     $("library").hidden = true;
     Guardian.renderHome();
-    plan();
     $("home").hidden = false;
     $("session").hidden = true;
     $("result").hidden = true;
+    refreshHome();
+  }
+  function refreshHome() {
+    plan();
+    const today = new Date();
+    $("wl-date").dateTime = date();
+    $("wl-date").textContent = new Intl.DateTimeFormat("vi-VN",{weekday:"short",day:"numeric",month:"numeric"}).format(today);
     const remaining = store.daily.ids.filter(
       (i) => !store.daily.done.includes(i),
     );
@@ -574,7 +433,7 @@
     const learned = words.filter(w => introduced(w) && store.records[w.word].stage >= 3).length;
     const attempts = Object.values(store.records).reduce((sum, record) => sum + (record?.attempts || 0), 0);
     $("stats").innerHTML =
-      `<div><strong>${words.length}</strong><small>Tổng số từ</small></div><div><strong>${seen}</strong><small>Đã làm quen</small></div><div><strong>${remaining.length}</strong><small>Ôn trong lượt</small></div>`;
+      `<div><strong>${seen}/${words.length}</strong><small>Đã làm quen</small></div><div><strong>${learned}</strong><small>Mốc ôn ≥ 7 ngày</small></div><div><strong>${fmt(attempts)}</strong><small>Lượt thử nhớ</small></div>`;
     $("wl-vocab-progress").max = words.length;
     $("wl-vocab-progress").value = seen;
     $("wl-progress-percent").textContent = `${Math.round(100 * seen / words.length)}%`;
@@ -595,40 +454,19 @@
       ? "Bắt đầu hôm nay →"
       : "Chưa có từ đến hạn";
     $("learn-description").textContent =
-      `${fresh} từ chờ làm quen. Mỗi lượt chỉ 5 từ: xem → chọn nghĩa → gõ theo mẫu. Không chấm điểm.`;
+      `${fresh} từ chờ làm quen. Mỗi lượt tối đa 5 từ theo thứ tự kho từ: xem → chọn nghĩa → gõ theo mẫu. Không chấm điểm.`;
     $("learn").disabled = !fresh;
+    $("learn").textContent=(store.lessonIds||[]).some(i=>!introduced(words[i]))||words.some(w=>!introduced(w)&&store.records[w.word]?.learningStep>0)?"Tiếp tục nhóm đang học →":"Học từ mới →";
     $("infinite").disabled = !seen;
     $("game").disabled = !seen;
     $("wl-match-start").disabled=new Set(words.filter(introduced).map(w=>w.meaning)).size<4;
     $("wl-scramble-start").disabled=!words.some(w=>introduced(w)&&/^[a-z]{3,}$/i.test(w.word));
-    $("wl-mini-status").textContent=seen<4?"Làm quen ít nhất 4 từ để mở ghép cặp. Giải mã cần từ đơn có ít nhất 3 chữ.":"Chọn thử thách từ những từ bạn đã làm quen.";
+    $("wl-mini-status").textContent=seen===0?"Chưa có từ đã làm quen. Hãy học nhóm 5 từ đầu tiên ở Học tập để mở trò chơi.":$("wl-match-start").disabled?"Ghép cặp cần ít nhất 4 từ có nghĩa khác nhau. Vệ binh có thể chơi ngay.":"Chọn thử thách phù hợp với mục tiêu luyện tập.";
     if ($("game-training")) $("game-training").disabled = !seen;
     if ($("game-rush")) $("game-rush").disabled = !seen;
-    const lightPractice = newToday >= 5;
-    const recommendation = remaining.length
-      ? "daily"
-      : lightPractice
-        ? "infinite"
-        : fresh
-          ? "learn"
-          : "infinite";
-    $("route-title").textContent = remaining.length
-      ? `${remaining.length} từ đang chờ bạn nhớ lại`
-      : lightPractice
-        ? "Đã làm quen đủ một nhóm hôm nay"
-        : fresh
-          ? "Một nhóm nhỏ, năm từ mới"
-          : "Củng cố những từ đã học";
-    $("route-copy").textContent = remaining.length
-      ? "Ôn từ đến hạn trước. Vài phút cũng là một bước tiến."
-      : lightPractice
-        ? "Nghỉ một chút để từ lắng lại. Nếu muốn luyện tiếp, thử tự nhớ không có đồng hồ; bạn vẫn có thể chủ động học thêm."
-        : fresh
-          ? "Xem nghĩa và câu → nhận diện → gõ theo mẫu. Không cần thuộc ngay."
-          : "Từ đã làm quen, độ khó vừa sức. Dừng lúc nào cũng giữ tiến độ.";
-    $("route-start").textContent =
-      lightPractice && !remaining.length ? "Luyện nhẹ →" : "Bắt đầu →";
-    $("route-start").onclick = () => $(recommendation).click();
+    const recommendation=learningRecommendation({remaining,fresh,newToday});
+    $("route-title").textContent=recommendation.title;$("route-copy").textContent=recommendation.copy;
+    $("route-start").textContent=recommendation.button;$("route-start").onclick=()=>$(recommendation.id).click();
   }
   function start(mode, selectedIds) {
     Guardian.clear();
@@ -742,7 +580,9 @@
           : shuffle(ids);
       if (q[0] === session.queue.at(-1) && q.length > 1)
         [q[0], q[1]] = [q[1], q[0]];
-      session.queue.push(...q);
+      // Discard consumed rounds; preserve last-word avoidance and lifetime counters.
+      session.queue = q;
+      session.cursor = 0;
     }
     Object.assign(session, {
       helped: false,
@@ -758,6 +598,7 @@
       invalidPrefix: false,
       memoryRecorded: false,
       firedLetters: 0,
+      accepted: "",
     });
     const w = current();
     $("flight-coach").hidden = true;
@@ -782,11 +623,11 @@
       `${session.mode === "daily" ? "Ôn hôm nay" : session.mode === "game" ? "Vệ binh" : "Vô hạn"} · ${session.completed} lượt · ${session.correct} đúng`;
     renderReview();
     $("enemy").classList.remove("meteor-destroyed");
-    $("enemy").style.setProperty("--label-shift","0px");
+    $("enemy").style.removeProperty("--label-shift");
     $("enemy").hidden = false;
     $("enemy").style.transform = "translateY(0px)";
     draw();
-    $("answer").focus();
+    $("answer").focus({preventScroll:true});
     if (session.mode === "game") {
       Guardian.question();
       $("g-ship-hint").disabled = !GuardianEquipment.ensure(store.guardian)
@@ -798,7 +639,10 @@
         session.streak,
         Guardian.timeBonus(),
       );
-      updateFlight();
+      // The previous target may have been destroyed just before the tab was hidden.
+      // Start the next target paused in that case rather than consuming invisible time.
+      if (document.hidden) pause();
+      else updateFlight();
       frame = requestAnimationFrame(tick);
     }
   }
@@ -816,7 +660,8 @@
   function record(success) {
     const w = current(),
       old = store.records[w.word] || { stage: 0, attempts: 0, due: 0 };
-    const stage = success
+    const early=success&&old.due>Date.now();
+    const stage = early ? old.stage : success
       ? old.lastSuccessDay === date()
         ? Math.max(1, old.stage)
         : Math.min(6, old.stage + 1)
@@ -825,10 +670,10 @@
     store.records[w.word] = {
       ...old,
       learned: true,
-      lastSuccessDay: success ? date() : old.lastSuccessDay,
+      lastSuccessDay: success&&!early ? date() : old.lastSuccessDay,
       stage,
       attempts: old.attempts + 1,
-      due: Date.now() + (success ? intervals[stage] * DAY : 10 * 60000),
+      due: early ? old.due : Date.now() + (success ? intervals[stage] * DAY : 10 * 60000),
     };
     logActivity(session.mode==="game"?"meteor":"review",false);
     save();
@@ -862,7 +707,8 @@
       if (!store.daily.done.includes(id)) store.daily.done.push(id);
       save();
     }
-    $("answer").disabled = true;
+    // Keep the focused input during a flight transition; the resolved guard blocks extra input.
+    $("answer").disabled = session.mode !== "game";
     $("check").disabled = true;
     $("hint").disabled = true;
     $("reveal").disabled = true;
@@ -874,9 +720,9 @@
     cancelAnimationFrame(frame);
     if (session.mode === "game") {
       tone(720);
-      $("enemy").classList.add("meteor-destroyed");
       const finished=session;
-      setTimeout(()=>{if(session===finished&&session.resolved){session.cursor++;nextQuestion();}},320);
+      setTimeout(()=>{if(session===finished&&session.resolved) $("enemy").classList.add("meteor-destroyed");},140);
+      setTimeout(()=>{if(session===finished&&session.resolved){session.cursor++;nextQuestion();}},480);
       return;
     }
     tone(720);
@@ -939,8 +785,7 @@
     $("coach-context").textContent = current().context;
     $("arena").classList.remove("is-danger");
     $("arena").classList.add("is-coaching");
-    $("enemy").style.transform = "translateY(0px)";
-    $("enemy").style.setProperty("--label-shift","0px");
+    $("enemy").style.removeProperty("--label-shift");
     $("game-study").disabled = true;
     $("g-ship-hint").disabled = true;
     $("feedback").textContent = timedOut
@@ -957,12 +802,12 @@
       const a=$("arena").getBoundingClientRect(),t=$("enemy-art").getBoundingClientRect(),ship=$("guardian-ship").getBoundingClientRect();
       const shot=document.createElement("span");shot.className="meteor-projectile";shot.style.left=`${ship.left+ship.width/2-a.left}px`;shot.style.top=`${ship.top-a.top}px`;shot.style.setProperty("--shot-dx",`${t.left+t.width/2-ship.left-ship.width/2}px`);shot.style.setProperty("--shot-dy",`${t.top+t.height/2-ship.top}px`);layer.append(shot);setTimeout(()=>shot.remove(),250);return;
     }
-    const box = $("enemy").getBoundingClientRect(),
+    const box = $("enemy-art").getBoundingClientRect(),
       arena = $("arena").getBoundingClientRect();
     const effect = document.createElement("span");
     effect.className = `flight-fx fx-${kind}`;
     effect.style.left = `${box.left - arena.left + box.width / 2}px`;
-    effect.style.top = `${box.top - arena.top + Math.min(45, box.height / 2)}px`;
+    effect.style.top = `${box.top - arena.top + box.height / 2}px`;
     effect.textContent = kind === "clear" ? "✦" : kind === "learn" ? "✓" : "·";
     layer.append(effect);
     effect.addEventListener("animationend", () => effect.remove(), {
@@ -992,7 +837,7 @@
     )
       return;
     if (!session.paused) {
-      if (session.last) session.elapsed += Math.min(now - session.last, 100);
+      if (session.last) session.elapsed += Math.max(0, now - session.last);
       const ratio = session.elapsed / session.duration;
       const max =
         $("guardian-ship").offsetTop -
@@ -1003,12 +848,12 @@
       const second = Math.ceil((session.duration - session.elapsed) / 1000);
       if (second !== session.clockSecond) updateFlight();
       $("arena").classList.toggle("is-danger", ratio >= 0.78);
-      $("enemy").style.setProperty("--label-shift",`${-Math.max(0,Math.min(1,(ratio-.62)/.18))*($("enemy-art").offsetHeight+$("enemy-meaning").offsetHeight+$("enemy-letters").offsetHeight+15)}px`);
+
       if (ratio >= 1) {
         session.shields--;
         updateFlight();
-        Guardian.mistake();
         if (!session.shields) {
+          Guardian.mistake();
           session.weak.add(session.queue[session.cursor]);
           rememberArcade(true);
           record(false);
@@ -1048,7 +893,7 @@
     $("wl-result-stats").hidden = s.mode === "game";
     $("wl-result-stats").innerHTML = `<div><strong>${s.completed}</strong><span>Lượt luyện</span></div><div><strong>${s.correct}</strong><span>Tự nhớ đúng</span></div><div><strong>${s.completed - s.correct}</strong><span>Cần hỗ trợ</span></div>`;
     $("result-copy").textContent =
-      `${s.completed} lượt luyện · ${s.correct} lượt đúng không gợi ý.\n${lost ? `Từ vừa rơi: ${answer.word} — ${answer.meaning}\n${answer.context}` : "Tiến độ đã lưu. Từ cần hỗ trợ sẽ đến hạn sau 10 phút; từ tự nhớ đúng được hẹn từ ngày mai."}`;
+      `${s.completed} lượt luyện · ${s.correct} lượt đúng không gợi ý.\n${lost ? `Từ vừa rơi: ${answer.word} — ${answer.meaning}\n${answer.context}` : `${storageError ? "Tiến độ đang ở bộ nhớ phiên. Hãy xuất bản sao trước khi đóng trang." : "Tiến độ đã lưu."} Từ cần hỗ trợ sẽ đến hạn sau 10 phút; từ ôn đúng hạn được hẹn theo bậc; luyện đúng trước hạn không dời lịch.`}`;
     if (s.mode === "game") Guardian.finish();
     reviewIds = [...s.weak];
     $("weak-review").hidden = !reviewIds.length;
@@ -1088,43 +933,48 @@
       resolve();
     else {
       session.mistake = true;
-      $("feedback").textContent =
+      $("feedback").textContent = session.mode==="game" ? "Gõ tiếp các chữ còn thiếu để phá thiên thạch." :
         "Chưa đúng. Kiểm tra các chữ màu đỏ và thử lại.";
       tone(180);
     }
   };
   $("answer").oninput = () => {
-    if (!session || session.resolved || session.paused) return;
-    draw();
-    if (session.mode === "game") {
-      const value = $("answer").value.toLowerCase(),
-        target = current().word.toLowerCase();
-      if (!target.startsWith(value)) {
-        if (!session.invalidPrefix && !session.coaching)
-          session.errorEpisodes++;
-        session.invalidPrefix = true;
-        session.mistake = true;
-        $("answer").setAttribute("aria-invalid", "true");
-        $("feedback").textContent =
-          "Cứ sửa chữ màu đỏ. Hoàn thành đúng trước khi hết giờ vẫn tính lượt vé.";
-      } else {
-        session.invalidPrefix = false;
-        $("answer").removeAttribute("aria-invalid");
-        if (!session.coaching) $("feedback").textContent = "";
-        const hits=value.replace(/[^a-z]/gi, "").length;
-        if(hits>session.firedLetters&&!session.coaching){
-          session.firedLetters=hits;
-          flightEffect("shot");
-          const ship=$("guardian-ship").getBoundingClientRect(), targetBox=$("enemy-art").getBoundingClientRect();
-          $("laser").style.height=`${Math.max(8,ship.top-targetBox.bottom+targetBox.height/2)}px`;
-          $("laser").classList.remove("fire");
-          void $("laser").offsetWidth;
-          $("laser").classList.add("fire");
-          tone(440 + hits * 25);
-        }
-      }
-      if (normalized(value) === target) resolve();
+    if (!session || session.paused) return;
+    if(session.resolved){if(session.mode==="game") $("answer").value=current().word.toLowerCase();return;}
+    if (session.mode !== "game" || session.coaching) {
+      draw();
+      if(session.mode === "game" && normalized($("answer").value) === current().word.toLowerCase()) resolve();
+      return;
     }
+    const field=$("answer"), target=current().word.toLowerCase();
+    const value=field.value.toLowerCase(), previous=session.accepted;
+    let next=previous, wrong=false, hits=0;
+    if(value.startsWith(previous)) {
+      for(const c of value.slice(previous.length)) {
+        if(c!==target[next.length]) { wrong=true; break; }
+        next+=c;
+        if(/[a-z]/.test(c)) hits++;
+      }
+    } else { wrong=value.length>=previous.length; }
+    session.accepted=next; field.value=next;
+    field.setSelectionRange(next.length,next.length);
+    if(wrong) {
+      session.errorEpisodes++; session.mistake=true;
+      field.setAttribute("aria-invalid","true");
+      $("feedback").textContent="Chưa đúng ký tự tiếp theo. Các chữ đã bắn vẫn được giữ.";
+      tone(180);
+    } else {
+      field.removeAttribute("aria-invalid");
+      if(hits || next!==previous) $("feedback").textContent="";
+    }
+    draw();
+    if(hits) {
+      session.firedLetters+=hits;
+      // One shot per newly accepted letter; no extra shot on deletion or hint.
+      for(let i=0;i<hits;i++) flightEffect("shot");
+      tone(440 + Math.min(20,session.firedLetters)*25);
+    }
+    if(next===target) resolve();
   };
   function useShipHint() {
     if (
@@ -1147,6 +997,7 @@
     let i = 0;
     while (i < w.length && $("answer").value.toLowerCase()[i] === w[i]) i++;
     $("answer").value = w.slice(0, i + 1);
+    if(session.mode==="game") session.accepted=$("answer").value.toLowerCase();
     draw();
     $("answer").focus();
     $("feedback").textContent =
@@ -1166,7 +1017,7 @@
   $("wl-module-grid").addEventListener("click",e=>{const btn=e.target.closest("[data-module-nav]");if(btn)document.querySelector(`[data-wl-nav="${btn.dataset.moduleNav}"]`)?.click()});
   const mini=$("wl-mini-game");
   const miniButton=(text,fn)=>{const b=document.createElement("button");b.type="button";b.textContent=text;b.onclick=fn;return b;};
-  function miniHeading(title,copy){mini.hidden=false;mini.replaceChildren();const h=document.createElement("h3");h.textContent=title;const p=document.createElement("p");p.textContent=copy;mini.append(h,p,miniButton("Đóng trò chơi",()=>{mini.hidden=true;mini.replaceChildren();}));}
+  function miniHeading(title,copy){mini.hidden=false;mini.replaceChildren();const h=document.createElement("h3");h.textContent=title;const p=document.createElement("p");p.textContent=copy;mini.append(h,p,miniButton("Đóng trò chơi",()=>{mini.hidden=true;mini.replaceChildren();}));mini.scrollIntoView({block:"start",behavior:"instant"});}
   $("wl-match-start").onclick=()=>{
     const pool=shuffle(words.filter(introduced));const used=new Set();const chosen=pool.filter(w=>{if(used.has(w.meaning))return false;used.add(w.meaning);return true}).slice(0,4);if(chosen.length<4)return;
     miniHeading("Ghép cặp từ","Chọn một từ tiếng Anh, sau đó chọn nghĩa tương ứng.");
@@ -1258,6 +1109,7 @@
       changes.push([KEY, JSON.stringify(data)]);
       const written = [], previous = new Map();
       try {
+        if(storageConflict || (savedRaw!==undefined && localStorage.getItem(KEY)!==savedRaw)){backupStatus("Dữ liệu đã thay đổi ở tab khác. Hãy tải lại trước khi nhập.");return;}
         for (const [key] of changes) previous.set(key, localStorage.getItem(key));
         for (const [key,value] of changes) { localStorage.setItem(key,value); written.push(key); }
       } catch {
@@ -1270,6 +1122,7 @@
         return;
       }
       store = data;
+      savedRaw=JSON.stringify(data); storageConflict=false;
       recoveryRaw = null; storageBlocked = false; storageError = "";
       renderStorageWarning();
       home();
@@ -1368,26 +1221,42 @@
   });
   const englishToggle=$("wl-english-keys");
   try{englishToggle.checked=localStorage.getItem("wl-english-keys")!=="off";}catch{}
-  englishToggle.onchange=()=>{try{localStorage.setItem("wl-english-keys",englishToggle.checked?"on":"off")}catch{}};
-  const wordFields=["answer","copy-answer","lib-quiz-answer"];
+  const wordFields=["answer","copy-answer","lib-quiz-answer"].map($);
+  const physical=matchMedia("(hover: hover) and (pointer: fine)");
+  const englishText=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[đĐ]/g,c=>c==="đ"?"d":"D").replace(/[’‘]/g,"'").replace(/[–—]/g,"-").replace(/[^a-zA-Z '\-]/g,"").toLowerCase();
+  function configureEnglish(){
+    for(const field of wordFields){
+      // readonly is intentional in physical-key mode: native IME must not rewrite the buffer.
+      field.readOnly=englishToggle.checked&&physical.matches;
+      field.inputMode=field.readOnly?"none":"text";
+      field.setAttribute("aria-description",field.readOnly?"Nhập bằng phím tiếng Anh QWERTY trực tiếp. Có thể đổi chế độ trong Cài đặt.":"Chỉ nhận ký tự tiếng Anh; không dấu.");
+    }
+  }
+  englishToggle.onchange=()=>{try{localStorage.setItem("wl-english-keys",englishToggle.checked?"on":"off")}catch{}configureEnglish();};
+  physical.addEventListener?.("change",configureEnglish);
+  configureEnglish();
   function englishInsert(field,char){
-    if(field.disabled||field.readOnly)return;
-    const from=field.selectionStart??field.value.length,to=field.selectionEnd??from;
+    if(field.disabled || (field.id==="answer"&&session?.resolved))return;
+    const activeGame=field.id==="answer"&&session?.mode==="game"&&!session.coaching;
+    let from=field.selectionStart??field.value.length,to=field.selectionEnd??from;
+    if(activeGame){from=to=field.value.length;if(char==="Backspace"||char==="Delete")return;}
     if(char==="Backspace")field.setRangeText("",from===to?Math.max(0,from-1):from,to,"end");
+    else if(char==="Delete")field.setRangeText("",from,from===to?Math.min(field.value.length,to+1):to,"end");
     else field.setRangeText(char,from,to,"end");
     field.dispatchEvent(new Event("input",{bubbles:true}));
   }
   document.addEventListener("keydown",e=>{
-    const field=e.target;if(!englishToggle.checked||!wordFields.includes(field.id)||field.disabled||e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
-    const char=/^Key[A-Z]$/.test(e.code)?e.code.slice(3).toLowerCase():e.code==="Space"?" ":e.code==="Minus"?"-":e.code==="Quote"?"'":null;
+    const field=e.target;if(!wordFields.includes(field)||field.disabled||e.ctrlKey||e.altKey||e.metaKey||!englishToggle.checked)return;
+    const char=/^Key[A-Z]$/.test(e.code)?e.code.slice(3).toLowerCase():e.code==="Space"?" ":e.code==="Minus"?"-":e.code==="Quote"?"'":field.readOnly&&["Backspace","Delete"].includes(e.key)?e.key:null;
     if(char===null)return;e.preventDefault();englishInsert(field,char);
   },true);
-  // An optional virtual keyboard works even when an OS input method consumes physical key events.
-  for(const id of wordFields){
-    const field=$(id),form=field.closest("form"),wrap=document.createElement("div"),keys=document.createElement("div"),toggle=document.createElement("button");
-    wrap.className="wl-virtual-english";keys.className="wl-english-pad";keys.hidden=true;toggle.type="button";toggle.textContent="Bàn phím English";toggle.setAttribute("aria-expanded","false");toggle.onclick=()=>{keys.hidden=!keys.hidden;toggle.setAttribute("aria-expanded",String(!keys.hidden));};
-    for(const c of [..."qwertyuiopasdfghjklzxcvbnm","-","'"," ","Backspace"]){const key=document.createElement("button");key.type="button";key.textContent=c===" "?"Space":c==="Backspace"?"⌫":c;key.setAttribute("aria-label",c===" "?"Dấu cách":c==="Backspace"?"Xóa ký tự":c);key.onpointerdown=e=>e.preventDefault();key.onclick=()=>englishInsert(field,c);keys.append(key);}
-    wrap.append(toggle,keys);form.insertAdjacentElement("afterend",wrap);
+  // Capture before existing input handlers so accented or composing text never reaches game/check logic.
+  for(const field of wordFields){
+    const sanitize=()=>{const value=field.value,clean=englishText(value);if(clean!==value){const caret=englishText(value.slice(0,field.selectionStart??value.length)).length;field.value=clean;field.setSelectionRange(caret,caret);}};
+    field.addEventListener("input",sanitize,true);
+    field.addEventListener("compositionend",()=>{sanitize();field.dispatchEvent(new Event("input",{bubbles:true}));});
+    field.addEventListener("paste",e=>{if(field.id==="answer"&&session?.mode==="game"&&!session.coaching){e.preventDefault();return;}if(field.readOnly&&e.clipboardData){e.preventDefault();englishInsert(field,englishText(e.clipboardData.getData("text")));}});
+    field.addEventListener("drop",e=>{if(field.id==="answer"&&session?.mode==="game"&&!session.coaching)e.preventDefault();});
   }
   Guardian.mount({ getStore: () => store, save });
   VocabularyLibrary.mount({
@@ -1397,11 +1266,13 @@
     onClose: home,
   });
   setInterval(() => {
-    if (!$("home").hidden) home();
+    if (!$("home").hidden && ["home","learn","progress"].includes(document.documentElement.dataset.wlSection) && !document.activeElement?.closest(".wl-dashboard button,.wl-dashboard input,.wl-dashboard select,.wl-dashboard textarea")) refreshHome();
   }, 30000);
   const params = new URLSearchParams(location.search);
   home();
   globalThis.WordLabHome = home;
+  globalThis.WordLabRefreshHome = refreshHome;
+  globalThis.WordLabStorageOK = () => !storageError;
   if (params.get("view") === "sentences") {
     VocabularySentences.open(params.get("exercise"));
   } else {

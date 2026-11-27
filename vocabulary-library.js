@@ -7,6 +7,7 @@
     selected = 0,
     practice = null,
     allView = false,
+    filteredPool = [],
     lastFocus = null;
   const root = () => options.getStore();
   const state = () => (root().library ||= M.create());
@@ -127,6 +128,9 @@
     $("lib-list-count").textContent =
       `${results.length} / ${options.words.length} từ`;
     $("lib-empty").hidden = results.length > 0;
+    filteredPool=results.slice().sort((a,b)=>{const ar=root().records[a.word],br=root().records[b.word];return (ar?.due??Infinity)-(br?.due??Infinity)||0;}).slice(0,12);
+    $("wl-lib-filter-cards").disabled=$("wl-lib-filter-quiz").disabled=!filteredPool.length;
+    $("wl-lib-filter-note").textContent=results.length?`Luyện ${filteredPool.length}/${results.length} từ đang lọc, ưu tiên lịch ôn sớm. Kết quả thư viện không đổi lịch Word Lab.`:"Không có từ phù hợp để luyện.";
     if (listing) wordRows(results, $("lib-word-list"));
     else
       $("lib-decks").replaceChildren(
@@ -206,13 +210,12 @@
     window.scrollTo(0, 0);
     $("lib-deck-title").focus({ preventScroll: true });
   }
-  function start(type, weakOnly = false) {
-    const pool = deck().words.filter(
-      (w) => !weakOnly || M.weak(state(), w.word),
-    );
+  function start(type, weakOnly = false, explicitPool=null, fromList=false) {
+    const pool = explicitPool ? explicitPool.slice() : deck().words.filter(w=>!weakOnly||M.weak(state(),w.word));
     if (!pool.length) return;
     practice = {
       type,
+      fromList,
       pool,
       queue: $("lib-shuffle").checked ? shuffle(pool) : pool.slice(),
       cursor: 0,
@@ -237,6 +240,7 @@
       w = p.queue[p.cursor];
     p.resolved = false;
     p.revealed = false;
+    p.mistake = false;
     $("lib-practice-progress").textContent =
       `${p.cursor + 1} / ${p.queue.length} từ`;
     $("wl-lib-progress").max = p.queue.length;
@@ -296,8 +300,8 @@
     $("lib-card-back").hidden = false;
     $("lib-card").classList.add("is-revealed");
     $("lib-quiz-feedback").textContent = correct
-      ? "Đúng rồi — bạn đã tự nhớ được từ này."
-      : "Đã xem đáp án. Từ này được đưa vào nhóm cần ôn lại.";
+      ? "Đúng ngay lần kiểm tra đầu tiên."
+      : "Cần sửa hoặc xem đáp án. Từ này được đưa vào nhóm cần ôn lại.";
     $("lib-quiz-answer").disabled = true;
     $("lib-quiz-check").disabled = true;
     $("lib-quiz-reveal").disabled = true;
@@ -333,17 +337,20 @@
     if (!count)
       $("lib-result-copy").textContent =
         "Bạn chưa hoàn tất từ nào. Không có kết quả nào được tính.";
-    const weakWords = p.pool.filter((w) => M.weak(state(), w.word));
+    const weakWords = p.pool.filter(w=>p.type==="quiz"?p.answers.some(a=>a.word===w.word&&!a.correct):[1,2].includes(p.ratings[w.word]));
+    p.retryPool=weakWords;
+    $("lib-result-back").textContent=p.fromList?"Về danh sách lọc →":"Về bộ từ →";
     $("lib-result-weak").hidden = !weakWords.length;
     wordRows(weakWords, $("lib-result-words"));
     $("lib-result-title").focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
+  function backFromResult(){if(practice?.fromList){practice=null;screen("browse");browse();$("lib-title").focus();}else showDeck();}
   function handleKey(e) {
     if (e.key === "Escape") {
       e.preventDefault();
       if (mode === "practice") finish();
-      else if (mode === "result") showDeck();
+      else if (mode === "result") backFromResult();
       else if (mode === "detail") {
         screen("browse");
         browse();
@@ -397,6 +404,8 @@
       state().direction = $("lib-direction").value;
       save();
     };
+    $("wl-lib-filter-cards").onclick=()=>start("cards",false,filteredPool,true);
+    $("wl-lib-filter-quiz").onclick=()=>start("quiz",false,filteredPool,true);
     $("lib-cards-start").onclick = () => start("cards");
     $("lib-quiz-start").onclick = () => start("quiz");
     $("lib-weak-start").onclick = () => start("cards", true);
@@ -411,10 +420,9 @@
         .trim()
         .replace(/\s+/g, " ");
       if (value === practice.queue[practice.cursor].word.toLowerCase())
-        resolve(true);
-      else
-        $("lib-quiz-feedback").textContent =
-          "Chưa khớp. Bạn có thể sửa lại; chỉ khi xem đáp án mới tính là cần ôn.";
+        resolve(!practice.mistake);
+      else if(value){practice.mistake=true;
+        $("lib-quiz-feedback").textContent = "Chưa khớp. Hãy thử sửa lại; lượt này sẽ được ghi nhận là cần củng cố.";}
     };
     $("lib-quiz-reveal").onclick = () => resolve(false);
     $("lib-quiz-next").onclick = () => {
@@ -424,8 +432,8 @@
       }
     };
     $("lib-stop").onclick = finish;
-    $("lib-result-back").onclick = () => showDeck();
-    $("lib-result-retry").onclick = () => start("quiz", true);
+    $("lib-result-back").onclick = backFromResult;
+    $("lib-result-retry").onclick = () => {if(practice?.retryPool?.length)start("quiz",false,practice.retryPool,practice.fromList);};
   }
   globalThis.VocabularyLibrary = {
     open,

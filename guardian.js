@@ -40,15 +40,16 @@
   function activeXP(s) {
     return N.ensure(s).pets[s.pet].xp;
   }
+  // Transactional station actions: roll back the in-memory guardian if storage rejects the write.
+  function transact(action) {
+    const root=options.getStore(),before=JSON.parse(JSON.stringify(state()));
+    let result;
+    try { result=action(); if(!result.ok){root.guardian=before;return result;} if(!options.save())throw Error('save');return result; }
+    catch {root.guardian=before;return {ok:false,message:"Không lưu được giao dịch. Đã hủy thay đổi trong Trạm Sao; hãy kiểm tra Cài đặt và sao lưu."};}
+  }
   function mutate(action) {
-    const result = action();
-    if (result.ok) {
-      options.save();
-      renderHome();
-      renderDialog();
-    }
-    notify(result.message);
-    return result;
+    const result=transact(action);
+    renderHome();renderDialog();notify(result.message);return result;
   }
   const equipment = (s) =>
     Object.fromEntries(
@@ -145,11 +146,7 @@
     naming.append(label, input, save);
     naming.onsubmit = (e) => {
       e.preventDefault();
-      s.petName = input.value.trim();
-      options.save();
-      renderHome();
-      renderDialog();
-      notify("Đã lưu tên bạn đồng hành.");
+      mutate(()=>{s.petName=input.value.trim();return {ok:true,message:"Đã lưu tên bạn đồng hành."};});
     };
     body.append(naming);
     const callout = node("div", "g-callout");
@@ -297,10 +294,7 @@
           renderDialog();
           return;
         }
-        s.pet = p.id;
-        options.save();
-        renderHome();
-        renderDialog();
+        mutate(()=>{s.pet=p.id;return {ok:true,message:"Đã chọn linh thú đồng hành."};});
       };
       card.append(b);
       if (GuardianArt.assets[p.id] && M.formCount(p.id) > 1) {
@@ -444,7 +438,7 @@
         const b = node("button", "", `Mua · ${number(p.price)} xu`);
         b.disabled = s.coins < p.price;
         b.dataset.buyegg = p.id;
-        b.onclick = () => mutate(() => N.buyEgg(s, p.id));
+        b.onclick = () => {if(confirm(`Mua trứng ${p.name}? Giá được ghi trên thẻ.`))mutate(() => N.buyEgg(s, p.id));};
         card.append(b);
       }
       shop.append(card);
@@ -490,11 +484,11 @@
       summon.disabled = n.tickets < count * 10 || summonBusy;
       summon.onclick = () => {
         if (summonBusy) return;
-        const result = N.summonMany(s, count);
-        if (!result.ok) { notify(result.message); return; }
+        if(!confirm(`Dùng ${count*10} vé để triệu hồi ${count} lần?`))return;
+        const result = transact(()=>N.summonMany(s, count));
+        if (!result.ok) { renderHome();renderDialog();notify(result.message); return; }
         summonBusy = true;
         lastSummonResults = n.history.slice(0, count).reverse();
-        options.save();
         renderHome();
         renderDialog();
         notify(result.message);
@@ -724,14 +718,12 @@
       b.disabled = active || (!owned && (!unlocked || s.coins < item.price));
       b.dataset.item = item.id;
       b.onclick = () => {
-        const result = M.buy(state(), item.id);
+        if(!owned&&!confirm(`Mua ${item.name} với ${number(item.price)} xu?`))return;
+        const result = transact(()=>M.buy(state(), item.id));
         if (result.ok) {
           previewGear = item.id;
-          options.save();
-          renderHome();
-          renderDialog();
         }
-        notify(result.message);
+        renderHome();renderDialog();notify(result.message);
       };
       const preview = node("button", "g-gear-preview-button", "Xem thử");
       preview.dataset.preview = item.id;
@@ -754,6 +746,9 @@
   }
   function journeyPage(body) {
     const s = state();
+    M.today(s,localDate());
+    const missions=M.missions(s),claimed=missions.filter(m=>s.day.missions.includes(m.id));
+    const overview=node("div","g-mission-overview");overview.append(node("strong","",`${claimed.length}/${missions.length} nhiệm vụ đã nhận thưởng`),node("p","g-muted",`${claimed.reduce((a,m)=>a+m.coins,0)} xu từ nhiệm vụ hôm nay · thưởng tự động, không cần bấm nhận.`));body.append(overview);
     body.append(
       node("h3", "", "Nhiệm vụ hôm nay"),
       node(
@@ -764,7 +759,7 @@
     );
     const tasks = node("div", "g-missions");
     for (const m of M.missions(s)) {
-      const card = node("div", "g-mission");
+      const card = node("div", "g-mission"+(s.day.missions.includes(m.id)?" is-claimed":""));
       card.append(
         node("strong", "", m.title),
         node("p", "", m.description),
@@ -1019,7 +1014,7 @@
       node(
         "p",
         "g-muted",
-        `Kỷ lục ${number(state().bestScore)} điểm. Mọi phần thưởng đã lưu, kể cả khi chuyến bay kết thúc.`,
+        `Kỷ lục ${number(state().bestScore)} điểm. ${globalThis.WordLabStorageOK?.() === false ? "Chưa lưu được toàn bộ tiến độ. Xuất bản sao trong Cài đặt trước khi đóng trang." : "Phần thưởng đã lưu, kể cả khi chuyến bay kết thúc."}`,
       ),
     );
     $("result-copy").after(summary);

@@ -127,6 +127,7 @@
         (!q || fold(w.word + " " + w.meaning + " " + w.context).includes(q)) &&
         (status === "all" ||
           (status === "weak" && weak(s, w.word)) ||
+          (status === "foundation" && introduced(records[w.word]) && records[w.word].stage===0) ||
           (status === "new" && !introduced(records[w.word])) ||
           (status === "due" &&
             introduced(records[w.word]) &&
